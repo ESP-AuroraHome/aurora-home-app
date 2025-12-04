@@ -5,15 +5,16 @@ interface Props {
   loading: boolean;
   text: string;
   loadingText?: string;
+  disabled?: boolean;
 }
 
-const ButtonForm = ({ loading, text, loadingText }: Props) => {
+const ButtonForm = ({ loading, text, loadingText, disabled }: Props) => {
   return (
     <Button
       className="bg-blue-500 w-full"
       size={"lg"}
       type="submit"
-      disabled={loading}
+      disabled={loading || disabled}
     >
       {loading ? (
         <>
