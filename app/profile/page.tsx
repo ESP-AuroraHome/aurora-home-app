@@ -5,7 +5,6 @@ import Header from "@/components/specific/header";
 import ProfilePageContent from "@/features/profile/components/ProfilePageContent";
 import { User } from "@prisma/client";
 
-// Données factices pour le test
 const getFakeUser = (): User => {
   return {
     id: "fake-user-id-123",
@@ -19,27 +18,22 @@ const getFakeUser = (): User => {
 };
 
 export default async function ProfilePage() {
-  // Récupérer la session
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   let user: User;
 
-  // Si pas de session, utiliser des données factices
   if (!session?.user) {
     user = getFakeUser();
   } else {
-    // Récupérer l'utilisateur depuis la base de données
     const dbUser = await prisma.user.findUnique({
       where: { id: session.user.id },
     });
 
-    // Si l'utilisateur n'existe pas en DB, utiliser des données factices
     user = dbUser || getFakeUser();
   }
 
-  // Récupérer la locale depuis les cookies
   const cookieStore = await cookies();
   const locale = cookieStore.get("locale")?.value || "fr";
 

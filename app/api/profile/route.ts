@@ -6,20 +6,18 @@ import { z } from "zod";
 const updateProfileSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
   email: z.string().email("Email invalide").min(1, "L'email est requis"),
+  image: z.string().url().optional().nullable(),
 });
 
 export async function PATCH(request: NextRequest) {
   try {
-    // Valider les données
     const body = await request.json();
     const validatedData = updateProfileSchema.parse(body);
 
-    // Vérifier la session
     const session = await auth.api.getSession({
       headers: new Headers(request.headers),
     });
 
-    // Si pas de session, simuler une mise à jour réussie (mode test)
     if (!session?.user) {
       return NextResponse.json({
         success: true,
@@ -27,11 +25,11 @@ export async function PATCH(request: NextRequest) {
           id: "fake-user-id-123",
           name: validatedData.name,
           email: validatedData.email,
+          image: validatedData.image ?? null,
         },
       });
     }
 
-    // Vérifier que l'email n'est pas déjà utilisé par un autre utilisateur
     const existingUser = await prisma.user.findUnique({
       where: { email: validatedData.email },
     });
@@ -43,12 +41,12 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Mettre à jour le profil
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
       data: {
         name: validatedData.name,
         email: validatedData.email,
+        image: validatedData.image ?? null,
       },
     });
 

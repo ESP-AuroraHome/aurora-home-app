@@ -12,8 +12,6 @@ export default function ProfilePageContent({
   user,
   locale,
 }: ProfilePageContentProps) {
-  // Parser le nom pour extraire prénom et nom
-  // Si le nom contient un espace, on prend la première partie comme prénom et le reste comme nom
   const nameParts = user.name.split(" ");
   const firstName = nameParts[0] || "";
   const lastName = nameParts.slice(1).join(" ") || "";

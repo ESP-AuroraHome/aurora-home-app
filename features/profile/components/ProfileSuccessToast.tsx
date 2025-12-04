@@ -13,9 +13,7 @@ export default function ProfileSuccessToast() {
 
   useEffect(() => {
     if (success === "true") {
-      // Afficher le toast avec les traductions chargées
       toast.success(t("success"));
-      // Nettoyer l'URL en enlevant le paramètre
       router.replace("/profile", { scroll: false });
     }
   }, [success, t, router]);

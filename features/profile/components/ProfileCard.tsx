@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
 import { SquarePen } from "lucide-react";
+import AvatarSelector from "./AvatarSelector";
 
 interface ProfileCardProps {
   user: User;
@@ -49,8 +50,9 @@ export default function ProfileCard({
   const t = useTranslations("profile");
   const [loading, setLoading] = useState(false);
   const [editingField, setEditingField] = useState<EditableField>(null);
-  // État local pour les valeurs initiales (mise à jour après sauvegarde)
   const [currentInitialData, setCurrentInitialData] = useState(initialData);
+  const [initialAvatar, setInitialAvatar] = useState<string | null>(user.image);
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(user.image);
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -62,30 +64,21 @@ export default function ProfileCard({
     },
   });
 
-  // Surveiller les valeurs du formulaire
   const watchedValues = form.watch();
 
-  // Vérifier si des modifications ont été apportées
   const hasChanges =
     watchedValues.firstName !== currentInitialData.firstName ||
     watchedValues.lastName !== currentInitialData.lastName ||
     watchedValues.email !== currentInitialData.email ||
-    watchedValues.locale !== currentInitialData.locale;
+    watchedValues.locale !== currentInitialData.locale ||
+    selectedAvatar !== initialAvatar;
 
-  // Extraire les initiales pour l'avatar
-  const initials = user.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
 
   const onSubmit = async (data: ProfileFormData) => {
     setLoading(true);
     setEditingField(null);
 
     try {
-      // Mettre à jour le profil
       const profileResponse = await fetch("/api/profile", {
         method: "PATCH",
         headers: {
@@ -94,6 +87,7 @@ export default function ProfileCard({
         body: JSON.stringify({
           name: `${data.firstName} ${data.lastName}`,
           email: data.email,
+          image: selectedAvatar,
         }),
       });
 
@@ -102,7 +96,6 @@ export default function ProfileCard({
         throw new Error(errorData.error || "Erreur lors de la mise à jour");
       }
 
-      // Mettre à jour la locale si elle a changé
       const localeChanged = data.locale !== initialData.locale;
       if (localeChanged) {
         const localeResponse = await fetch("/api/locale", {
@@ -118,7 +111,6 @@ export default function ProfileCard({
         }
       }
 
-      // Mettre à jour les valeurs initiales pour masquer le bouton
       const newInitialData = {
         firstName: data.firstName,
         lastName: data.lastName,
@@ -126,18 +118,19 @@ export default function ProfileCard({
         locale: data.locale,
       };
       setCurrentInitialData(newInitialData);
+      setInitialAvatar(selectedAvatar);
       
-      // Réinitialiser le formulaire avec les nouvelles valeurs
+      if (selectedAvatar) {
+        user.image = selectedAvatar;
+      }
+      
       form.reset(newInitialData);
 
-      // Si la locale a changé, rediriger avec un paramètre pour afficher le toast après le refresh
       if (localeChanged) {
         router.push("/profile?success=true");
         router.refresh();
       } else {
-        // Si la locale n'a pas changé, on peut afficher le toast directement
         toast.success(t("success"));
-        // Rafraîchir la page pour voir les changements
         setTimeout(() => {
           router.refresh();
         }, 1000);
@@ -153,7 +146,6 @@ export default function ProfileCard({
 
   const handleFieldClick = (field: EditableField) => {
     if (field === "firstName" || field === "lastName") {
-      // Pour le nom, on édite toujours les deux ensemble
       setEditingField("firstName");
     } else {
       setEditingField(field);
@@ -161,25 +153,21 @@ export default function ProfileCard({
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Ne fermer l'édition que si le focus n'est pas passé à l'autre input du même groupe
     if (!loading) {
       const relatedTarget = e.relatedTarget as HTMLElement;
-      // Si le focus passe à un autre input du même groupe d'édition, ne pas fermer
       if (editingField === "firstName" || editingField === "lastName") {
         const container = e.currentTarget.closest('.name-edit-container');
         if (container && relatedTarget && container.contains(relatedTarget)) {
-          return; // Le focus est toujours dans le conteneur, ne pas fermer
+          return;
         }
       }
-      // Utiliser un timeout pour permettre au focus de se déplacer
       setTimeout(() => {
-        // Vérifier si un input du conteneur a toujours le focus
         if (editingField === "firstName" || editingField === "lastName") {
           const container = e.currentTarget.closest('.name-edit-container');
           if (container) {
             const activeElement = document.activeElement;
             if (activeElement && container.contains(activeElement)) {
-              return; // Un input a toujours le focus, ne pas fermer
+              return;
             }
           }
         }
@@ -196,19 +184,14 @@ export default function ProfileCard({
       <CardContent className="flex flex-col gap-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Avatar avec initiales */}
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-2xl font-semibold border border-white/30">
-                {user.image ? (
-                  <img
-                    src={user.image}
-                    alt={user.name}
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                ) : (
-                  initials
-                )}
-              </div>
+              <AvatarSelector
+                currentAvatar={selectedAvatar}
+                userName={user.name}
+                onSelect={(avatarUrl) => {
+                  setSelectedAvatar(avatarUrl);
+                }}
+              />
               <div className="flex flex-col flex-1">
                 <div className="flex items-center gap-2">
                   {editingField === "firstName" || editingField === "lastName" ? (
@@ -304,7 +287,6 @@ export default function ProfileCard({
               </div>
             </div>
 
-            {/* Informations supplémentaires */}
             <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
               <div className="flex justify-between items-center group">
                 <span className="text-white/70 text-sm">{t("language")}</span>
@@ -365,7 +347,6 @@ export default function ProfileCard({
               </div>
             </div>
 
-            {/* Bouton de sauvegarde - affiché seulement s'il y a des changements */}
             {hasChanges && (
               <div className="pt-2 border-t border-white/10">
                 <ButtonForm
