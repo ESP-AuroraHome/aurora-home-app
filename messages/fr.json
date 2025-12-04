@@ -1,0 +1,6 @@
+{
+  "home": {
+    "hello": "Bonjour {{name}}",
+    "subtitle": "Voici la santé de votre maison"
+  }
+}
