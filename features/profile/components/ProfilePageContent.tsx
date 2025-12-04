@@ -1,7 +1,5 @@
-import { Suspense } from "react";
 import { User } from "@prisma/client";
 import ProfileCard from "./ProfileCard";
-import ProfileSuccessToast from "./ProfileSuccessToast";
 
 interface ProfilePageContentProps {
   user: User;
@@ -18,9 +16,6 @@ export default function ProfilePageContent({
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      <Suspense fallback={null}>
-        <ProfileSuccessToast />
-      </Suspense>
       <ProfileCard
         user={user}
         locale={locale}

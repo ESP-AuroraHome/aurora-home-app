@@ -37,6 +37,8 @@ interface ProfileCardProps {
     email: string;
     locale: string;
   };
+  onSuccess?: () => void;
+  hideTitle?: boolean;
 }
 
 type EditableField = "firstName" | "lastName" | "email" | "locale" | null;
@@ -45,6 +47,8 @@ export default function ProfileCard({
   user,
   locale,
   initialData,
+  onSuccess,
+  hideTitle = false,
 }: ProfileCardProps) {
   const router = useRouter();
   const t = useTranslations("profile");
@@ -126,14 +130,22 @@ export default function ProfileCard({
       
       form.reset(newInitialData);
 
+      toast.success(t("success"));
+
       if (localeChanged) {
-        router.push("/profile?success=true");
         router.refresh();
+        if (onSuccess) {
+          setTimeout(() => {
+            onSuccess();
+          }, 1000);
+        }
       } else {
-        toast.success(t("success"));
-        setTimeout(() => {
-          router.refresh();
-        }, 1000);
+        router.refresh();
+        if (onSuccess) {
+          setTimeout(() => {
+            onSuccess();
+          }, 1000);
+        }
       }
     } catch (err) {
       toast.error(
@@ -178,9 +190,11 @@ export default function ProfileCard({
 
   return (
     <Card className="bg-black/4 backdrop-blur-xs border-gray-100/50 rounded-3xl shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-white text-xl">{t("title")}</CardTitle>
-      </CardHeader>
+      {!hideTitle && (
+        <CardHeader>
+          <CardTitle className="text-white text-xl">{t("title")}</CardTitle>
+        </CardHeader>
+      )}
       <CardContent className="flex flex-col gap-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

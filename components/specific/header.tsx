@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { Settings } from "lucide-react";
-import Link from "next/link";
+import ProfileSheetProvider from "@/features/profile/components/ProfileSheetProvider";
 
 const header = () => {
   return (
@@ -13,13 +12,7 @@ const header = () => {
         height={32}
       />
       <p className="place-self-center">AuroraHome</p>
-      <Link href={"/settings"}>
-        <Settings
-          className="place-self-end self-center"
-          size={24}
-          strokeWidth={1}
-        />
-      </Link>
+      <ProfileSheetProvider />
     </header>
   );
 };
