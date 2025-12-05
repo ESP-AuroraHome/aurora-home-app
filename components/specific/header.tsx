@@ -13,12 +13,8 @@ const header = () => {
         height={32}
       />
       <p className="place-self-center">AuroraHome</p>
-      <Link href={"/settings"}>
-        <Settings
-          className="place-self-end self-center"
-          size={24}
-          strokeWidth={1}
-        />
+      <Link href={"/settings"} className="place-self-end self-center">
+        <Settings size={24} strokeWidth={1} />
       </Link>
     </header>
   );

@@ -1,19 +1,21 @@
-type UsecaseResult = { success: true } | { success: false; error: string };
+type UsecaseResult<T> = { success: true } | { success: false; error: string };
 
-const usecase: Promise<UsecaseResult> = async (
-  fct: (arg: unknown) => Promise<void>
+const usecase = <TArgs, TResult>(
+  fct: (args: TArgs) => Promise<TResult> | TResult
 ) => {
-  try {
-    await fct;
-    return {
-      success: true,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: (error as Error).message,
-    };
-  }
+  return async (args: TArgs): Promise<UsecaseResult<TResult>> => {
+    try {
+      await fct(args);
+      return {
+        success: true,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        error: (err as Error).message,
+      };
+    }
+  };
 };
 
 export default usecase;
