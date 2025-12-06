@@ -25,18 +25,26 @@ export default async function Home() {
     take: 20,
   });
 
-  const lightDatapoints = await prisma.dataPoint.findMany({
+  const pressureDatapoints = await prisma.dataPoint.findMany({
     orderBy: { createdAt: "desc" },
     where: {
-      type: { equals: "LIGHT" },
+      type: { equals: "PRESSURE" },
     },
     take: 20,
   });
 
-  const motionDatapoints = await prisma.dataPoint.findMany({
+  const co2Datapoints = await prisma.dataPoint.findMany({
     orderBy: { createdAt: "desc" },
     where: {
-      type: { equals: "MOTION" },
+      type: { equals: "CO2" },
+    },
+    take: 20,
+  });
+
+  const lightDatapoints = await prisma.dataPoint.findMany({
+    orderBy: { createdAt: "desc" },
+    where: {
+      type: { equals: "LIGHT" },
     },
     take: 20,
   });
@@ -51,11 +59,12 @@ export default async function Home() {
             <br />
             {t("home.subtitle")}
           </h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
             <ItemDataPoint type="TEMPERATURE" datapoints={temperatureDatapoints} />
             <ItemDataPoint type="HUMIDITY" datapoints={humidityDatapoints} />
+            <ItemDataPoint type="PRESSURE" datapoints={pressureDatapoints} />
+            <ItemDataPoint type="CO2" datapoints={co2Datapoints} />
             <ItemDataPoint type="LIGHT" datapoints={lightDatapoints} />
-            <ItemDataPoint type="MOTION" datapoints={motionDatapoints} />
           </div>
         </div>
       </div>

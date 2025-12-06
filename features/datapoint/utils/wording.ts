@@ -7,10 +7,12 @@ export const getTitleForDataType = (type: DataType, t?: (key: string) => string)
         return t("temperature");
       case "HUMIDITY":
         return t("humidity");
+      case "PRESSURE":
+        return t("pressure");
+      case "CO2":
+        return t("co2");
       case "LIGHT":
         return t("light");
-      case "MOTION":
-        return t("motion");
       default:
         throw new Error("Unknown DataType : " + type);
     }
@@ -21,10 +23,12 @@ export const getTitleForDataType = (type: DataType, t?: (key: string) => string)
       return "Temperature";
     case "HUMIDITY":
       return "Humidity";
+    case "PRESSURE":
+      return "Pressure";
+    case "CO2":
+      return "CO2";
     case "LIGHT":
       return "Light";
-    case "MOTION":
-      return "Motion";
     default:
       throw new Error("Unknown DataType : " + type);
   }
@@ -36,10 +40,12 @@ export const getUnitForDataType = (type: DataType): string => {
       return "°C";
     case "HUMIDITY":
       return "%";
+    case "PRESSURE":
+      return "hPa";
+    case "CO2":
+      return "ppm";
     case "LIGHT":
       return "lx";
-    case "MOTION":
-      return "mx";
     default:
       throw new Error("Unknown DataType : " + type);
   }

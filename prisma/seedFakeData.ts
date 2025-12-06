@@ -11,39 +11,48 @@ async function main() {
     end: currentDate,
   });
 
-  await Promise.all(
-    dates.map(async (date) => {
-      const data: Omit<DataPoint, "id">[] = [];
+  const batchSize = 1000;
+  const allData: Omit<DataPoint, "id">[] = [];
 
-      data.push({
-        createdAt: date,
-        value: faker.number.float({ min: 0, max: 100 }).toString(),
-        type: DataType.TEMPERATURE,
-      });
+  for (const date of dates) {
+    allData.push({
+      createdAt: date,
+      value: faker.number.float({ min: 0, max: 100 }).toString(),
+      type: DataType.TEMPERATURE,
+    });
 
-      data.push({
-        createdAt: date,
-        value: faker.number.float({ min: 0, max: 100 }).toString(),
-        type: DataType.HUMIDITY,
-      });
+    allData.push({
+      createdAt: date,
+      value: faker.number.float({ min: 0, max: 100 }).toString(),
+      type: DataType.HUMIDITY,
+    });
 
-      data.push({
-        createdAt: date,
-        value: faker.number.float({ min: 0, max: 100 }).toString(),
-        type: DataType.LIGHT,
-      });
+    allData.push({
+      createdAt: date,
+      value: faker.number.float({ min: 980, max: 1050 }).toString(),
+      type: DataType.PRESSURE,
+    });
 
-      data.push({
-        createdAt: date,
-        value: faker.number.float({ min: 0, max: 100 }).toString(),
-        type: DataType.MOTION,
-      });
+    allData.push({
+      createdAt: date,
+      value: faker.number.float({ min: 400, max: 1000 }).toString(),
+      type: DataType.CO2,
+    });
 
-      await prisma.dataPoint.createMany({
-        data,
-      });
-    })
-  );
+    allData.push({
+      createdAt: date,
+      value: faker.number.float({ min: 0, max: 1000 }).toString(),
+      type: DataType.LIGHT,
+    });
+  }
+
+  for (let i = 0; i < allData.length; i += batchSize) {
+    const batch = allData.slice(i, i + batchSize);
+    await prisma.dataPoint.createMany({
+      data: batch,
+    });
+    console.log(`Inserted ${Math.min(i + batchSize, allData.length)} / ${allData.length} records`);
+  }
 }
 
 main()

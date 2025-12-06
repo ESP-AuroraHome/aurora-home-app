@@ -6,8 +6,9 @@
   "datapoint": {
     "temperature": "Température",
     "humidity": "Humidité",
+    "pressure": "Pression",
+    "co2": "CO2",
     "light": "Lumière",
-    "motion": "Mouvement",
     "recentDataPoints": "Données récentes pour {type}"
   },
   "auth": {

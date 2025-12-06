@@ -3,7 +3,7 @@ import ProfileSheetProvider from "@/features/profile/components/ProfileSheetProv
 
 const header = () => {
   return (
-    <header className="grid grid-cols-3 w-full sticky top-0 text-white max-w-7xl mx-auto">
+    <header className="grid grid-cols-3 w-full sticky top-0 z-50 backdrop-blur-sm text-white max-w-7xl mx-auto py-2 md:py-3">
       <Image
         className="place-self-start"
         src="/assets/logo/logo-black.png"

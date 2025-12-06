@@ -22,11 +22,32 @@ interface Props {
 
 const ItemDataPoint = ({ type, datapoints }: Props) => {
   const t = useTranslations("datapoint");
-  const lastDatapoint = datapoints.sort(
+  const sortedDatapoints = [...datapoints].sort(
     (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-  )[0];
+  );
+  const lastDatapoint = sortedDatapoints[0];
   
   const title = getTitleForDataType(type, t);
+  
+  if (!lastDatapoint) {
+    return (
+      <Item
+        variant={"outline"}
+        className="bg-black/4 backdrop-blur-xs border-gray-100/50 rounded-3xl"
+      >
+        <ItemHeader className="justify-start">
+          <IconDataType type={type} />
+          {title}
+        </ItemHeader>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-2 md:gap-4">
+          <ChartDataPoint data={[]} className="w-full md:w-48 h-10" unit={getUnitForDataType(type)} />
+          <p className="text-2xl md:text-3xl font-bold">
+            -- <span className="font-normal">{getUnitForDataType(type)}</span>
+          </p>
+        </div>
+      </Item>
+    );
+  }
   
   return (
     <Drawer>
