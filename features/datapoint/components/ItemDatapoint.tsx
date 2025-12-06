@@ -40,7 +40,7 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
           {title}
         </ItemHeader>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-2 md:gap-4">
-          <ChartDataPoint data={[]} className="w-full md:w-48 h-10" unit={getUnitForDataType(type)} />
+          <ChartDataPoint data={[]} type={type} className="w-full md:w-48 h-10" unit={getUnitForDataType(type)} />
           <p className="text-2xl md:text-3xl font-bold">
             -- <span className="font-normal">{getUnitForDataType(type)}</span>
           </p>
@@ -61,9 +61,9 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
             {title}
           </ItemHeader>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-2 md:gap-4">
-            <ChartDataPoint data={datapoints} className="w-full md:w-48 h-10" unit={getUnitForDataType(type)} />
+            <ChartDataPoint data={datapoints} type={type} className="w-full md:w-48 h-10" unit={getUnitForDataType(type)} />
             <p className="text-2xl md:text-3xl font-bold">
-              {Number(lastDatapoint.value).toFixed(2)}{" "}
+              {parseFloat(lastDatapoint.value).toFixed(2)}{" "}
               <span className="font-normal">{getUnitForDataType(type)}</span>
             </p>
           </div>
@@ -78,8 +78,8 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
             {t("recentDataPoints", { type: title })}
           </DrawerDescription>
         </DrawerHeader>
-        <div className="p-6 md:p-10 overflow-auto">
-          <ChartDataPoint data={datapoints} unit={getUnitForDataType(type)} />
+        <div className="p-0 md:p-10 overflow-auto">
+          <ChartDataPoint data={datapoints} type={type} unit={getUnitForDataType(type)} className="w-full" />
         </div>
       </DrawerContent>
     </Drawer>
