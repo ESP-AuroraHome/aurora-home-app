@@ -6,10 +6,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { User } from "@prisma/client";
-import { profileSchema, ProfileFormData } from "../utils/profileSchema";
+import { createProfileSchema, ProfileFormData } from "../utils/profileSchema";
+import updateUserProfile from "../usecase/updateUserProfile";
+import signOut from "@/features/auth/usecase/signOut";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import ButtonForm from "@/components/specific/buttonForm";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Form,
   FormControl,
@@ -25,15 +28,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
-import { SquarePen } from "lucide-react";
+import { SquarePen, LogOut } from "lucide-react";
 import AvatarSelector from "./AvatarSelector";
 
 interface ProfileCardProps {
   user: User;
   locale: string;
   initialData: {
-    firstName: string;
-    lastName: string;
+    name: string;
     email: string;
     locale: string;
   };
@@ -41,7 +43,7 @@ interface ProfileCardProps {
   hideTitle?: boolean;
 }
 
-type EditableField = "firstName" | "lastName" | "email" | "locale" | null;
+type EditableField = "name" | "email" | "locale" | null;
 
 export default function ProfileCard({
   user,
@@ -53,16 +55,18 @@ export default function ProfileCard({
   const router = useRouter();
   const t = useTranslations("profile");
   const [loading, setLoading] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const [editingField, setEditingField] = useState<EditableField>(null);
   const [currentInitialData, setCurrentInitialData] = useState(initialData);
   const [initialAvatar, setInitialAvatar] = useState<string | null>(user.image);
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(user.image);
 
+  const profileSchema = createProfileSchema(t);
+
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: currentInitialData.firstName,
-      lastName: currentInitialData.lastName,
+      name: currentInitialData.name,
       email: currentInitialData.email,
       locale: currentInitialData.locale as "fr" | "en",
     },
@@ -71,8 +75,7 @@ export default function ProfileCard({
   const watchedValues = form.watch();
 
   const hasChanges =
-    watchedValues.firstName !== currentInitialData.firstName ||
-    watchedValues.lastName !== currentInitialData.lastName ||
+    watchedValues.name !== currentInitialData.name ||
     watchedValues.email !== currentInitialData.email ||
     watchedValues.locale !== currentInitialData.locale ||
     selectedAvatar !== initialAvatar;
@@ -83,21 +86,14 @@ export default function ProfileCard({
     setEditingField(null);
 
     try {
-      const profileResponse = await fetch("/api/profile", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: `${data.firstName} ${data.lastName}`,
-          email: data.email,
-          image: selectedAvatar,
-        }),
+      const profileResult = await updateUserProfile({
+        name: data.name,
+        email: data.email,
+        image: selectedAvatar,
       });
 
-      if (!profileResponse.ok) {
-        const errorData = await profileResponse.json();
-        throw new Error(errorData.error || "Erreur lors de la mise à jour");
+      if (!profileResult.success) {
+        throw new Error(profileResult.error || t("updateError"));
       }
 
       const localeChanged = data.locale !== initialData.locale;
@@ -111,14 +107,14 @@ export default function ProfileCard({
         });
 
         if (!localeResponse.ok) {
-          throw new Error("Erreur lors de la mise à jour de la langue");
+          throw new Error(t("localeUpdateError"));
         }
       }
 
+      const updatedUser = profileResult.data;
       const newInitialData = {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
+        name: updatedUser.name,
+        email: updatedUser.email,
         locale: data.locale,
       };
       setCurrentInitialData(newInitialData);
@@ -126,7 +122,11 @@ export default function ProfileCard({
       
       if (selectedAvatar) {
         user.image = selectedAvatar;
+      } else {
+        user.image = updatedUser.image;
       }
+      
+      user.name = updatedUser.name;
       
       form.reset(newInitialData);
 
@@ -149,7 +149,7 @@ export default function ProfileCard({
       }
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Une erreur est survenue"
+        err instanceof Error ? err.message : t("unknownError")
       );
     } finally {
       setLoading(false);
@@ -157,32 +157,12 @@ export default function ProfileCard({
   };
 
   const handleFieldClick = (field: EditableField) => {
-    if (field === "firstName" || field === "lastName") {
-      setEditingField("firstName");
-    } else {
-      setEditingField(field);
-    }
+    setEditingField(field);
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!loading) {
-      const relatedTarget = e.relatedTarget as HTMLElement;
-      if (editingField === "firstName" || editingField === "lastName") {
-        const container = e.currentTarget.closest('.name-edit-container');
-        if (container && relatedTarget && container.contains(relatedTarget)) {
-          return;
-        }
-      }
       setTimeout(() => {
-        if (editingField === "firstName" || editingField === "lastName") {
-          const container = e.currentTarget.closest('.name-edit-container');
-          if (container) {
-            const activeElement = document.activeElement;
-            if (activeElement && container.contains(activeElement)) {
-              return;
-            }
-          }
-        }
         setEditingField(null);
       }, 150);
     }
@@ -191,8 +171,39 @@ export default function ProfileCard({
   return (
     <Card className="bg-black/4 backdrop-blur-xs border-gray-100/50 rounded-3xl shadow-lg">
       {!hideTitle && (
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-white text-xl">{t("title")}</CardTitle>
+          <button
+            onClick={async (e) => {
+              e.preventDefault();
+              setSigningOut(true);
+              try {
+                const result = await signOut({});
+                if (result.success) {
+                  router.push("/auth/login");
+                } else {
+                  toast.error(result.error || t("unknownError"));
+                }
+              } catch (err) {
+                toast.error(
+                  err instanceof Error ? err.message : t("unknownError")
+                );
+              } finally {
+                setSigningOut(false);
+              }
+            }}
+            disabled={loading || signingOut}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 hover:text-white hover:bg-white/15 hover:border-white/30 transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label={t("signOut")}
+            title={t("signOut")}
+          >
+            {signingOut ? (
+              <Spinner className="w-4 h-4 text-white" />
+            ) : (
+              <LogOut className="w-4 h-4" />
+            )}
+            <span className="hidden sm:inline">{t("signOut")}</span>
+          </button>
         </CardHeader>
       )}
       <CardContent className="flex flex-col gap-4">
@@ -208,58 +219,36 @@ export default function ProfileCard({
               />
               <div className="flex flex-col flex-1">
                 <div className="flex items-center gap-2">
-                  {editingField === "firstName" || editingField === "lastName" ? (
-                    <div className="flex gap-2 flex-1 name-edit-container">
-                      <FormField
-                        control={form.control}
-                        name="firstName"
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input
-                                className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40 transition-all h-8 text-sm"
-                                placeholder={t("firstNamePlaceholder")}
-                                autoFocus
-                                {...field}
-                                onBlur={(e) => {
-                                  field.onBlur();
-                                  handleBlur(e);
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-red-300 text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input
-                                className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40 transition-all h-8 text-sm"
-                                placeholder={t("lastNamePlaceholder")}
-                                {...field}
-                                onBlur={(e) => {
-                                  field.onBlur();
-                                  handleBlur(e);
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-red-300 text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                  {editingField === "name" ? (
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input
+                              className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40 transition-all h-8 text-sm"
+                              placeholder={t("namePlaceholder")}
+                              autoFocus
+                              {...field}
+                              onBlur={(e) => {
+                                field.onBlur();
+                                handleBlur(e);
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-red-300 text-xs" />
+                        </FormItem>
+                      )}
+                    />
                   ) : (
                     <div className="flex items-center justify-between w-full">
                       <p className="text-white text-lg font-semibold">
-                        {watchedValues.firstName} {watchedValues.lastName}
+                        {watchedValues.name}
                       </p>
                       <SquarePen
                         className="w-4 h-4 text-white/70 hover:text-white cursor-pointer transition-colors"
-                        onClick={() => handleFieldClick("firstName")}
+                        onClick={() => handleFieldClick("name")}
                       />
                     </div>
                   )}
@@ -344,7 +333,7 @@ export default function ProfileCard({
                 ) : (
                   <div className="flex items-center justify-end gap-2">
                     <span className="text-white font-medium">
-                      {watchedValues.locale === "fr" ? "Français" : "English"}
+                      {watchedValues.locale === "fr" ? t("french") : t("english")}
                     </span>
                     <SquarePen
                       className="w-4 h-4 text-white/70 hover:text-white cursor-pointer transition-colors"
@@ -367,6 +356,7 @@ export default function ProfileCard({
                   loading={loading}
                   text={t("save")}
                   loadingText={t("saving")}
+                  variant="liquid-glass"
                 />
               </div>
             )}

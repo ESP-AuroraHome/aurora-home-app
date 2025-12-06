@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { createAvatar } from "@dicebear/core";
 import { SquarePen } from "lucide-react";
 import { adventurer } from "@dicebear/collection";
@@ -52,6 +53,7 @@ export default function AvatarSelector({
   userName,
   onSelect,
 }: AvatarSelectorProps) {
+  const t = useTranslations("profile");
   const [isOpen, setIsOpen] = useState(false);
 
   const avatarOptions = useMemo(
@@ -103,7 +105,7 @@ export default function AvatarSelector({
           type="button"
           onClick={toggleOpen}
           className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-full opacity-0 group-hover:opacity-100 hover:opacity-100 active:opacity-100 transition-opacity cursor-pointer"
-          aria-label="Changer l'avatar"
+          aria-label={t("changeAvatar")}
         >
           <SquarePen className="w-5 h-5 text-white" />
         </button>
@@ -111,22 +113,24 @@ export default function AvatarSelector({
 
       {isOpen && (
         <div
-          className="fixed sm:absolute top-1/2 sm:top-0 left-1/2 sm:left-20 -translate-x-1/2 sm:translate-x-0 -translate-y-1/2 sm:translate-y-0 z-50 bg-black/90 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-2xl w-[calc(100vw-2rem)] max-w-[400px] sm:w-[400px]"
+          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-10 sm:absolute sm:top-full sm:left-0 sm:mt-10 sm:translate-x-0 sm:translate-y-0 z-[9999] bg-black/90 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-2xl w-[calc(100vw-2rem)] max-w-[400px] sm:w-[400px]"
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
           onClick={(e) => e.stopPropagation()}
+          style={{ zIndex: 9999 }}
         >
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 relative">
             <h3 className="text-white text-sm font-semibold">
-              Choisir un avatar
+              {t("chooseAvatar")}
             </h3>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setIsOpen(false);
               }}
-              className="text-white/70 hover:text-white text-xl leading-none sm:hidden"
-              aria-label="Fermer"
+              className="text-white/70 hover:text-white text-xl leading-none sm:hidden relative"
+              style={{ zIndex: 10000 }}
+              aria-label={t("close")}
             >
               ×
             </button>

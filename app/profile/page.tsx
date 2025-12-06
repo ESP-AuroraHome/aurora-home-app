@@ -1,8 +1,7 @@
-import { cookies, headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { cookies } from "next/headers";
 import Header from "@/components/specific/header";
 import ProfilePageContent from "@/features/profile/components/ProfilePageContent";
+import getUserProfile from "@/features/profile/usecase/getUserProfile";
 import { User } from "@prisma/client";
 
 const getFakeUser = (): User => {
@@ -18,20 +17,14 @@ const getFakeUser = (): User => {
 };
 
 export default async function ProfilePage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const profileResult = await getUserProfile();
+  
   let user: User;
-
-  if (!session?.user) {
+  
+  if (!profileResult.success) {
     user = getFakeUser();
   } else {
-    const dbUser = await prisma.user.findUnique({
-      where: { id: session.user.id },
-    });
-
-    user = dbUser || getFakeUser();
+    user = profileResult.data;
   }
 
   const cookieStore = await cookies();

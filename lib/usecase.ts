@@ -1,13 +1,16 @@
-type UsecaseResult<T> = { success: true } | { success: false; error: string };
+type UsecaseResult<T> = 
+  | { success: true; data: T } 
+  | { success: false; error: string };
 
 const usecase = <TArgs, TResult>(
   fct: (args: TArgs) => Promise<TResult> | TResult
 ) => {
   return async (args: TArgs): Promise<UsecaseResult<TResult>> => {
     try {
-      await fct(args);
+      const data = await fct(args);
       return {
         success: true,
+        data,
       };
     } catch (err) {
       return {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { User } from "@prisma/client";
 import { User as UserIcon } from "lucide-react";
 import ProfileSheet from "./ProfileSheet";
@@ -14,6 +15,7 @@ export default function ProfileSheetWrapper({
   user,
   locale,
 }: ProfileSheetWrapperProps) {
+  const t = useTranslations("profile");
   const [open, setOpen] = useState(false);
 
   return (
@@ -21,7 +23,7 @@ export default function ProfileSheetWrapper({
       <button
         onClick={() => setOpen(true)}
         className="place-self-end self-center"
-        aria-label="Ouvrir le profil"
+        aria-label={t("openProfile")}
       >
         <UserIcon size={24} strokeWidth={1} className="text-white" />
       </button>

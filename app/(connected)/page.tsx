@@ -2,11 +2,13 @@ import Header from "@/components/specific/header";
 import ItemDataPoint from "@/features/datapoint/components/ItemDatapoint";
 import prisma from "@/lib/prisma";
 import { getTranslations } from "next-intl/server";
+import getUserProfile from "@/features/profile/usecase/getUserProfile";
 
 export default async function Home() {
   const t = await getTranslations();
 
-  const name = "Louis Etienne";
+  const profileResult = await getUserProfile();
+  const name = profileResult.success ? profileResult.data.name : "";
   const temperatureDatapoints = await prisma.dataPoint.findMany({
     orderBy: { createdAt: "desc" },
     where: {

@@ -23,9 +23,6 @@ export default function ProfileSheet({
   onOpenChange,
 }: ProfileSheetProps) {
   const t = useTranslations("profile");
-  const nameParts = user.name.split(" ");
-  const firstName = nameParts[0] || "";
-  const lastName = nameParts.slice(1).join(" ") || "";
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -36,8 +33,7 @@ export default function ProfileSheet({
             user={user}
             locale={locale}
             initialData={{
-              firstName,
-              lastName,
+              name: user.name,
               email: user.email,
               locale,
             }}

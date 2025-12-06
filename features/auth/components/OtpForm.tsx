@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useTranslations } from "next-intl";
 import {
   InputOTP,
   InputOTPGroup,
@@ -22,20 +23,25 @@ import { redirect } from "next/navigation";
 import { otpTypeSchema } from "@/app/auth/otp/page";
 import signInOtp from "../usecase/signInOtp";
 
-export const loginFormSchema = z.object({
-  otp: z.string().min(6).max(6),
-});
+export const createOtpFormSchema = (t: (key: string) => string) => {
+  return z.object({
+    otp: z.string().min(6, { message: t("otpLength") }).max(6, { message: t("otpLength") }),
+  });
+};
 
 const OtpForm = ({ type }: { type: z.infer<typeof otpTypeSchema> }) => {
+  const t = useTranslations("auth");
   const [loading, setLoading] = useState(false);
-  const form = useForm<z.infer<typeof loginFormSchema>>({
-    resolver: zodResolver(loginFormSchema),
+  const otpFormSchema = createOtpFormSchema(t);
+  
+  const form = useForm<z.infer<typeof otpFormSchema>>({
+    resolver: zodResolver(otpFormSchema),
     defaultValues: {
       otp: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof loginFormSchema>) {
+  async function onSubmit(values: z.infer<typeof otpFormSchema>) {
     setLoading(true);
     const response = await signInOtp({
       otp: values.otp,
@@ -51,31 +57,54 @@ const OtpForm = ({ type }: { type: z.infer<typeof otpTypeSchema> }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="otp"
           render={({ field }) => (
-            <FormItem className="justify-center">
-              <FormLabel>OTP</FormLabel>
+            <FormItem className="flex flex-col items-center">
+              <FormLabel className="text-white mb-4">{t("otp")}</FormLabel>
               <FormControl>
                 <InputOTP maxLength={6} {...field}>
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
+                  <InputOTPGroup className="gap-2">
+                    <InputOTPSlot
+                      index={0}
+                      className="bg-white/10 backdrop-blur-sm border-white/20 text-white data-[active=true]:bg-white/15 data-[active=true]:border-white/40 h-12 w-12 rounded-lg text-lg"
+                    />
+                    <InputOTPSlot
+                      index={1}
+                      className="bg-white/10 backdrop-blur-sm border-white/20 text-white data-[active=true]:bg-white/15 data-[active=true]:border-white/40 h-12 w-12 rounded-lg text-lg"
+                    />
+                    <InputOTPSlot
+                      index={2}
+                      className="bg-white/10 backdrop-blur-sm border-white/20 text-white data-[active=true]:bg-white/15 data-[active=true]:border-white/40 h-12 w-12 rounded-lg text-lg"
+                    />
+                    <InputOTPSlot
+                      index={3}
+                      className="bg-white/10 backdrop-blur-sm border-white/20 text-white data-[active=true]:bg-white/15 data-[active=true]:border-white/40 h-12 w-12 rounded-lg text-lg"
+                    />
+                    <InputOTPSlot
+                      index={4}
+                      className="bg-white/10 backdrop-blur-sm border-white/20 text-white data-[active=true]:bg-white/15 data-[active=true]:border-white/40 h-12 w-12 rounded-lg text-lg"
+                    />
+                    <InputOTPSlot
+                      index={5}
+                      className="bg-white/10 backdrop-blur-sm border-white/20 text-white data-[active=true]:bg-white/15 data-[active=true]:border-white/40 h-12 w-12 rounded-lg text-lg"
+                    />
                   </InputOTPGroup>
                 </InputOTP>
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-red-300 text-xs mt-2" />
             </FormItem>
           )}
         />
 
-        <ButtonForm loading={loading} text="Verify" />
+        <ButtonForm
+          loading={loading}
+          text={t("verify")}
+          loadingText={t("verifying")}
+          variant="liquid-glass"
+        />
       </form>
     </Form>
   );
