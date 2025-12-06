@@ -130,16 +130,20 @@ export default function ProfileCard({
       
       form.reset(newInitialData);
 
-      toast.success(t("success"));
-
       if (localeChanged) {
+        const messages = await import(`@/messages/${data.locale}.json`);
+        const successMessage = messages.default.profile.success;
         router.refresh();
-        if (onSuccess) {
-          setTimeout(() => {
-            onSuccess();
-          }, 1000);
-        }
+        setTimeout(() => {
+          toast.success(successMessage);
+          if (onSuccess) {
+            setTimeout(() => {
+              onSuccess();
+            }, 1000);
+          }
+        }, 100);
       } else {
+        toast.success(t("success"));
         router.refresh();
         if (onSuccess) {
           setTimeout(() => {

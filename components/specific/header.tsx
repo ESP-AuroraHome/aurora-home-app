@@ -3,16 +3,19 @@ import ProfileSheetProvider from "@/features/profile/components/ProfileSheetProv
 
 const header = () => {
   return (
-    <header className="grid grid-cols-3 w-full sticky top-0 text-white">
+    <header className="grid grid-cols-3 w-full sticky top-0 text-white max-w-7xl mx-auto">
       <Image
         className="place-self-start"
         src="/assets/logo/logo-black.png"
         alt="Logo"
         width={32}
         height={32}
+        className="md:w-10 md:h-10"
       />
-      <p className="place-self-center">AuroraHome</p>
-      <ProfileSheetProvider />
+      <p className="place-self-center text-sm md:text-base lg:text-lg">AuroraHome</p>
+      <div className="place-self-end">
+        <ProfileSheetProvider />
+      </div>
     </header>
   );
 };

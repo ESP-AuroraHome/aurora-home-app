@@ -42,18 +42,22 @@ export default async function Home() {
   });
 
   return (
-    <div className="flex flex-col gap-20 p-6 pb-0 h-screen w-full bg-[url('/assets/background-main.jpg')] bg-cover">
-      <Header />
-      <h1 className="text-2xl leading-[150%] text-white">
-        {t("home.hello", { name })}
-        <br />
-        {t("home.subtitle")}
-      </h1>
-      <div className="flex flex-col gap-4 justify-end h-full overflow-auto pb-6">
-        <ItemDataPoint type="TEMPERATURE" datapoints={temperatureDatapoints} />
-        <ItemDataPoint type="HUMIDITY" datapoints={humidityDatapoints} />
-        <ItemDataPoint type="LIGHT" datapoints={lightDatapoints} />
-        <ItemDataPoint type="MOTION" datapoints={motionDatapoints} />
+    <div className="flex flex-col h-screen w-full bg-[url('/assets/background-main.jpg')] bg-cover overflow-hidden">
+      <div className="flex flex-col gap-6 md:gap-8 lg:gap-12 p-6 md:p-8 lg:p-12 pb-6 md:pb-8 lg:pb-12 overflow-y-auto flex-1">
+        <div className="max-w-7xl mx-auto w-full flex flex-col gap-6 md:gap-8 lg:gap-12">
+          <Header />
+          <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-[150%] text-white">
+            {t("home.hello", { name })}
+            <br />
+            {t("home.subtitle")}
+          </h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <ItemDataPoint type="TEMPERATURE" datapoints={temperatureDatapoints} />
+            <ItemDataPoint type="HUMIDITY" datapoints={humidityDatapoints} />
+            <ItemDataPoint type="LIGHT" datapoints={lightDatapoints} />
+            <ItemDataPoint type="MOTION" datapoints={motionDatapoints} />
+          </div>
+        </div>
       </div>
     </div>
   );

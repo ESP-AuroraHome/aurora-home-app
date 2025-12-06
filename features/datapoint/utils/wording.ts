@@ -1,6 +1,21 @@
 import { DataType } from "@prisma/client";
 
-export const getTitleForDataType = (type: DataType): string => {
+export const getTitleForDataType = (type: DataType, t?: (key: string) => string): string => {
+  if (t) {
+    switch (type) {
+      case "TEMPERATURE":
+        return t("temperature");
+      case "HUMIDITY":
+        return t("humidity");
+      case "LIGHT":
+        return t("light");
+      case "MOTION":
+        return t("motion");
+      default:
+        throw new Error("Unknown DataType : " + type);
+    }
+  }
+  
   switch (type) {
     case "TEMPERATURE":
       return "Temperature";

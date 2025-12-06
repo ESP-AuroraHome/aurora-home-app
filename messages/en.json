@@ -3,6 +3,13 @@
     "hello": "Hello {name},",
     "subtitle": "Here is the health of your home"
   },
+  "datapoint": {
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "light": "Light",
+    "motion": "Motion",
+    "recentDataPoints": "Recent data points for {type}"
+  },
   "auth": {
     "loginTitle": "Connect",
     "loginSubtitle": "to your account",
