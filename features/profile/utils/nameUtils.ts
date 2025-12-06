@@ -1,11 +1,3 @@
-/**
- * Utilitaires pour gérer le name unique de la base de données
- * qui est séparé en firstName/lastName dans l'UI
- */
-
-/**
- * Divise un name en firstName et lastName
- */
 export function splitName(name: string | null | undefined): {
   firstName: string;
   lastName: string;
@@ -23,9 +15,6 @@ export function splitName(name: string | null | undefined): {
   };
 }
 
-/**
- * Combine firstName et lastName en un name unique
- */
 export function combineName(firstName: string, lastName: string): string {
   const trimmedFirstName = firstName.trim();
   const trimmedLastName = lastName.trim();

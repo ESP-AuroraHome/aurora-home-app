@@ -36,7 +36,6 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
     const sortedData = [...data]
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
       .map((dp) => {
-        // Parse la valeur en nombre, en gérant les cas d'erreur
         const numValue = parseFloat(dp.value);
         const value = isNaN(numValue) ? 0 : numValue;
         
@@ -65,14 +64,13 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
   }, [type, chartData]);
 
   const uniqueId = useMemo(() => `chart-${Math.random().toString(36).substr(2, 9)}`, []);
-  const isSmallChart = className?.includes("h-10");
+  const hasFixedHeight = className?.includes("h-10") || className?.includes("h-12") || className?.includes("h-16") || className?.includes("h-20") || className?.includes("h-24") || className?.includes("h-32");
+  const isOnlyFullWidth = className === "w-full" || (className?.includes("w-full") && !hasFixedHeight);
+  const isSmallChart = hasFixedHeight && !isOnlyFullWidth;
 
-  // Marges adaptatives selon la taille de l'écran
-  // Augmenter la largeur pour éviter les retours à la ligne
   const yAxisWidth = isMobile ? (unit ? 50 : 40) : (unit ? 80 : 65);
-  const marginLeft = isMobile ? (unit ? 45 : 35) : (unit ? 75 : 60);
-  // Équilibrer la marge droite avec la gauche pour centrer le graphique
-  const marginRight = marginLeft;
+  const marginLeft = isSmallChart ? (isMobile ? 5 : 5) : (isMobile ? (unit ? 45 : 35) : (unit ? 75 : 60));
+  const marginRight = isSmallChart ? (isMobile ? 5 : 5) : marginLeft;
 
   return (
     <ChartContainer config={chartConfig} className={className}>
@@ -109,24 +107,18 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
           }}
           width={yAxisWidth}
           tickFormatter={(value) => {
-            // Formate les nombres pour éviter l'affichage de valeurs aberrantes
             const numValue = typeof value === 'number' ? value : parseFloat(String(value));
             if (isNaN(numValue) || !isFinite(numValue)) return '--';
             
-            // Formatage intelligent selon la valeur
             let formatted: string;
             if (numValue >= 1000) {
-              // Pour les grandes valeurs (>= 1000), pas de décimales
               formatted = numValue.toFixed(0);
             } else if (numValue >= 100) {
-              // Pour les valeurs moyennes (100-999), 1 décimale si nécessaire
               formatted = numValue % 1 === 0 ? numValue.toFixed(0) : numValue.toFixed(1);
             } else {
-              // Pour les petites valeurs (< 100), 1 décimale
               formatted = numValue.toFixed(1);
             }
             
-            // Affiche la valeur et l'unité sur la même ligne avec un espace insécable
             return unit ? `${formatted}\u00A0${unit}` : formatted;
           }}
           domain={domain}
