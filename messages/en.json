@@ -2,5 +2,22 @@
   "home": {
     "hello": "Hello {name},",
     "subtitle": "Here is the health of your home"
+  },
+  "profile": {
+    "title": "My Profile",
+    "editTitle": "Edit my profile",
+    "firstName": "First name",
+    "firstNamePlaceholder": "Your first name",
+    "lastName": "Last name",
+    "lastNamePlaceholder": "Your last name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "language": "Language",
+    "languagePlaceholder": "Select a language",
+    "emailVerified": "Email verified",
+    "save": "Save",
+    "saving": "Saving...",
+    "success": "Profile updated successfully",
+    "error": "An error occurred"
   }
 }

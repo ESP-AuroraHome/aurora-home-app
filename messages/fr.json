@@ -1,6 +1,23 @@
 {
   "home": {
-    "hello": "Bonjour {{name}}",
+    "hello": "Bonjour {name}",
     "subtitle": "Voici la santé de votre maison"
+  },
+  "profile": {
+    "title": "Mon Profil",
+    "editTitle": "Modifier mon profil",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Votre prénom",
+    "lastName": "Nom",
+    "lastNamePlaceholder": "Votre nom",
+    "email": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "language": "Langue",
+    "languagePlaceholder": "Sélectionnez une langue",
+    "emailVerified": "Email vérifié",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "success": "Profil mis à jour avec succès",
+    "error": "Une erreur est survenue"
   }
 }
