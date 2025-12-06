@@ -66,7 +66,7 @@ const OtpForm = ({ type }: { type: z.infer<typeof otpTypeSchema> }) => {
               <FormLabel className="text-white mb-4">{t("otp")}</FormLabel>
               <FormControl>
                 <InputOTP maxLength={6} {...field}>
-                  <InputOTPGroup className="gap-2">
+                  <InputOTPGroup className="gap-1">
                     <InputOTPSlot
                       index={0}
                       className="bg-white/10 backdrop-blur-sm border-white/20 text-white data-[active=true]:bg-white/15 data-[active=true]:border-white/40 h-12 w-12 rounded-lg text-lg"

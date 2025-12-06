@@ -40,7 +40,7 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
             {title}
           </ItemHeader>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-2 md:gap-4">
-            <ChartDataPoint data={datapoints} className="w-full md:w-48 h-10" />
+            <ChartDataPoint data={datapoints} className="w-full md:w-48 h-10" unit={getUnitForDataType(type)} />
             <p className="text-2xl md:text-3xl font-bold">
               {Number(lastDatapoint.value).toFixed(2)}{" "}
               <span className="font-normal">{getUnitForDataType(type)}</span>
@@ -58,7 +58,7 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
           </DrawerDescription>
         </DrawerHeader>
         <div className="p-6 md:p-10 overflow-auto">
-          <ChartDataPoint data={datapoints} />
+          <ChartDataPoint data={datapoints} unit={getUnitForDataType(type)} />
         </div>
       </DrawerContent>
     </Drawer>

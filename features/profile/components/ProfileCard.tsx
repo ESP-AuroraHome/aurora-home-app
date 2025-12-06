@@ -221,14 +221,14 @@ export default function ProfileCard({
                   setSelectedAvatar(avatarUrl);
                 }}
               />
-              <div className="flex flex-col flex-1">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col flex-1 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
                   {editingField === "name" ? (
                     <FormField
                       control={form.control}
                       name="name"
                       render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem className="flex-1 min-w-0">
                           <FormControl>
                             <Input
                               className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40 transition-all h-8 text-sm"
@@ -246,12 +246,12 @@ export default function ProfileCard({
                       )}
                     />
                   ) : (
-                    <div className="flex items-center justify-between w-full">
-                      <p className="text-white text-lg font-semibold">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0 w-full">
+                      <p className="text-white text-lg font-semibold flex-1 min-w-0 truncate">
                         {watchedValues.name}
                       </p>
                       <SquarePen
-                        className="w-4 h-4 text-white/70 hover:text-white cursor-pointer transition-colors"
+                        className="w-4 h-4 text-white/70 hover:text-white cursor-pointer transition-colors flex-shrink-0"
                         onClick={() => handleFieldClick("name")}
                       />
                     </div>
@@ -262,7 +262,7 @@ export default function ProfileCard({
                     control={form.control}
                     name="email"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="min-w-0">
                         <FormControl>
                           <Input
                             type="email"
@@ -281,12 +281,12 @@ export default function ProfileCard({
                     )}
                   />
                 ) : (
-                  <div className="flex items-center justify-between w-full">
-                    <p className="text-white/70 text-sm">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 w-full">
+                    <p className="text-white/70 text-sm flex-1 min-w-0 truncate">
                       {watchedValues.email}
                     </p>
                     <SquarePen
-                      className="w-4 h-4 text-white/70 hover:text-white cursor-pointer transition-colors"
+                      className="w-4 h-4 text-white/70 hover:text-white cursor-pointer transition-colors flex-shrink-0"
                       onClick={() => handleFieldClick("email")}
                     />
                   </div>
@@ -335,12 +335,12 @@ export default function ProfileCard({
                     )}
                   />
                 ) : (
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center justify-end gap-2 sm:gap-3">
                     <span className="text-white font-medium">
                       {watchedValues.locale === "fr" ? t("french") : t("english")}
                     </span>
                     <SquarePen
-                      className="w-4 h-4 text-white/70 hover:text-white cursor-pointer transition-colors"
+                      className="w-4 h-4 text-white/70 hover:text-white cursor-pointer transition-colors flex-shrink-0"
                       onClick={() => handleFieldClick("locale")}
                     />
                   </div>

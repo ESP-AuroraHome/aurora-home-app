@@ -8,6 +8,7 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 interface Props {
   data: DataPoint[];
   className?: string;
+  unit?: string;
 }
 
 const chartConfig = {
@@ -17,7 +18,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const ChartDataPoint = ({ data, className }: Props) => {
+const ChartDataPoint = ({ data, className, unit }: Props) => {
   const chartData = useMemo(() => {
     const sortedData = [...data]
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
@@ -69,7 +70,8 @@ const ChartDataPoint = ({ data, className }: Props) => {
             tickLine={false}
             axisLine={false}
             tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }}
-            width={40}
+            width={unit ? 50 : 40}
+            tickFormatter={(value) => `${value}${unit ? ` ${unit}` : ""}`}
           />
         )}
         {!isSmallChart && (
@@ -84,7 +86,7 @@ const ChartDataPoint = ({ data, className }: Props) => {
                     {data.date} {data.time}
                   </p>
                   <p className="text-white font-semibold">
-                    {Number(payload[0].value).toFixed(2)}
+                    {Number(payload[0].value).toFixed(2)}{unit ? ` ${unit}` : ""}
                   </p>
                 </div>
               );
