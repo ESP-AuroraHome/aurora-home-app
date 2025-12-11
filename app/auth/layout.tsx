@@ -13,7 +13,7 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
     redirect("/");
   }
   return (
-    <div className="bg-gray-950 w-full h-screen dark text-gray-200">
+    <div className="w-full h-screen bg-[url('/assets/background-main.jpg')] bg-cover bg-center flex items-center justify-center p-6">
       {children}
     </div>
   );

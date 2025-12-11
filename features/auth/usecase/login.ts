@@ -2,12 +2,15 @@
 
 import usecase from "@/lib/usecase";
 import { z } from "zod";
-import { loginFormSchema } from "../components/LoginForm";
 import { authClient } from "@/lib/auth-client";
 import assert from "assert";
 import { cookies } from "next/headers";
 
-const login = usecase(async ({ email }: z.infer<typeof loginFormSchema>) => {
+const loginSchema = z.object({
+  email: z.string().email(),
+});
+
+const login = usecase(async ({ email }: z.infer<typeof loginSchema>) => {
   const { data, error } = await authClient.emailOtp.sendVerificationOtp({
     email,
     type: "sign-in",
