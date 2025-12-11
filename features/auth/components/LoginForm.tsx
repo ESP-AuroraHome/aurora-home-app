@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+import { useTranslations } from "next-intl";
 import {
   Form,
   FormControl,
@@ -18,19 +18,20 @@ import login from "../usecase/login";
 import { useState } from "react";
 import { redirect } from "next/navigation";
 
-export const loginFormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-});
+export const createLoginFormSchema = (t: (key: string) => string) => {
+  return z.object({
+    email: z.string().email({ message: t("emailInvalid") }),
+  });
+};
 
 const LoginForm = () => {
+  const t = useTranslations("auth");
   const [loading, setLoading] = useState(false);
+  const loginFormSchema = createLoginFormSchema(t);
+  
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      username: "",
       email: "",
     },
   });
@@ -38,7 +39,6 @@ const LoginForm = () => {
   async function onSubmit(values: z.infer<typeof loginFormSchema>) {
     setLoading(true);
     const response = await login({
-      username: values.username,
       email: values.email,
     });
     if (!response.success) {
@@ -52,34 +52,31 @@ const LoginForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-white">{t("email")}</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn@example.com" {...field} />
+                <Input
+                  type="email"
+                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40 transition-all"
+                  placeholder={t("emailPlaceholder")}
+                  {...field}
+                />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-red-300 text-xs" />
             </FormItem>
           )}
         />
-        <ButtonForm loading={loading} text="Login" />
+        <ButtonForm
+          loading={loading}
+          text={t("login")}
+          loadingText={t("loggingIn")}
+          variant="liquid-glass"
+        />
       </form>
     </Form>
   );
