@@ -5,9 +5,12 @@ import { eachMinuteOfInterval, subDays } from "date-fns";
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log("Suppression des anciennes données...");
+  await prisma.dataPoint.deleteMany({});
+  
   const currentDate = new Date();
   const dates = eachMinuteOfInterval({
-    start: subDays(currentDate, 360),
+    start: subDays(currentDate, 30),
     end: currentDate,
   });
 
