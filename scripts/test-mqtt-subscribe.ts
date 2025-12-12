@@ -23,19 +23,16 @@ console.log(`🔌 Connexion au broker MQTT...`);
 console.log(`📡 Abonnement au topic: ${topic}`);
 console.log(`⏳ En attente de messages... (Ctrl+C pour quitter)\n`);
 
-// S'abonner au topic
 subscribeToTopic(
   topic,
   (receivedTopic, message) => {
     const timestamp = new Date().toISOString();
     const messageStr = message.toString();
     
-    // Essayer de parser comme JSON
     let parsedMessage: string | object = messageStr;
     try {
       parsedMessage = JSON.parse(messageStr);
     } catch {
-      // Si ce n'est pas du JSON, garder comme string
     }
 
     console.log(`\n📨 [${timestamp}]`);
@@ -46,7 +43,6 @@ subscribeToTopic(
   { qos: 1 }
 );
 
-// Gérer l'arrêt propre
 process.on("SIGINT", () => {
   console.log("\n\n🔇 Déconnexion...");
   const client = getMqttClient();
@@ -55,6 +51,5 @@ process.on("SIGINT", () => {
   process.exit(0);
 });
 
-// Garder le processus actif
 process.stdin.resume();
 
