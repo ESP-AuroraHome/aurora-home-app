@@ -37,7 +37,7 @@ export async function PATCH(request: NextRequest) {
     if (existingUser && existingUser.id !== session.user.id) {
       return NextResponse.json(
         { error: "Cet email est déjà utilisé" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -60,17 +60,13 @@ export async function PATCH(request: NextRequest) {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error }, { status: 400 });
     }
 
     console.error("Erreur lors de la mise à jour du profil:", error);
     return NextResponse.json(
       { error: "Une erreur est survenue" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

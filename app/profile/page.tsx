@@ -17,10 +17,10 @@ const getFakeUser = (): User => {
 };
 
 export default async function ProfilePage() {
-  const profileResult = await getUserProfile();
-  
+  const profileResult = await getUserProfile({});
+
   let user: User;
-  
+
   if (!profileResult.success) {
     user = getFakeUser();
   } else {
