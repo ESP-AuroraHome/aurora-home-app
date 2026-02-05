@@ -16,10 +16,10 @@ const getFakeUser = (): User => {
 };
 
 export default async function ProfileSheetProvider() {
-  const profileResult = await getUserProfile();
-  
+  const profileResult = await getUserProfile({});
+
   let user: User;
-  
+
   if (!profileResult.success) {
     user = getFakeUser();
   } else {
@@ -31,4 +31,3 @@ export default async function ProfileSheetProvider() {
 
   return <ProfileSheetWrapper user={user} locale={locale} />;
 }
-

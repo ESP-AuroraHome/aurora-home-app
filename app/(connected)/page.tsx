@@ -7,7 +7,7 @@ import getUserProfile from "@/features/profile/usecase/getUserProfile";
 export default async function Home() {
   const t = await getTranslations();
 
-  const profileResult = await getUserProfile();
+  const profileResult = await getUserProfile({});
   const name = profileResult.success ? profileResult.data.name : "";
   const temperatureDatapoints = await prisma.dataPoint.findMany({
     orderBy: { createdAt: "desc" },
@@ -60,7 +60,10 @@ export default async function Home() {
             {t("home.subtitle")}
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
-            <ItemDataPoint type="TEMPERATURE" datapoints={temperatureDatapoints} />
+            <ItemDataPoint
+              type="TEMPERATURE"
+              datapoints={temperatureDatapoints}
+            />
             <ItemDataPoint type="HUMIDITY" datapoints={humidityDatapoints} />
             <ItemDataPoint type="PRESSURE" datapoints={pressureDatapoints} />
             <ItemDataPoint type="CO2" datapoints={co2Datapoints} />
