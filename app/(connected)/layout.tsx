@@ -7,8 +7,6 @@ const ConnectedLayout = async ({ children }: { children: React.ReactNode }) => {
     headers: await headers(),
   });
 
-  console.log("ConnectedLayout session:", session);
-
   if (!session) {
     redirect("/auth/login");
   }
