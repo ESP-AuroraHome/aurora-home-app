@@ -12,10 +12,26 @@
  *   DISPLAY_OTP_I2C_ADDRESS  I2C address in hex string (default: "0x3C")
  *
  * Dependencies:
- *   i2c-bus (optionalDependency — already in package.json)
+ *   i2c-bus (optionalDependency — run `npm install i2c-bus` if missing)
  */
 
-import { openSync } from "i2c-bus";
+let i2cBus;
+try {
+  i2cBus = await import("i2c-bus");
+} catch {
+  console.error([
+    "",
+    "  ✗ i2c-bus is not installed.",
+    "    Run the following on your OrangePi:",
+    "",
+    "      sudo apt install build-essential python3 make g++",
+    "      npm install i2c-bus",
+    "",
+  ].join("\n"));
+  process.exit(1);
+}
+
+const { openSync } = i2cBus;
 
 const I2C_BUS = parseInt(process.env.DISPLAY_OTP_I2C_BUS ?? "0", 10);
 const I2C_ADDRESS = parseInt(process.env.DISPLAY_OTP_I2C_ADDRESS ?? "0x3C", 16);

@@ -12,7 +12,15 @@ Edit `/boot/armbianEnv.txt` as root:
 sudo nano /boot/armbianEnv.txt
 ```
 
-Append `sun50i-h6-i2c0` to the existing `overlays=` line (space-separated). If you already have other overlays, keep them:
+Append `i2c0` to the existing `overlays=` line (space-separated).
+
+If `overlay_prefix=sun50i-h6` is already set in your file (common on OrangePi 3 LTS), use just the **suffix** — Armbian prepends the prefix automatically:
+
+```
+overlays=spi-spidev i2c0
+```
+
+If there is **no** `overlay_prefix` line, use the full name:
 
 ```
 overlays=spi-spidev sun50i-h6-i2c0
