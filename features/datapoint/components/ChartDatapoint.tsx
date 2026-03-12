@@ -152,6 +152,9 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
           strokeWidth={2}
           dot={false}
           activeDot={isSmallChart ? false : { r: 4, fill: "white" }}
+          isAnimationActive={true}
+          animationDuration={800}
+          animationEasing="ease-out"
         />
       </AreaChart>
     </ChartContainer>
