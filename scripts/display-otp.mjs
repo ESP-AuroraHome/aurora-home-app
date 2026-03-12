@@ -241,14 +241,7 @@ function showOTP(otp) {
   try {
     initDisplay(bus);
     clearDisplay(bus);
-
-    writeLine(bus, 0, " AuroraHome", true);  // page 0: inverted title
-    writeLine(bus, 1, " Auth. code :");       // page 1: static label (14 chars = 126px)
-    writeLine(bus, 2, "");                    // page 2: spacer
     writeLineLarge(bus, 3, otp);              // pages 3-4: OTP x2 size, centered
-    writeLine(bus, 5, "");                    // page 5: spacer
-    writeLine(bus, 6, " Exp: 5 min");         // page 6: expiry hint
-    writeLine(bus, 7, "");                    // page 7: blank
   } finally {
     bus.closeSync();
   }
