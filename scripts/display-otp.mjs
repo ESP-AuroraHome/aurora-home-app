@@ -66,7 +66,7 @@ function initDisplay(bus) {
     0x40,       // start line
     0x8D, 0x14, // charge pump on
     0x20, 0x00, // horizontal addressing mode
-    0xA1,       // segment remap
+    0xA0,       // segment remap
     0xC8,       // COM output scan direction
     0xDA, 0x12, // COM pins hardware config
     0x81, 0xCF, // contrast
@@ -241,17 +241,18 @@ function showOTP(otp, email) {
     initDisplay(bus);
     clearDisplay(bus);
 
-    const maxEmailLen = 20;
+    // Max chars per line: floor(128 / 9px) = 14. With leading space: 13 visible chars.
+    const maxEmailLen = 13;
     const displayEmail = email.length > maxEmailLen
       ? email.slice(0, maxEmailLen - 1) + "~"
       : email;
 
     writeLine(bus, 0, " AuroraHome", true);  // page 0: inverted title
-    writeLine(bus, 1, " " + displayEmail);    // page 1: email
+    writeLine(bus, 1, " " + displayEmail);    // page 1: email (max 13 chars + space = 126px)
     // pages 2-3: blank spacer, then large OTP
     writeLineLarge(bus, 3, otp);              // pages 3-4: OTP x2 size
     writeLine(bus, 5, "");                    // page 5: spacer
-    writeLine(bus, 6, " Expires in 5 min");   // page 6: hint
+    writeLine(bus, 6, " Exp: 5 min");         // page 6: hint (11 chars x 9px = 99px)
     writeLine(bus, 7, "");                    // page 7: blank
   } finally {
     bus.closeSync();
