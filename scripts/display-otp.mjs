@@ -175,11 +175,12 @@ function renderText(text) {
   const cols = [];
   for (const ch of text) {
     const glyph = FONT[ch] ?? FALLBACK;
-    // Each glyph byte is a row; we need to transpose to columns for SSD1306 horizontal mode
+    // Each glyph byte is a row; we need to transpose to columns for SSD1306 horizontal mode.
+    // Bit 7 of each row byte = leftmost pixel (MSB-first convention).
     for (let col = 0; col < 8; col++) {
       let colByte = 0;
       for (let row = 0; row < 8; row++) {
-        if (glyph[row] & (1 << col)) colByte |= (1 << row);
+        if (glyph[row] & (1 << (7 - col))) colByte |= (1 << row);
       }
       cols.push(colByte);
     }
@@ -235,24 +236,18 @@ function writeLineLarge(bus, startPage, text) {
 
 // ─── Commands ───────────────────────────────────────────────────────────────
 
-function showOTP(otp, email) {
+function showOTP(otp) {
   const bus = openSync(I2C_BUS);
   try {
     initDisplay(bus);
     clearDisplay(bus);
 
-    // Max chars per line: floor(128 / 9px) = 14. With leading space: 13 visible chars.
-    const maxEmailLen = 13;
-    const displayEmail = email.length > maxEmailLen
-      ? email.slice(0, maxEmailLen - 1) + "~"
-      : email;
-
     writeLine(bus, 0, " AuroraHome", true);  // page 0: inverted title
-    writeLine(bus, 1, " " + displayEmail);    // page 1: email (max 13 chars + space = 126px)
-    // pages 2-3: blank spacer, then large OTP
-    writeLineLarge(bus, 3, otp);              // pages 3-4: OTP x2 size
+    writeLine(bus, 1, " Auth. code :");       // page 1: static label (14 chars = 126px)
+    writeLine(bus, 2, "");                    // page 2: spacer
+    writeLineLarge(bus, 3, otp);              // pages 3-4: OTP x2 size, centered
     writeLine(bus, 5, "");                    // page 5: spacer
-    writeLine(bus, 6, " Exp: 5 min");         // page 6: hint (11 chars x 9px = 99px)
+    writeLine(bus, 6, " Exp: 5 min");         // page 6: expiry hint
     writeLine(bus, 7, "");                    // page 7: blank
   } finally {
     bus.closeSync();

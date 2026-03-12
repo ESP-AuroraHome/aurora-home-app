@@ -14,7 +14,7 @@ const cyan = "\x1b[36m";
 const white = "\x1b[37m";
 const bgBlack = "\x1b[40m";
 
-function printMockScreen(otp: string, email: string): void {
+function printMockScreen(otp: string): void {
   const width = 36;
   const border = "═".repeat(width);
   const pad = (text: string, w: number) => text + " ".repeat(Math.max(0, w - text.length));
@@ -25,16 +25,15 @@ function printMockScreen(otp: string, email: string): void {
     return " ".repeat(left) + text + " ".repeat(right);
   };
 
-  const truncatedEmail = email.length > width - 2 ? email.slice(0, width - 3) + "…" : email;
   const otpCentered = center(otp, width - 2);
 
   console.log(`\n${cyan}${bold}╔${border}╗`);
   console.log(`║${bgBlack}${white}${bold}  ${pad("AuroraHome", width - 2)}${reset}${cyan}${bold}║`);
-  console.log(`║  ${white}${pad(truncatedEmail, width - 2)}${reset}${cyan}${bold}║`);
+  console.log(`║  ${white}${pad("Auth. code :", width - 2)}${reset}${cyan}${bold}║`);
   console.log(`║${" ".repeat(width)}║`);
   console.log(`║${white}${bold}${otpCentered}${reset}${cyan}${bold}║`);
   console.log(`║${" ".repeat(width)}║`);
-  console.log(`║  ${white}${pad("Expires in 5 min", width - 2)}${reset}${cyan}${bold}║`);
+  console.log(`║  ${white}${pad("Exp: 5 min", width - 2)}${reset}${cyan}${bold}║`);
   console.log(`╚${border}╝${reset}\n`);
 }
 
@@ -45,7 +44,7 @@ function printMockClear(): void {
 function runScript(args: string[]): void {
   if (isDevMode) {
     if (args[0] === "show") {
-      printMockScreen(args[1], args[2]);
+      printMockScreen(args[1]);
     } else if (args[0] === "clear") {
       printMockClear();
     }
