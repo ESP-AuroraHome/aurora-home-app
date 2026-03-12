@@ -5,7 +5,7 @@ const isEnabled = process.env.DISPLAY_OTP_ENABLED === "true";
 const isDevMode = process.env.DISPLAY_OTP_DEV_MODE === "true";
 const isLinux = process.platform === "linux";
 
-const scriptPath = path.join(process.cwd(), "scripts", "display-otp.py");
+const scriptPath = path.join(process.cwd(), "scripts", "display-otp.mjs");
 
 // ANSI helpers
 const reset = "\x1b[0m";
@@ -54,7 +54,7 @@ function runScript(args: string[]): void {
 
   if (!isEnabled || !isLinux) return;
 
-  const child = spawn("python3", [scriptPath, ...args], {
+  const child = spawn("node", [scriptPath, ...args], {
     detached: true,
     stdio: "ignore",
     env: {
