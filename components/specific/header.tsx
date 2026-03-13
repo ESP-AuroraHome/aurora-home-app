@@ -1,24 +1,26 @@
-import Image from "next/image";
+import { headers } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import ProfileSheetProvider from "@/features/profile/components/ProfileSheetProvider";
+import { auth } from "@/lib/auth";
 
-const header = () => {
+const Header = async () => {
+  const t = await getTranslations();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const name = session?.user?.name || "";
+
   return (
-    <header className="grid grid-cols-3 w-full sticky top-0 z-50 backdrop-blur-sm text-white max-w-7xl mx-auto py-2 md:py-3">
-      <Image
-        className="place-self-start md:w-10 md:h-10"
-        src="/assets/logo/logo-black.png"
-        alt="Logo"
-        width={32}
-        height={32}
-      />
-      <p className="place-self-center text-sm md:text-base lg:text-lg">
-        AuroraHome
-      </p>
-      <div className="place-self-end">
-        <ProfileSheetProvider />
+    <header className="flex items-center gap-3 w-full text-white max-w-7xl mx-auto py-2 md:py-3">
+      <ProfileSheetProvider />
+      <div>
+        <p className=" leading-[150%] text-slate-200">
+          {t("home.hello", { name: "" })}
+        </p>
+        <p className="text-2xl font-semibold">{name}</p>
       </div>
     </header>
   );
 };
 
-export default header;
+export default Header;
