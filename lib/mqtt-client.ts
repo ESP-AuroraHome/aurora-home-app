@@ -1,7 +1,7 @@
+import type { DataType } from "@prisma/client";
 import mqtt from "mqtt";
-import prisma from "./prisma";
+import { dataPointRepository } from "@/features/datapoint/repository/dataPointRepository";
 import { sensorEmitter } from "./sensor-emitter";
-import { DataType } from "@prisma/client";
 
 const MQTT_BROKER_URL =
   process.env.MQTT_BROKER_URL || "mqtt://192.168.4.2:1883";
@@ -58,8 +58,9 @@ export function startMqttClient() {
       for (const [key, dataType] of Object.entries(SENSOR_KEYS)) {
         if (raw[key] !== undefined) {
           const value = parseNumericValue(raw[key]);
-          const dp = await prisma.dataPoint.create({
-            data: { type: dataType, value },
+          const dp = await dataPointRepository.create({
+            type: dataType,
+            value,
           });
           dataPoints[dataType] = {
             id: dp.id,
@@ -71,7 +72,7 @@ export function startMqttClient() {
       }
 
       console.log(
-        `💾 ${Object.keys(dataPoints).length} DataPoints sauvegardés en base`
+        `💾 ${Object.keys(dataPoints).length} DataPoints sauvegardés en base`,
       );
 
       sensorEmitter.emit("sensor_update", {

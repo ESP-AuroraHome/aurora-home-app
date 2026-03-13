@@ -1,22 +1,25 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useTranslations } from "next-intl";
-import { createAvatar } from "@dicebear/core";
+import {
+  adventurer,
+  avataaars,
+  bottts,
+  funEmoji,
+  identicon,
+  lorelei,
+  micah,
+  miniavs,
+  openPeeps,
+  personas,
+  pixelArt,
+  shapes,
+  thumbs,
+} from "@dicebear/collection";
+import { createAvatar, type Style } from "@dicebear/core";
 import { SquarePen } from "lucide-react";
-import { adventurer } from "@dicebear/collection";
-import { avataaars } from "@dicebear/collection";
-import { bottts } from "@dicebear/collection";
-import { funEmoji } from "@dicebear/collection";
-import { identicon } from "@dicebear/collection";
-import { lorelei } from "@dicebear/collection";
-import { micah } from "@dicebear/collection";
-import { miniavs } from "@dicebear/collection";
-import { openPeeps } from "@dicebear/collection";
-import { personas } from "@dicebear/collection";
-import { pixelArt } from "@dicebear/collection";
-import { shapes } from "@dicebear/collection";
-import { thumbs } from "@dicebear/collection";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { useMemo, useState } from "react";
 
 interface AvatarSelectorProps {
   currentAvatar: string | null;
@@ -40,7 +43,10 @@ const avatarStyles = [
   { name: "thumbs", generator: thumbs },
 ];
 
-const generateAvatar = (style: { name: string; generator: any }, seed: string) => {
+const generateAvatar = (
+  style: { name: string; generator: Style<{ seed: string; size: number }> },
+  seed: string,
+) => {
   const avatar = createAvatar(style.generator, {
     seed: seed,
     size: 128,
@@ -62,7 +68,7 @@ export default function AvatarSelector({
         style: style.name,
         url: generateAvatar(style, userName),
       })),
-    [userName]
+    [userName],
   );
 
   const handleSelect = (avatarUrl: string, e: React.MouseEvent) => {
@@ -79,28 +85,37 @@ export default function AvatarSelector({
   };
 
   return (
-    <div className="relative" onClick={(e) => e.stopPropagation()}>
+    <button
+      type="button"
+      className="relative"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="relative w-16 h-16 group">
-        <div
+        <button
+          type="button"
           className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-2xl font-semibold border border-white/30 overflow-hidden cursor-pointer hover:border-white/50 active:border-white/50 transition-all"
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
           onClick={(e) => e.stopPropagation()}
         >
           {currentAvatar ? (
-            <img
+            <Image
               src={currentAvatar}
               alt={userName}
               className="w-full h-full object-cover"
+              width={64}
+              height={64}
             />
           ) : (
-            <img
+            <Image
               src={avatarOptions[0].url}
               alt={userName}
               className="w-full h-full object-cover"
+              width={64}
+              height={64}
             />
           )}
-        </div>
+        </button>
         <button
           type="button"
           onClick={toggleOpen}
@@ -112,7 +127,8 @@ export default function AvatarSelector({
       </div>
 
       {isOpen && (
-        <div
+        <button
+          type="button"
           className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-10 sm:absolute sm:top-full sm:left-0 sm:mt-10 sm:translate-x-0 sm:translate-y-0 z-[9999] bg-black/90 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-2xl w-[calc(100vw-2rem)] max-w-[400px] sm:w-[400px]"
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
@@ -124,6 +140,7 @@ export default function AvatarSelector({
               {t("chooseAvatar")}
             </h3>
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsOpen(false);
@@ -136,9 +153,10 @@ export default function AvatarSelector({
             </button>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 max-h-[60vh] sm:max-h-[400px] overflow-y-auto pr-2">
-            {avatarOptions.map((option, index) => (
-              <div
-                key={index}
+            {avatarOptions.map((option) => (
+              <button
+                type="button"
+                key={option.url}
                 className="relative group"
                 onClick={(e) => handleSelect(option.url, e)}
               >
@@ -149,18 +167,19 @@ export default function AvatarSelector({
                       : "border-white/20 hover:border-white/50 active:border-white/50"
                   }`}
                 >
-                  <img
+                  <Image
                     src={option.url}
                     alt={`Avatar ${option.style}`}
                     className="w-full h-full object-cover"
+                    width={64}
+                    height={64}
                   />
                 </div>
-              </div>
+              </button>
             ))}
           </div>
-        </div>
+        </button>
       )}
-    </div>
+    </button>
   );
 }
-

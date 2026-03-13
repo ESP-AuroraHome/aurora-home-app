@@ -32,9 +32,7 @@ export async function GET(request: Request) {
   sensorEmitter.on("sensor_update", onUpdate);
 
   keepAlive = setInterval(() => {
-    writer
-      .write(encoder.encode(": keepalive\n\n"))
-      .catch(() => cleanup());
+    writer.write(encoder.encode(": keepalive\n\n")).catch(() => cleanup());
   }, 15000);
 
   writer.write(encoder.encode(": connected\n\n")).catch(() => cleanup());

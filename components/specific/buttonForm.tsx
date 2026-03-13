@@ -1,6 +1,6 @@
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
-import { cn } from "@/lib/utils";
 
 interface Props {
   loading: boolean;
@@ -13,15 +13,25 @@ interface Props {
   type?: "button" | "submit" | "reset";
 }
 
-const ButtonForm = ({ loading, text, loadingText, disabled, className, variant = "default", onClick, type = "submit" }: Props) => {
-  const liquidGlassClasses = "bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/15 hover:border-white/30 active:bg-white/20 transition-all shadow-lg";
-  
+const ButtonForm = ({
+  loading,
+  text,
+  loadingText,
+  disabled,
+  className,
+  variant = "default",
+  onClick,
+  type = "submit",
+}: Props) => {
+  const liquidGlassClasses =
+    "bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/15 hover:border-white/30 active:bg-white/20 transition-all shadow-lg";
+
   return (
     <Button
       className={cn(
         variant === "liquid-glass" ? liquidGlassClasses : "bg-blue-500",
         "w-full",
-        className
+        className,
       )}
       size={"lg"}
       type={type}
@@ -30,7 +40,9 @@ const ButtonForm = ({ loading, text, loadingText, disabled, className, variant =
     >
       {loading ? (
         <>
-          <Spinner className={variant === "liquid-glass" ? "text-white" : undefined} />
+          <Spinner
+            className={variant === "liquid-glass" ? "text-white" : undefined}
+          />
           {loadingText}
         </>
       ) : (

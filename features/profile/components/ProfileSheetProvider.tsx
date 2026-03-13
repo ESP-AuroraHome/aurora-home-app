@@ -1,7 +1,7 @@
+import type { User } from "@prisma/client";
 import { cookies } from "next/headers";
-import { User } from "@prisma/client";
-import ProfileSheetWrapper from "./ProfileSheetWrapper";
 import getUserProfile from "../usecase/getUserProfile";
+import ProfileSheetWrapper from "./ProfileSheetWrapper";
 
 const getFakeUser = (): User => {
   return {

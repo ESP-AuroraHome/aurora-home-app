@@ -1,7 +1,4 @@
 {
-    "i18n-ally.localesPaths": [
-        "i18n",
-        "messages"
-    ],
-    "i18n-ally.sourceLanguage": "fr"
+  "i18n-ally.localesPaths": ["i18n", "messages"],
+  "i18n-ally.sourceLanguage": "fr"
 }

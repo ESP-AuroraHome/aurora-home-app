@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
 import type { DataType } from "@prisma/client";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface SerializedDataPoint {
   id: string;
   type: DataType;
   value: string;
-  createdAt: string;
+  createdAt: Date;
 }
 
 type DataPointsByType = Record<DataType, SerializedDataPoint[]>;
@@ -23,7 +23,7 @@ export function useSensorData(initialData: DataPointsByType) {
   const [data, setData] = useState<DataPointsByType>(initialData);
   const esRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null
+    null,
   );
 
   const connect = useCallback(() => {
@@ -46,13 +46,13 @@ export function useSensorData(initialData: DataPointsByType) {
                 ...dp,
                 createdAt:
                   typeof dp.createdAt === "string"
-                    ? dp.createdAt
-                    : new Date(dp.createdAt).toISOString(),
+                    ? new Date(dp.createdAt)
+                    : new Date(dp.createdAt),
               };
               const existing = next[key] || [];
               next[key] = [serialized, ...existing].slice(
                 0,
-                MAX_POINTS_PER_TYPE
+                MAX_POINTS_PER_TYPE,
               );
             }
             return next;

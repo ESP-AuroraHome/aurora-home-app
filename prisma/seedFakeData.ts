@@ -1,5 +1,5 @@
-import { DataPoint, DataType, PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import { type DataPoint, DataType, PrismaClient } from "@prisma/client";
 import { eachMinuteOfInterval, subDays } from "date-fns";
 
 const prisma = new PrismaClient();
@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("Suppression des anciennes données...");
   await prisma.dataPoint.deleteMany({});
-  
+
   const currentDate = new Date();
   const dates = eachMinuteOfInterval({
     start: subDays(currentDate, 30),
@@ -20,31 +20,41 @@ async function main() {
   for (const date of dates) {
     allData.push({
       createdAt: date,
-      value: faker.number.float({ min: 0, max: 100, fractionDigits: 2 }).toFixed(2),
+      value: faker.number
+        .float({ min: 0, max: 100, fractionDigits: 2 })
+        .toFixed(2),
       type: DataType.TEMPERATURE,
     });
 
     allData.push({
       createdAt: date,
-      value: faker.number.float({ min: 0, max: 100, fractionDigits: 2 }).toFixed(2),
+      value: faker.number
+        .float({ min: 0, max: 100, fractionDigits: 2 })
+        .toFixed(2),
       type: DataType.HUMIDITY,
     });
 
     allData.push({
       createdAt: date,
-      value: faker.number.float({ min: 980, max: 1050, fractionDigits: 2 }).toFixed(2),
+      value: faker.number
+        .float({ min: 980, max: 1050, fractionDigits: 2 })
+        .toFixed(2),
       type: DataType.PRESSURE,
     });
 
     allData.push({
       createdAt: date,
-      value: faker.number.float({ min: 400, max: 1000, fractionDigits: 2 }).toFixed(2),
+      value: faker.number
+        .float({ min: 400, max: 1000, fractionDigits: 2 })
+        .toFixed(2),
       type: DataType.CO2,
     });
 
     allData.push({
       createdAt: date,
-      value: faker.number.float({ min: 0, max: 1000, fractionDigits: 2 }).toFixed(2),
+      value: faker.number
+        .float({ min: 0, max: 1000, fractionDigits: 2 })
+        .toFixed(2),
       type: DataType.LIGHT,
     });
   }
@@ -54,7 +64,9 @@ async function main() {
     await prisma.dataPoint.createMany({
       data: batch,
     });
-    console.log(`Inserted ${Math.min(i + batchSize, allData.length)} / ${allData.length} records`);
+    console.log(
+      `Inserted ${Math.min(i + batchSize, allData.length)} / ${allData.length} records`,
+    );
   }
 }
 

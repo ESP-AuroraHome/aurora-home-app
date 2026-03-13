@@ -19,7 +19,7 @@ const topic = process.argv[2];
 if (!topic) {
   console.error("❌ Usage: tsx scripts/test-mqtt-subscribe.ts <topic>");
   console.error(
-    "   Exemple: tsx scripts/test-mqtt-subscribe.ts sensor/temperature"
+    "   Exemple: tsx scripts/test-mqtt-subscribe.ts sensor/temperature",
   );
   process.exit(1);
 }
