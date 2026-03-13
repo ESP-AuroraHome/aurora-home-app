@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { createAvatar } from "@dicebear/core";
 import { adventurer } from "@dicebear/collection";
+import { clearScreen } from "@/lib/otp-display";
 
 const generateRandomAvatar = (seed: string): string => {
   const avatar = createAvatar(adventurer, {
@@ -41,6 +42,8 @@ const signInOtp = usecase(async ({ otp }: { otp: string }) => {
   if (!data || !data.user) {
     throw new Error("Failed to verify OTP");
   }
+
+  clearScreen();
 
   const userId = data.user.id;
 

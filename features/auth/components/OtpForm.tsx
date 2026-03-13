@@ -50,8 +50,9 @@ const OtpForm = ({ type }: { type: z.infer<typeof otpTypeSchema> }) => {
       form.setError("root", {
         message: response.error,
       });
+      setLoading(false);
+      return;
     }
-    setLoading(false);
     redirect("/");
   }
 
