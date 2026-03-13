@@ -2,7 +2,6 @@
 
 import type { DataPoint, DataType } from "@prisma/client";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
 import {
   Drawer,
   DrawerContent,
@@ -22,23 +21,15 @@ interface Props {
   datapoints: DataPoint[];
 }
 
-function AnimatedValue({ value, unit }: { value: number; unit: string }) {
+function AnimatedValue({
+  value,
+  unit,
+  className = "",
+}: { value: number; unit: string; className?: string }) {
   const animatedValue = useAnimatedValue(value);
-  const [flash, setFlash] = useState(false);
-  const prevValue = useRef(value);
-
-  useEffect(() => {
-    if (prevValue.current !== value) {
-      prevValue.current = value;
-      const timeout = setTimeout(() => setFlash(false), 600);
-      return () => clearTimeout(timeout);
-    }
-  }, [value]);
 
   return (
-    <p
-      className={`text-2xl md:text-3xl font-bold transition-opacity duration-500 ${flash ? "opacity-60" : "opacity-100"}`}
-    >
+    <p className={`font-bold ${className}`}>
       {animatedValue.toFixed(2)} <span className="font-normal">{unit}</span>
     </p>
   );
@@ -89,7 +80,7 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
       <DrawerTrigger asChild>
         <Item
           variant={"outline"}
-          className="bg-black/20 backdrop-blur-md border-0 rounded-3xl cursor-pointer"
+          className="bg-black/20 backdrop-blur-md border-0 rounded-3xl cursor-pointer transition-all duration-300"
         >
           <ItemHeader className="justify-between items-start">
             <div className="flex flex-col gap-2">
@@ -102,10 +93,11 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
                 {lastDatapoint.createdAt.toDateString()}
               </p>
             </div>
-            <p className="text-2xl md:text-3xl font-bold">
-              {parseFloat(lastDatapoint.value).toFixed(2)}{" "}
-              {getUnitForDataType(type)}
-            </p>
+            <AnimatedValue
+              value={numericValue}
+              unit={unit}
+              className="text-2xl md:text-3xl"
+            />
           </ItemHeader>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-2 md:gap-4">
             <ChartDataPoint
@@ -131,7 +123,11 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
                 {lastDatapoint.createdAt.toDateString()}
               </DrawerDescription>
             </div>
-            <AnimatedValue value={numericValue} unit={unit} />
+            <AnimatedValue
+              value={numericValue}
+              unit={unit}
+              className="text-2xl md:text-3xl"
+            />
           </div>
         </DrawerHeader>
         <div className="px-4 pb-6 md:px-10 md:pb-10 overflow-auto">

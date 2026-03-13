@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import Header from "@/components/specific/header";
-import ItemDataPoint from "@/features/datapoint/components/ItemDatapoint";
+import DashboardDatapoints from "@/features/datapoint/components/DashboardDatapoints";
 import { getInitialDataPoints } from "@/features/datapoint/usecase/getInitialDataPoints";
 
 export const dynamic = "force-dynamic";
@@ -25,22 +25,7 @@ export default async function Home() {
             <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-[150%] text-white font-semibold">
               {t("home.subtitle")}
             </h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-              <ItemDataPoint
-                type="TEMPERATURE"
-                datapoints={initialData.TEMPERATURE}
-              />
-              <ItemDataPoint
-                type="HUMIDITY"
-                datapoints={initialData.HUMIDITY}
-              />
-              <ItemDataPoint
-                type="PRESSURE"
-                datapoints={initialData.PRESSURE}
-              />
-              <ItemDataPoint type="CO2" datapoints={initialData.CO2} />
-              <ItemDataPoint type="LIGHT" datapoints={initialData.LIGHT} />
-            </div>
+            <DashboardDatapoints initialData={initialData} />
           </div>
         </div>
       </div>

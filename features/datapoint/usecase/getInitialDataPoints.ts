@@ -19,7 +19,7 @@ export async function getInitialDataPoints(): Promise<
     const datapoints = await dataPointRepository.findLatestByType(type, 20);
     initialData[type] = datapoints.map((dp) => ({
       ...dp,
-      createdAt: dp.createdAt,
+      createdAt: dp.createdAt.toISOString(),
     }));
   }
 
