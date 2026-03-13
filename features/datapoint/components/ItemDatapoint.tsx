@@ -25,7 +25,11 @@ function AnimatedValue({
   value,
   unit,
   className = "",
-}: { value: number; unit: string; className?: string }) {
+}: {
+  value: number;
+  unit: string;
+  className?: string;
+}) {
   const animatedValue = useAnimatedValue(value);
 
   return (

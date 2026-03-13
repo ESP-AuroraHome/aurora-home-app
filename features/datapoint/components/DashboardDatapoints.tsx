@@ -1,10 +1,7 @@
 "use client";
 
 import type { DataType } from "@prisma/client";
-import {
-  type SerializedDataPoint,
-  useSensorData,
-} from "@/hooks/useSensorData";
+import { type SerializedDataPoint, useSensorData } from "@/hooks/useSensorData";
 import ItemDataPoint from "./ItemDatapoint";
 
 interface Props {

@@ -1,5 +1,5 @@
-import { spawn } from "child_process";
-import path from "path";
+import { spawn } from "node:child_process";
+import path from "node:path";
 
 const isEnabled = process.env.DISPLAY_OTP_ENABLED === "true";
 const isDevMode = process.env.DISPLAY_OTP_DEV_MODE === "true";
@@ -17,7 +17,8 @@ const bgBlack = "\x1b[40m";
 function printMockScreen(otp: string): void {
   const width = 36;
   const border = "═".repeat(width);
-  const pad = (text: string, w: number) => text + " ".repeat(Math.max(0, w - text.length));
+  const pad = (text: string, w: number) =>
+    text + " ".repeat(Math.max(0, w - text.length));
   const center = (text: string, w: number) => {
     const total = Math.max(0, w - text.length);
     const left = Math.floor(total / 2);
@@ -28,12 +29,18 @@ function printMockScreen(otp: string): void {
   const otpCentered = center(otp, width - 2);
 
   console.log(`\n${cyan}${bold}╔${border}╗`);
-  console.log(`║${bgBlack}${white}${bold}  ${pad("AuroraHome", width - 2)}${reset}${cyan}${bold}║`);
-  console.log(`║  ${white}${pad("Auth. code :", width - 2)}${reset}${cyan}${bold}║`);
+  console.log(
+    `║${bgBlack}${white}${bold}  ${pad("AuroraHome", width - 2)}${reset}${cyan}${bold}║`,
+  );
+  console.log(
+    `║  ${white}${pad("Auth. code :", width - 2)}${reset}${cyan}${bold}║`,
+  );
   console.log(`║${" ".repeat(width)}║`);
   console.log(`║${white}${bold}${otpCentered}${reset}${cyan}${bold}║`);
   console.log(`║${" ".repeat(width)}║`);
-  console.log(`║  ${white}${pad("Exp: 5 min", width - 2)}${reset}${cyan}${bold}║`);
+  console.log(
+    `║  ${white}${pad("Exp: 5 min", width - 2)}${reset}${cyan}${bold}║`,
+  );
   console.log(`╚${border}╝${reset}\n`);
 }
 

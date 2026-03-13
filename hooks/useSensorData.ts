@@ -7,7 +7,7 @@ export interface SerializedDataPoint {
   id: string;
   type: DataType;
   value: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 type DataPointsByType = Record<DataType, SerializedDataPoint[]>;
@@ -46,8 +46,8 @@ export function useSensorData(initialData: DataPointsByType) {
                 ...dp,
                 createdAt:
                   typeof dp.createdAt === "string"
-                    ? new Date(dp.createdAt)
-                    : new Date(dp.createdAt),
+                    ? dp.createdAt
+                    : new Date(dp.createdAt).toISOString(),
               };
               const existing = next[key] || [];
               next[key] = [serialized, ...existing].slice(
