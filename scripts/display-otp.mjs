@@ -177,7 +177,7 @@ function renderText(text) {
     const glyph = FONT[ch] ?? FALLBACK;
     // Each glyph byte is a row; we need to transpose to columns for SSD1306 writes.
     // The bitmap table uses LSB-first rows.
-    for (let col = 0; col < 8; col++) {
+    for (let col = 7; col >= 0; col--) {
       let colByte = 0;
       for (let row = 0; row < 8; row++) {
         if (glyph[row] & (1 << col)) colByte |= (1 << row);
