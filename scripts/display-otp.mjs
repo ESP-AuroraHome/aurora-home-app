@@ -66,7 +66,7 @@ function initDisplay(bus) {
     0x40,       // start line
     0x8D, 0x14, // charge pump on
     0x20, 0x00, // horizontal addressing mode
-    0xA0,       // segment remap
+    0xA1,       // segment remap (column 127 → SEG0, flip horizontal)
     0xC8,       // COM output scan direction
     0xDA, 0x12, // COM pins hardware config
     0x81, 0xCF, // contrast
