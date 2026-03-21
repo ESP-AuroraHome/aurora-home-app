@@ -1,14 +1,9 @@
 "use client";
 
-import { useAlerts } from "@/hooks/useAlerts";
-import type { SerializedAlert } from "@/hooks/useSensorData";
+import { useAlertsContext } from "@/contexts/AlertsContext";
 import DashboardAlertBanner from "./DashboardAlertBanner";
 
-interface Props {
-  initialAlerts: SerializedAlert[];
-}
-
-export default function DashboardAlertShell({ initialAlerts }: Props) {
-  const { alerts } = useAlerts(initialAlerts);
+export default function DashboardAlertShell() {
+  const { alerts } = useAlertsContext();
   return <DashboardAlertBanner alerts={alerts} />;
 }

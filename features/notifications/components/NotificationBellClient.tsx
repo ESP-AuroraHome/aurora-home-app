@@ -1,16 +1,11 @@
 "use client";
 
-import { useAlerts } from "@/hooks/useAlerts";
-import type { SerializedAlert } from "@/hooks/useSensorData";
+import { useAlertsContext } from "@/contexts/AlertsContext";
 import NotificationSheet from "./NotificationSheet";
 
-interface Props {
-  initialAlerts: SerializedAlert[];
-}
-
-export default function NotificationBellClient({ initialAlerts }: Props) {
+export default function NotificationBellClient() {
   const { alerts, unreadCount, markAlertRead, resolveAlertLocally, markAllReadLocally } =
-    useAlerts(initialAlerts);
+    useAlertsContext();
 
   return (
     <NotificationSheet
