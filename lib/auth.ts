@@ -19,7 +19,7 @@ export const auth = betterAuth({
           displayOTPOnScreen(otp, email);
         } else if (type === "email-verification") {
           console.log(
-            `Sending email verification OTP ${otp} to email ${email}`
+            `Sending email verification OTP ${otp} to email ${email}`,
           );
         } else {
           console.log(`Sending password reset OTP ${otp} to email ${email}`);

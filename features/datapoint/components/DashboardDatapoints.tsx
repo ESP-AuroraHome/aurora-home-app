@@ -1,7 +1,7 @@
 "use client";
 
-import { DataType } from "@prisma/client";
-import { useSensorData, SerializedDataPoint } from "@/hooks/useSensorData";
+import type { DataType } from "@prisma/client";
+import { type SerializedDataPoint, useSensorData } from "@/hooks/useSensorData";
 import ItemDataPoint from "./ItemDatapoint";
 
 interface Props {
@@ -27,7 +27,7 @@ export default function DashboardDatapoints({ initialData }: Props) {
   const data = useSensorData(initialData);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       {DATA_TYPES.map((type) => (
         <ItemDataPoint
           key={type}

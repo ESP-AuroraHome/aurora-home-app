@@ -1,13 +1,9 @@
 "use client";
 
-import { User } from "@prisma/client";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import ProfileCard from "./ProfileCard";
+import type { User } from "@prisma/client";
 import { useTranslations } from "next-intl";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import ProfileCard from "./ProfileCard";
 
 interface ProfileSheetProps {
   user: User;
@@ -26,7 +22,7 @@ export default function ProfileSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="bg-[url('/assets/background-main.jpg')] bg-cover bg-center overflow-auto w-full sm:max-w-lg p-0 border-l border-white/10 [&>button]:!top-4 [&>button]:!right-4 [&>button]:!bg-white/10 [&>button]:!backdrop-blur-sm [&>button]:!border [&>button]:!border-white/20 [&>button]:!text-white [&>button]:hover:!bg-white/20 [&>button]:hover:!border-white/30 [&>button]:!rounded-full [&>button]:!w-9 [&>button]:!h-9 [&>button]:!opacity-100 [&>button]:!transition-all [&>button]:!z-50 [&>button]:!flex [&>button]:!items-center [&>button]:!justify-center [&>button]:!cursor-pointer [&>button]:!shadow-lg">
+      <SheetContent className="bg-[url('/assets/background-main.jpg')] bg-cover bg-center overflow-auto w-full sm:max-w-lg p-0 border-l border-white/10 [&>button]:top-4! [&>button]:right-4! [&>button]:border-0! [&>button]:text-white! [&>button]:!rounded-full [&>button]:!w-9 [&>button]:!h-9 [&>button]:!opacity-100 [&>button]:!transition-all [&>button]:!z-50 [&>button]:!flex [&>button]:!items-center [&>button]:!justify-center [&>button]:!cursor-pointer [&>button]:backdrop-blur-md!">
         <SheetTitle className="sr-only">{t("title")}</SheetTitle>
         <div className="flex flex-col gap-6 p-6 pt-16">
           <ProfileCard
@@ -43,4 +39,3 @@ export default function ProfileSheet({
     </Sheet>
   );
 }
-

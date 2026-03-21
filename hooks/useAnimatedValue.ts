@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 
 function easeOutCubic(t: number): number {
-  return 1 - Math.pow(1 - t, 3);
+  return 1 - (1 - t) ** 3;
 }
 
 export function useAnimatedValue(
   targetValue: number,
-  duration: number = 800
+  duration: number = 800,
 ): number {
   const [displayValue, setDisplayValue] = useState(targetValue);
   const previousValue = useRef(targetValue);

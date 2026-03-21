@@ -1,6 +1,9 @@
-import { DataType } from "@prisma/client";
+import type { DataType } from "@prisma/client";
 
-export const getTitleForDataType = (type: DataType, t?: (key: string) => string): string => {
+export const getTitleForDataType = (
+  type: DataType,
+  t?: (key: string) => string,
+): string => {
   if (t) {
     switch (type) {
       case "TEMPERATURE":
@@ -14,10 +17,10 @@ export const getTitleForDataType = (type: DataType, t?: (key: string) => string)
       case "LIGHT":
         return t("light");
       default:
-        throw new Error("Unknown DataType : " + type);
+        throw new Error(`Unknown DataType : ${type}`);
     }
   }
-  
+
   switch (type) {
     case "TEMPERATURE":
       return "Temperature";
@@ -30,7 +33,7 @@ export const getTitleForDataType = (type: DataType, t?: (key: string) => string)
     case "LIGHT":
       return "Light";
     default:
-      throw new Error("Unknown DataType : " + type);
+      throw new Error(`Unknown DataType : ${type}`);
   }
 };
 
@@ -47,13 +50,13 @@ export const getUnitForDataType = (type: DataType): string => {
     case "LIGHT":
       return "lx";
     default:
-      throw new Error("Unknown DataType : " + type);
+      throw new Error(`Unknown DataType : ${type}`);
   }
 };
 
 export const calculateChartDomain = (
   type: DataType,
-  values: number[]
+  values: number[],
 ): { min: number; max: number } => {
   if (values.length === 0) {
     switch (type) {

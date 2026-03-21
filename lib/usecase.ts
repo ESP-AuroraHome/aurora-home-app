@@ -1,9 +1,9 @@
-type UsecaseResult<T> = 
-  | { success: true; data: T } 
+type UsecaseResult<T> =
+  | { success: true; data: T }
   | { success: false; error: string };
 
 const usecase = <TArgs, TResult>(
-  fct: (args: TArgs) => Promise<TResult> | TResult
+  fct: (args: TArgs) => Promise<TResult> | TResult,
 ) => {
   return async (args: TArgs): Promise<UsecaseResult<TResult>> => {
     try {

@@ -30,7 +30,8 @@
     "emailRequired": "Email is required",
     "emailInvalid": "Please enter a valid email address",
     "otpRequired": "Verification code is required",
-    "otpLength": "Code must contain 6 digits"
+    "otpLength": "Code must contain 6 digits",
+    "isNewUser": "I'm a new user"
   },
   "profile": {
     "title": "My Profile",

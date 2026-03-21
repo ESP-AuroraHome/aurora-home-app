@@ -43,3 +43,5 @@ next-env.d.ts
 
 # IDEs and editors
 .idea/
+
+dev.db

@@ -1,13 +1,12 @@
 "use server";
 
-import usecase from "@/lib/usecase";
-import assert from "assert";
-import { cookies, headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
-import { createAvatar } from "@dicebear/core";
 import { adventurer } from "@dicebear/collection";
+import { createAvatar } from "@dicebear/core";
+import { cookies } from "next/headers";
+import { userRepository } from "@/features/profile/repository/userRepository";
+import { auth } from "@/lib/auth";
 import { clearScreen } from "@/lib/otp-display";
+import usecase from "@/lib/usecase";
 
 const generateRandomAvatar = (seed: string): string => {
   const avatar = createAvatar(adventurer, {
@@ -26,6 +25,7 @@ const extractNameFromEmail = (email: string): string => {
 const signInOtp = usecase(async ({ otp }: { otp: string }) => {
   const store = await cookies();
   const email = store.get("otp_email")?.value;
+  const providedName = store.get("otp_name")?.value;
 
   if (!email) {
     throw new Error("OTP email not found");
@@ -38,6 +38,7 @@ const signInOtp = usecase(async ({ otp }: { otp: string }) => {
   });
 
   store.delete("otp_email");
+  store.delete("otp_name");
 
   if (!data || !data.user) {
     throw new Error("Failed to verify OTP");
@@ -48,9 +49,7 @@ const signInOtp = usecase(async ({ otp }: { otp: string }) => {
   const userId = data.user.id;
 
   if (userId) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
+    const user = await userRepository.findById(userId);
 
     if (user) {
       const updates: { image?: string; name?: string } = {};
@@ -59,18 +58,16 @@ const signInOtp = usecase(async ({ otp }: { otp: string }) => {
         updates.image = generateRandomAvatar(user.email || user.id);
       }
 
-      const extractedName = extractNameFromEmail(user.email);
-      const needsNameUpdate = !user.name || user.name.trim() === "" || user.name === user.email;
+      const extractedName = providedName || extractNameFromEmail(user.email);
+      const needsNameUpdate =
+        !user.name || user.name.trim() === "" || user.name === user.email;
 
       if (needsNameUpdate) {
         updates.name = extractedName;
       }
 
       if (Object.keys(updates).length > 0) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: updates,
-        });
+        await userRepository.update(user.id, updates);
       }
     }
   }

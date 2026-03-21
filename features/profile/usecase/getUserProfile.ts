@@ -1,31 +1,27 @@
 "use server";
 
-import usecase from "@/lib/usecase";
-import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import type { User } from "@prisma/client";
 import { headers } from "next/headers";
-import { User } from "@prisma/client";
+import { auth } from "@/lib/auth";
+import usecase from "@/lib/usecase";
+import { userRepository } from "../repository/userRepository";
 
-const getUserProfile = usecase(
-  async (): Promise<User> => {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+const getUserProfile = usecase(async (): Promise<User> => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-    if (!session?.user) {
-      throw new Error("Utilisateur non authentifié");
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-    });
-
-    if (!user) {
-      throw new Error("Utilisateur non trouvé");
-    }
-
-    return user;
+  if (!session?.user) {
+    throw new Error("Utilisateur non authentifié");
   }
-);
+
+  const user = await userRepository.findById(session.user.id);
+
+  if (!user) {
+    throw new Error("Utilisateur non trouvé");
+  }
+
+  return user;
+});
 
 export default getUserProfile;

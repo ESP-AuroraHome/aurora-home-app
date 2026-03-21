@@ -1,14 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { redirect } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useTranslations } from "next-intl";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import ButtonForm from "@/components/specific/buttonForm";
 import {
   Form,
   FormControl,
@@ -17,23 +15,27 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import ButtonForm from "@/components/specific/buttonForm";
-import { useState } from "react";
-import { redirect } from "next/navigation";
-import { otpTypeSchema } from "@/app/auth/otp/page";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import signInOtp from "../usecase/signInOtp";
 
 export const createOtpFormSchema = (t: (key: string) => string) => {
   return z.object({
-    otp: z.string().min(6, { message: t("otpLength") }).max(6, { message: t("otpLength") }),
+    otp: z
+      .string()
+      .min(6, { message: t("otpLength") })
+      .max(6, { message: t("otpLength") }),
   });
 };
 
-const OtpForm = ({ type }: { type: z.infer<typeof otpTypeSchema> }) => {
+const OtpForm = () => {
   const t = useTranslations("auth");
   const [loading, setLoading] = useState(false);
   const otpFormSchema = createOtpFormSchema(t);
-  
+
   const form = useForm<z.infer<typeof otpFormSchema>>({
     resolver: zodResolver(otpFormSchema),
     defaultValues: {

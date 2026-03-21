@@ -1,22 +1,37 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import localFont from "next/font/local";
 import { NextIntlClientProvider } from "next-intl";
 import { Toaster } from "@/components/ui/sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const geistMono = localFont({
+  src: "../public/fonts/GeistMono-VariableFont_wght.ttf",
+  variable: "--font-geist-mono",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const geistSans = localFont({
+  src: "../public/fonts/Geist-VariableFont_wght.ttf",
+  variable: "--font-geist-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Aurora Home",
   description: "Prenez soin de votre maison",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Aurora Home",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({

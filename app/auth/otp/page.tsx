@@ -1,10 +1,10 @@
-import OtpForm from "@/features/auth/components/OtpForm";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SearchParams } from "next/dist/server/request/search-params";
+import type { SearchParams } from "next/dist/server/request/search-params";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import Image from "next/image";
 import z from "zod";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import OtpForm from "@/features/auth/components/OtpForm";
 
 export const otpTypeSchema = z.enum(["sign-in", "email-verification"]);
 
@@ -16,7 +16,7 @@ const OTPPage = async ({
   const t = await getTranslations("auth");
   const type = (await searchParams).type;
 
-  const { success, data: typeData } = otpTypeSchema.safeParse(type);
+  const { success } = otpTypeSchema.safeParse(type);
 
   if (!success) {
     redirect("/auth");
@@ -33,8 +33,8 @@ const OTPPage = async ({
           className="mb-4"
         />
       </div>
-      
-      <Card className="bg-black/4 backdrop-blur-xs border-gray-100/50 rounded-3xl shadow-lg">
+
+      <Card className="bg-black/20 backdrop-blur-md border-0 rounded-3xl shadow-lg">
         <CardHeader>
           <CardTitle className="text-white text-2xl font-semibold text-center">
             {t("otpTitle")}
@@ -44,7 +44,7 @@ const OTPPage = async ({
           </p>
         </CardHeader>
         <CardContent>
-          <OtpForm type={typeData} />
+          <OtpForm />
         </CardContent>
       </Card>
     </div>

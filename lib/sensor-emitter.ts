@@ -1,4 +1,4 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from "node:events";
 
 const globalForEmitter = globalThis as typeof globalThis & {
   sensorEmitter: EventEmitter;

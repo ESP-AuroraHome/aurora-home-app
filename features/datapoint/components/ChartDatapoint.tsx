@@ -1,9 +1,13 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { DataPoint, DataType } from "@prisma/client";
+import type { DataPoint, DataType } from "@prisma/client";
+import { useEffect, useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+} from "@/components/ui/chart";
 import { calculateChartDomain } from "../utils/wording";
 
 interface Props {
@@ -37,8 +41,8 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
       .map((dp) => {
         const numValue = parseFloat(dp.value);
-        const value = isNaN(numValue) ? 0 : numValue;
-        
+        const value = Number.isNaN(numValue) ? 0 : numValue;
+
         return {
           value,
           createdAt: dp.createdAt,
@@ -63,13 +67,34 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
     return [min, max];
   }, [type, chartData]);
 
-  const uniqueId = useMemo(() => `chart-${Math.random().toString(36).substr(2, 9)}`, []);
-  const hasFixedHeight = className?.includes("h-10") || className?.includes("h-12") || className?.includes("h-16") || className?.includes("h-20") || className?.includes("h-24") || className?.includes("h-32");
-  const isOnlyFullWidth = className === "w-full" || (className?.includes("w-full") && !hasFixedHeight);
+  const uniqueId = useMemo(
+    () => `chart-${Math.random().toString(36).substr(2, 9)}`,
+    [],
+  );
+  const hasFixedHeight =
+    className?.includes("h-10") ||
+    className?.includes("h-12") ||
+    className?.includes("h-16") ||
+    className?.includes("h-20") ||
+    className?.includes("h-24") ||
+    className?.includes("h-32");
+  const isOnlyFullWidth =
+    className === "w-full" ||
+    (className?.includes("w-full") && !hasFixedHeight);
   const isSmallChart = hasFixedHeight && !isOnlyFullWidth;
 
-  const yAxisWidth = isMobile ? (unit ? 50 : 40) : (unit ? 80 : 65);
-  const marginLeft = isSmallChart ? (isMobile ? 5 : 5) : (isMobile ? (unit ? 45 : 35) : (unit ? 75 : 60));
+  const yAxisWidth = isMobile ? (unit ? 50 : 40) : unit ? 80 : 65;
+  const marginLeft = isSmallChart
+    ? isMobile
+      ? 5
+      : 5
+    : isMobile
+      ? unit
+        ? 45
+        : 35
+      : unit
+        ? 75
+        : 60;
   const marginRight = isSmallChart ? (isMobile ? 5 : 5) : marginLeft;
 
   return (
@@ -80,13 +105,23 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
         margin={{ top: 10, right: marginRight, left: marginLeft, bottom: 10 }}
       >
         <defs>
-          <linearGradient id={`fillValue-${uniqueId}`} x1="0" y1="0" x2="0" y2="1">
+          <linearGradient
+            id={`fillValue-${uniqueId}`}
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="1"
+          >
             <stop offset="5%" stopColor="white" stopOpacity={0.8} />
             <stop offset="95%" stopColor="white" stopOpacity={0.1} />
           </linearGradient>
         </defs>
         {!isSmallChart && (
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="rgba(255,255,255,0.1)"
+          />
         )}
         {!isSmallChart && (
           <XAxis
@@ -100,25 +135,28 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
           hide={isSmallChart}
           tickLine={false}
           axisLine={false}
-          tick={{ 
-            fill: "rgba(255,255,255,0.5)", 
+          tick={{
+            fill: "rgba(255,255,255,0.5)",
             fontSize: isMobile ? 10 : 11,
-            style: { whiteSpace: 'nowrap' }
+            style: { whiteSpace: "nowrap" },
           }}
           width={yAxisWidth}
           tickFormatter={(value) => {
-            const numValue = typeof value === 'number' ? value : parseFloat(String(value));
-            if (isNaN(numValue) || !isFinite(numValue)) return '--';
-            
+            const numValue =
+              typeof value === "number" ? value : parseFloat(String(value));
+            if (Number.isNaN(numValue) || !Number.isFinite(numValue))
+              return "--";
+
             let formatted: string;
             if (numValue >= 1000) {
               formatted = numValue.toFixed(0);
             } else if (numValue >= 100) {
-              formatted = numValue % 1 === 0 ? numValue.toFixed(0) : numValue.toFixed(1);
+              formatted =
+                numValue % 1 === 0 ? numValue.toFixed(0) : numValue.toFixed(1);
             } else {
               formatted = numValue.toFixed(1);
             }
-            
+
             return unit ? `${formatted}\u00A0${unit}` : formatted;
           }}
           domain={domain}
@@ -126,9 +164,9 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
         />
         {!isSmallChart && (
           <ChartTooltip
-            content={({ active, payload, label }) => {
+            content={({ active, payload }) => {
               if (!active || !payload || !payload.length) return null;
-              
+
               const data = payload[0].payload;
               return (
                 <div className="bg-black/90 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-2 shadow-lg">
@@ -136,7 +174,8 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
                     {data.date} {data.time}
                   </p>
                   <p className="text-white font-semibold">
-                    {Number(payload[0].value).toFixed(2)}{unit ? ` ${unit}` : ""}
+                    {Number(payload[0].value).toFixed(2)}
+                    {unit ? ` ${unit}` : ""}
                   </p>
                 </div>
               );
