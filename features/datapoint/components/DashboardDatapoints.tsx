@@ -24,7 +24,7 @@ const DATA_TYPES: DataType[] = [
 ];
 
 export default function DashboardDatapoints({ initialData }: Props) {
-  const data = useSensorData(initialData);
+  const { data } = useSensorData(initialData);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">

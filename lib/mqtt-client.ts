@@ -1,6 +1,8 @@
 import type { DataType } from "@prisma/client";
 import mqtt from "mqtt";
+import { alertRepository } from "@/features/notifications/repository/alertRepository";
 import { dataPointRepository } from "@/features/datapoint/repository/dataPointRepository";
+import { detectAnomaly } from "./anomaly-detector";
 import { sensorEmitter } from "./sensor-emitter";
 
 const MQTT_BROKER_URL =
@@ -57,10 +59,10 @@ export function startMqttClient() {
 
       for (const [key, dataType] of Object.entries(SENSOR_KEYS)) {
         if (raw[key] !== undefined) {
-          const value = parseNumericValue(raw[key]);
+          const valueStr = parseNumericValue(raw[key]);
           const dp = await dataPointRepository.create({
             type: dataType,
-            value,
+            value: valueStr,
           });
           dataPoints[dataType] = {
             id: dp.id,
@@ -68,6 +70,44 @@ export function startMqttClient() {
             value: dp.value,
             createdAt: dp.createdAt.toISOString(),
           };
+
+          // Détection d'anomalie
+          const numericValue = parseFloat(valueStr);
+          if (!isNaN(numericValue)) {
+            const recent = await dataPointRepository.findLatestByType(dataType, 6);
+            const recentValues = recent
+              .slice(1) // exclure le point qu'on vient de créer
+              .map((p) => parseFloat(p.value))
+              .filter((v) => !isNaN(v));
+
+            const detection = detectAnomaly(dataType, numericValue, recentValues);
+            if (detection) {
+              const alreadyAlerted = await alertRepository.hasRecentUnresolved(
+                dataType,
+                detection.type,
+              );
+              if (!alreadyAlerted) {
+                const alert = await alertRepository.create(detection);
+                sensorEmitter.emit("alert_created", {
+                  type: "alert_created",
+                  data: {
+                    id: alert.id,
+                    type: alert.type,
+                    severity: alert.severity,
+                    sensorType: alert.sensorType,
+                    value: alert.value,
+                    threshold: alert.threshold,
+                    message: alert.message,
+                    suggestions: JSON.parse(alert.suggestions) as string[],
+                    read: alert.read,
+                    resolvedAt: null,
+                    createdAt: alert.createdAt.toISOString(),
+                  },
+                });
+                console.log(`🚨 Alerte créée : ${alert.message}`);
+              }
+            }
+          }
         }
       }
 
