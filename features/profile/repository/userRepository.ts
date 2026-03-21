@@ -12,7 +12,7 @@ export const userRepository = {
 
   async update(
     id: string,
-    data: Partial<Pick<User, "name" | "email" | "image">>,
+    data: Partial<Pick<User, "name" | "email" | "image" | "onboardingCompleted">>,
   ): Promise<User> {
     return prisma.user.update({ where: { id }, data });
   },
