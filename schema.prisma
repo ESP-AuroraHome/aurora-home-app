@@ -82,3 +82,29 @@ enum DataType {
   CO2
   LIGHT
 }
+
+model Alert {
+  id          String    @id @default(cuid())
+  type        AlertType
+  severity    Severity
+  sensorType  DataType
+  value       Float
+  threshold   Float?
+  message     String
+  suggestions String
+  read        Boolean   @default(false)
+  resolvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+enum AlertType {
+  THRESHOLD_HIGH
+  THRESHOLD_LOW
+  SUDDEN_CHANGE
+}
+
+enum Severity {
+  WARNING
+  HIGH
+  CRITICAL
+}
