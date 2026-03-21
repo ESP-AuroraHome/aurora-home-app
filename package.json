@@ -13,7 +13,12 @@
     "test-mqtt": "tsx scripts/test-mqtt-subscribe.ts",
     "prisma-clear-data": "tsx prisma/clearData.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "simulate": "node scripts/simulate-sensors.mjs",
+    "simulate:co2": "node scripts/simulate-sensors.mjs --anomaly co2",
+    "simulate:temp": "node scripts/simulate-sensors.mjs --anomaly temp",
+    "simulate:hum": "node scripts/simulate-sensors.mjs --anomaly hum",
+    "simulate:sudden": "node scripts/simulate-sensors.mjs --anomaly sudden"
   },
   "dependencies": {
     "@dicebear/collection": "^9.2.4",
