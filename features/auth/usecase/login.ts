@@ -1,9 +1,8 @@
 "use server";
 
 import assert from "node:assert";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { z } from "zod";
-import { authClient } from "@/lib/auth-client";
 import usecase from "@/lib/usecase";
 
 const loginSchema = z.object({
@@ -12,10 +11,17 @@ const loginSchema = z.object({
 });
 
 const login = usecase(async ({ email, name }: z.infer<typeof loginSchema>) => {
-  const { data, error } = await authClient.emailOtp.sendVerificationOtp({
-    email,
-    type: "sign-in",
-  });
+  const requestHeaders = await headers();
+  const baseUrl = `${requestHeaders.get("x-forwarded-proto") ?? "http"}://${requestHeaders.get("host")}`;
+
+  const res = await fetch(
+    `${baseUrl}/api/auth/email-otp/send-verification-otp`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, type: "sign-in" }),
+    },
+  );
 
   const store = await cookies();
   store.set("otp_email", email);
@@ -23,7 +29,7 @@ const login = usecase(async ({ email, name }: z.infer<typeof loginSchema>) => {
     store.set("otp_name", name);
   }
 
-  assert(!data?.success, error?.message || "Failed to send OTP");
+  assert(res.ok, `Failed to send OTP: ${res.statusText}`);
 });
 
 export default login;
