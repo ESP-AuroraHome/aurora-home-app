@@ -65,6 +65,9 @@
     "french": "Français",
     "english": "English",
     "signOut": "Déconnexion",
-    "signingOut": "Déconnexion..."
+    "signingOut": "Déconnexion...",
+    "verified": "Vérifié",
+    "notVerified": "Non vérifié",
+    "signOutDescription": "Se déconnecter de cet appareil"
   }
 }

@@ -1,26 +1,71 @@
 "use client";
 
+import {
+  adventurer,
+  avataaars,
+  bottts,
+  funEmoji,
+  identicon,
+  lorelei,
+  micah,
+  miniavs,
+  openPeeps,
+  personas,
+  pixelArt,
+  shapes,
+  thumbs,
+} from "@dicebear/collection";
+import { createAvatar, type Style } from "@dicebear/core";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { User } from "@prisma/client";
+import { Check, SquarePen, X } from "lucide-react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import ButtonForm from "@/components/specific/buttonForm";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useProfileSubmit } from "../hooks/useProfileSubmit";
 import {
   createProfileSchema,
   type ProfileFormData,
 } from "../utils/profileSchema";
-import AvatarSelector from "./AvatarSelector";
-import {
-  EditableEmailField,
-  type EditableField,
-  EditableLocaleField,
-  EditableNameField,
-} from "./EditableFields";
 import SignOutButton from "./SignOutButton";
+
+const avatarStyles = [
+  { name: "adventurer", generator: adventurer },
+  { name: "avataaars", generator: avataaars },
+  { name: "bottts", generator: bottts },
+  { name: "fun-emoji", generator: funEmoji },
+  { name: "identicon", generator: identicon },
+  { name: "lorelei", generator: lorelei },
+  { name: "micah", generator: micah },
+  { name: "miniavs", generator: miniavs },
+  { name: "open-peeps", generator: openPeeps },
+  { name: "personas", generator: personas },
+  { name: "pixel-art", generator: pixelArt },
+  { name: "shapes", generator: shapes },
+  { name: "thumbs", generator: thumbs },
+];
+
+const generateAvatar = (
+  style: { name: string; generator: Style<{ seed: string; size: number }> },
+  seed: string,
+) => createAvatar(style.generator, { seed, size: 128 }).toDataUri();
 
 interface ProfileCardProps {
   user: User;
@@ -34,10 +79,12 @@ export default function ProfileCard({
   user,
   initialData,
   onSuccess,
-  hideTitle = false,
 }: ProfileCardProps) {
   const t = useTranslations("profile");
-  const [editingField, setEditingField] = useState<EditableField>(null);
+  const [editingField, setEditingField] = useState<
+    "name" | "email" | "locale" | null
+  >(null);
+  const [pickingAvatar, setPickingAvatar] = useState(false);
   const [currentInitialData, setCurrentInitialData] = useState(initialData);
   const [initialAvatar, setInitialAvatar] = useState<string | null>(user.image);
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(
@@ -67,6 +114,18 @@ export default function ProfileCard({
     },
   });
 
+  const avatarOptions = useMemo(
+    () =>
+      avatarStyles.map((style) => ({
+        style: style.name,
+        url: generateAvatar(
+          style,
+          currentInitialData.name || currentInitialData.email,
+        ),
+      })),
+    [currentInitialData.name, currentInitialData.email],
+  );
+
   const watchedValues = form.watch();
   const hasChanges =
     watchedValues.name !== currentInitialData.name ||
@@ -74,80 +133,279 @@ export default function ProfileCard({
     watchedValues.locale !== currentInitialData.locale ||
     selectedAvatar !== initialAvatar;
 
-  const handleFieldClick = (field: EditableField) => setEditingField(field);
+  const currentAvatarUrl = selectedAvatar ?? avatarOptions[0]?.url ?? "";
+
   const handleBlur = () => {
     if (!loading) setTimeout(() => setEditingField(null), 150);
   };
 
   return (
-    <Card className="bg-black/20 backdrop-blur-md border-0 rounded-3xl">
-      {!hideTitle && (
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-white text-xl">{t("title")}</CardTitle>
-          <SignOutButton disabled={loading} />
-        </CardHeader>
-      )}
-      <CardContent className="flex flex-col gap-4">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="flex items-center gap-4">
-              <AvatarSelector
-                currentAvatar={selectedAvatar}
-                userName={user.name}
-                onSelect={setSelectedAvatar}
-              />
-              <div className="flex flex-col flex-1 min-w-0">
-                <div className="flex items-center gap-2 min-w-0">
-                  <EditableNameField
-                    form={form}
-                    editingField={editingField}
-                    onFieldClick={handleFieldClick}
-                    onBlur={handleBlur}
-                    t={t}
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col gap-4"
+      >
+        {/* Identity card */}
+        <div className="bg-black/20 backdrop-blur-md rounded-3xl overflow-hidden">
+          {pickingAvatar ? (
+            /* ── Avatar picker mode ── */
+            <div className="p-6 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <span className="text-white text-sm font-medium">
+                  {t("chooseAvatar")}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPickingAvatar(false)}
+                  className="text-white/40 hover:text-white/70 transition-colors"
+                  aria-label={t("close")}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="grid grid-cols-5 gap-2.5">
+                {avatarOptions.map((option) => {
+                  const isSelected = selectedAvatar === option.url;
+                  return (
+                    <button
+                      key={option.style}
+                      type="button"
+                      onClick={() => {
+                        setSelectedAvatar(option.url);
+                        setPickingAvatar(false);
+                      }}
+                      className={`relative rounded-full overflow-hidden border-2 aspect-square transition-all ${
+                        isSelected
+                          ? "border-white ring-2 ring-white/30 scale-105"
+                          : "border-white/10 hover:border-white/40"
+                      }`}
+                    >
+                      <Image
+                        src={option.url}
+                        alt={option.style}
+                        fill
+                        className="object-cover p-0.5"
+                      />
+                      {isSelected && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full">
+                          <Check className="w-4 h-4 text-white" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            /* ── Normal identity mode ── */
+            <div className="p-8 flex flex-col items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setPickingAvatar(true)}
+                className="relative group"
+                aria-label={t("changeAvatar")}
+              >
+                <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-white/15 group-hover:border-white/30 transition-colors">
+                  <Image
+                    src={currentAvatarUrl}
+                    alt={currentInitialData.name}
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                <EditableEmailField
-                  form={form}
-                  editingField={editingField}
-                  onFieldClick={handleFieldClick}
-                  onBlur={handleBlur}
-                  t={t}
+                <div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                  <SquarePen className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </button>
+
+              {/* Editable name */}
+              {editingField === "name" ? (
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="w-full max-w-[200px]">
+                      <FormControl>
+                        <Input
+                          className="bg-white/10 border-white/20 text-white text-center h-9 text-base"
+                          autoFocus
+                          {...field}
+                          onBlur={(e) => {
+                            field.onBlur();
+                            handleBlur();
+                          }}
+                          onKeyDown={(e) =>
+                            e.key === "Enter" && setEditingField(null)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-300 text-xs text-center" />
+                    </FormItem>
+                  )}
                 />
-              </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setEditingField("name")}
+                  className="flex items-center gap-1.5 group"
+                >
+                  <span className="text-white text-lg font-semibold">
+                    {watchedValues.name}
+                  </span>
+                  <SquarePen className="w-3.5 h-3.5 text-white/20 group-hover:text-white/50 transition-colors" />
+                </button>
+              )}
             </div>
-            <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
-              <div className="flex justify-between items-center group">
-                <span className="text-white/70 text-sm">{t("language")}</span>
-                <EditableLocaleField
-                  form={form}
-                  editingField={editingField}
-                  onFieldClick={handleFieldClick}
-                  setEditingField={setEditingField}
-                  t={t}
-                />
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-white/70 text-sm">
-                  {t("emailVerified")}
+          )}
+        </div>
+
+        {/* Settings card */}
+        <div className="bg-black/20 backdrop-blur-md rounded-3xl overflow-hidden">
+          {/* Email row */}
+          <div className="flex items-center gap-4 px-6 py-4 border-b border-white/5">
+            <span className="text-white/50 text-sm w-20 flex-shrink-0">
+              {t("email")}
+            </span>
+            {editingField === "email" ? (
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="flex-1 min-w-0">
+                    <FormControl>
+                      <Input
+                        type="email"
+                        className="bg-white/10 border-white/20 text-white h-8 text-sm"
+                        autoFocus
+                        {...field}
+                        onBlur={(e) => {
+                          field.onBlur();
+                          handleBlur();
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-300 text-xs" />
+                  </FormItem>
+                )}
+              />
+            ) : (
+              <div className="flex flex-1 min-w-0 items-center justify-end gap-2">
+                <span className="text-white text-sm truncate">
+                  {watchedValues.email}
                 </span>
-                <span className="text-white font-medium">
-                  {user.emailVerified ? "✓" : "✗"}
-                </span>
-              </div>
-            </div>
-            {hasChanges && (
-              <div className="pt-2 border-t border-white/10">
-                <ButtonForm
-                  loading={loading}
-                  text={t("save")}
-                  loadingText={t("saving")}
-                  variant="liquid-glass"
-                />
+                <button
+                  type="button"
+                  onClick={() => setEditingField("email")}
+                  className="flex-shrink-0"
+                >
+                  <SquarePen className="w-3.5 h-3.5 text-white/25 hover:text-white/60 transition-colors" />
+                </button>
               </div>
             )}
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+          </div>
+
+          {/* Language row */}
+          <div className="flex items-center gap-4 px-6 py-4 border-b border-white/5">
+            <span className="text-white/50 text-sm w-20 flex-shrink-0">
+              {t("language")}
+            </span>
+            {editingField === "locale" ? (
+              <FormField
+                control={form.control}
+                name="locale"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setEditingField(null);
+                      }}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="bg-white/10 border-white/20 text-white h-8 text-sm">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-black/90 backdrop-blur-xl border-white/20">
+                        <SelectItem
+                          value="fr"
+                          className="text-white focus:bg-white/20"
+                        >
+                          Français
+                        </SelectItem>
+                        <SelectItem
+                          value="en"
+                          className="text-white focus:bg-white/20"
+                        >
+                          English
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+            ) : (
+              <div className="flex flex-1 items-center justify-end gap-2">
+                <span className="text-white text-sm">
+                  {watchedValues.locale === "fr" ? t("french") : t("english")}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setEditingField("locale")}
+                  className="flex-shrink-0"
+                >
+                  <SquarePen className="w-3.5 h-3.5 text-white/25 hover:text-white/60 transition-colors" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Email verified row */}
+          <div className="flex items-center gap-4 px-6 py-4">
+            <span className="text-white/50 text-sm w-20 flex-shrink-0">
+              {t("emailVerified")}
+            </span>
+            <div className="flex flex-1 justify-end">
+              {user.emailVerified ? (
+                <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full">
+                  <Check className="w-3 h-3" />
+                  {t("verified")}
+                </span>
+              ) : (
+                <span className="text-xs font-medium text-red-400 bg-red-400/10 px-2.5 py-1 rounded-full">
+                  {t("notVerified")}
+                </span>
+              )}
+            </div>
+          </div>
+
+        </div>
+
+        {/* Save card */}
+        {hasChanges && (
+          <div className="bg-black/20 backdrop-blur-md rounded-3xl p-4">
+            <ButtonForm
+              loading={loading}
+              text={t("save")}
+              loadingText={t("saving")}
+              variant="liquid-glass"
+            />
+          </div>
+        )}
+
+        {/* SignOut card */}
+        <div className="bg-black/20 backdrop-blur-md rounded-3xl px-6 py-4 flex items-center justify-between">
+          <div>
+            <p className="text-white text-sm font-medium">{t("signOut")}</p>
+            <p className="text-white/35 text-xs mt-0.5">
+              {t("signOutDescription")}
+            </p>
+          </div>
+          <SignOutButton disabled={loading} />
+        </div>
+      </form>
+    </Form>
   );
 }

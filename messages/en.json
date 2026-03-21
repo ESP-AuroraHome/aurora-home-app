@@ -65,6 +65,9 @@
     "french": "Français",
     "english": "English",
     "signOut": "Sign out",
-    "signingOut": "Signing out..."
+    "signingOut": "Signing out...",
+    "verified": "Verified",
+    "notVerified": "Not verified",
+    "signOutDescription": "Sign out of this device"
   }
 }

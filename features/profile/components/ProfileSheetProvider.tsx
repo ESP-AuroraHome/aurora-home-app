@@ -10,6 +10,7 @@ const getFakeUser = (): User => {
     email: "jean.dupont@example.com",
     emailVerified: true,
     image: null,
+    onboardingCompleted: true,
     createdAt: new Date(),
     updatedAt: new Date(),
   };

@@ -11,7 +11,7 @@ export default function ProfilePageContent({
   locale,
 }: ProfilePageContentProps) {
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-6 p-6 max-w-sm mx-auto w-full">
       <ProfileCard
         user={user}
         locale={locale}
