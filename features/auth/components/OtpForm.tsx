@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -33,6 +33,7 @@ export const createOtpFormSchema = (t: (key: string) => string) => {
 
 const OtpForm = () => {
   const t = useTranslations("auth");
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const otpFormSchema = createOtpFormSchema(t);
 
@@ -55,7 +56,7 @@ const OtpForm = () => {
       setLoading(false);
       return;
     }
-    redirect("/");
+    router.push("/");
   }
 
   return (

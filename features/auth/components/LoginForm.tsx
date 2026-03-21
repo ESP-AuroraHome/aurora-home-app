@@ -1,13 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import ButtonForm from "@/components/specific/buttonForm";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -19,45 +18,37 @@ import {
 import { Input } from "@/components/ui/input";
 import login from "../usecase/login";
 
-export const createLoginFormSchema = (
-  t: (key: string) => string,
-  isNewUser: boolean,
-) => {
+export const createLoginFormSchema = (t: (key: string) => string) => {
   return z.object({
     email: z.string().email({ message: t("emailInvalid") }),
-    name: isNewUser
-      ? z.string().min(1, { message: t("nameRequired") })
-      : z.string().optional(),
   });
 };
 
 const LoginForm = () => {
   const t = useTranslations("auth");
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [isNewUser, setIsNewUser] = useState(false);
-  const loginFormSchema = createLoginFormSchema(t, isNewUser);
+  const loginFormSchema = createLoginFormSchema(t);
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
       email: "",
-      name: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof loginFormSchema>) {
     setLoading(true);
-    const response = await login({
-      email: values.email,
-      name: isNewUser ? values.name : undefined,
-    });
+    const response = await login({ email: values.email });
     if (!response.success) {
       form.setError("root", {
         message: response.error,
       });
     }
     setLoading(false);
-    redirect("/auth/otp?type=sign-in");
+    if (response.success) {
+      router.push("/auth/otp?type=sign-in");
+    }
   }
 
   return (
@@ -81,41 +72,6 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
-
-        <div className="flex items-center gap-2">
-          <Checkbox
-            id="isNewUser"
-            checked={isNewUser}
-            onCheckedChange={(checked) => setIsNewUser(checked === true)}
-            className="border-white/30 data-[state=checked]:bg-white/20 data-[state=checked]:border-white/40"
-          />
-          <label
-            htmlFor="isNewUser"
-            className="text-white/70 text-sm cursor-pointer select-none"
-          >
-            {t("isNewUser")}
-          </label>
-        </div>
-
-        {isNewUser && (
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">{t("name")}</FormLabel>
-                <FormControl>
-                  <Input
-                    className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40 transition-all"
-                    placeholder={t("namePlaceholder")}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage className="text-red-300 text-xs" />
-              </FormItem>
-            )}
-          />
-        )}
 
         <ButtonForm
           loading={loading}
