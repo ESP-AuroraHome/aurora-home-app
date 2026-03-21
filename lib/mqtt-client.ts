@@ -85,15 +85,21 @@ export function startMqttClient() {
   });
 
   client.on("reconnect", () => {
-    console.log("🔄 Tentative de reconnexion MQTT...");
+    if (process.env.NODE_ENV !== "development") {
+      console.log("🔄 Tentative de reconnexion MQTT...");
+    }
   });
 
   client.on("error", (err) => {
-    console.error("❌ Erreur MQTT:", err.message);
+    if (process.env.NODE_ENV !== "development") {
+      console.error("❌ Erreur MQTT:", err.message);
+    }
   });
 
   client.on("offline", () => {
-    console.log("⚠️  Client MQTT hors ligne");
+    if (process.env.NODE_ENV !== "development") {
+      console.log("⚠️  Client MQTT hors ligne");
+    }
   });
 
   return client;

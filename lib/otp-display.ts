@@ -1,8 +1,6 @@
 import { spawn } from "node:child_process";
 import path from "node:path";
 
-const isEnabled = process.env.DISPLAY_OTP_ENABLED === "true";
-const isDevMode = process.env.DISPLAY_OTP_DEV_MODE === "true";
 const isLinux = process.platform === "linux";
 
 const scriptPath = path.join(process.cwd(), "scripts", "display-otp.mjs");
@@ -49,6 +47,9 @@ function printMockClear(): void {
 }
 
 function runScript(args: string[]): void {
+  const isDevMode = process.env.DISPLAY_OTP_DEV_MODE === "true";
+  const isEnabled = process.env.DISPLAY_OTP_ENABLED === "true";
+
   if (isDevMode) {
     if (args[0] === "show") {
       printMockScreen(args[1]);
