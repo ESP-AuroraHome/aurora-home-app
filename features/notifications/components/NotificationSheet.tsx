@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { Bell, CheckCircle2, House } from "lucide-react";
 import { useState, useTransition } from "react";
 import {
   Sheet,
@@ -34,9 +34,9 @@ export default function NotificationSheet({
   const [isPending, startTransition] = useTransition();
 
   const filtered = alerts.filter((a) => {
-    if (tab === "unread")   return !a.read;
+    if (tab === "unread")   return !a.read && !a.resolvedAt;
     if (tab === "resolved") return !!a.resolvedAt;
-    return true;
+    return !a.resolvedAt;
   });
 
   const handleMarkAllRead = () => {
@@ -46,10 +46,13 @@ export default function NotificationSheet({
     });
   };
 
+  const activeAlerts = alerts.filter((a) => !a.resolvedAt);
+  const hasActiveIssues = activeAlerts.some((a) => !a.read);
+
   const tabs: { key: Tab; label: string; count?: number }[] = [
-    { key: "all",      label: "Toutes",   count: alerts.length },
-    { key: "unread",   label: "Non lues", count: unreadCount },
-    { key: "resolved", label: "Résolues" },
+    { key: "all",      label: "Alertes",   count: activeAlerts.length },
+    { key: "unread",   label: "Non vues",  count: unreadCount },
+    { key: "resolved", label: "Résolues",  count: alerts.filter((a) => !!a.resolvedAt).length },
   ];
 
   return (
@@ -82,7 +85,7 @@ export default function NotificationSheet({
         <SheetHeader className="px-5 pt-5 pb-3 border-b border-white/5">
           <div className="flex items-center justify-between">
             <SheetTitle className="text-white text-base font-semibold">
-              Notifications
+              État de la maison
             </SheetTitle>
             {unreadCount > 0 && (
               <button
@@ -91,10 +94,20 @@ export default function NotificationSheet({
                 disabled={isPending}
                 className="text-white/40 hover:text-white/70 text-xs transition-colors disabled:opacity-30"
               >
-                Tout marquer comme lu
+                Tout marquer comme vu
               </button>
             )}
           </div>
+
+          {/* Indicateur santé globale */}
+          {!hasActiveIssues && (
+            <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/20">
+              <House strokeWidth={1} size={20} className="bg-emerald-400 p-0.5 rounded-full flex-shrink-0" />
+              <p className="text-emerald-300 text-xs font-medium">
+                Tous les capteurs sont dans les normes
+              </p>
+            </div>
+          )}
 
           {/* Tabs */}
           <div className="flex gap-1 mt-3">
@@ -125,13 +138,22 @@ export default function NotificationSheet({
         {/* Liste */}
         <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2">
           {filtered.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full gap-3 py-16">
-              <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
-                <Bell className="w-5 h-5 text-white/20" />
+            <div className="flex flex-col items-center justify-center h-full gap-4 py-16 px-6 text-center">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                <CheckCircle2 className="w-7 h-7 text-emerald-400" />
               </div>
-              <p className="text-white/30 text-sm text-center">
-                {tab === "unread" ? "Aucune notification non lue" : "Aucune notification"}
-              </p>
+              <div>
+                <p className="text-white text-sm font-medium mb-1">
+                  {tab === "resolved"
+                    ? "Aucun problème résolu"
+                    : "Votre maison est en bonne santé"}
+                </p>
+                <p className="text-white/40 text-xs leading-relaxed">
+                  {tab === "resolved"
+                    ? "Les alertes résolues apparaîtront ici"
+                    : "Aucune anomalie détectée sur vos capteurs"}
+                </p>
+              </div>
             </div>
           ) : (
             filtered.map((alert) => (
