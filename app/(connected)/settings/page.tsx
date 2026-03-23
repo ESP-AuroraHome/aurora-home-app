@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -23,13 +22,7 @@ export default async function SettingsPage() {
 
   return (
     <AlertsProvider initialAlerts={initialAlerts}>
-    <div className="flex flex-col h-screen w-full overflow-hidden">
-      <Image
-        src="/assets/background-main.jpg"
-        fill
-        alt="Background"
-        className="object-cover object-center"
-      />
+    <div className="flex flex-col h-full w-full">
       <div className="flex flex-col gap-6 md:gap-8 lg:gap-12 p-6 md:p-8 lg:p-12 overflow-y-auto flex-1 z-10">
         <div className="max-w-7xl mx-auto w-full flex flex-col gap-8">
           <Header />
