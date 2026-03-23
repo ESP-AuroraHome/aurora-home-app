@@ -120,3 +120,22 @@ model SystemThreshold {
 
   @@map("system_threshold")
 }
+
+model SensorPreference {
+  id          String   @id @default(cuid())
+  sensorType  DataType @unique
+  enabled     Boolean  @default(true)
+  minSeverity Severity @default(WARNING)
+  updatedAt   DateTime @updatedAt
+
+  @@map("sensor_preference")
+}
+
+model NotificationSettings {
+  id         String   @id @default("default")
+  quietStart Int?
+  quietEnd   Int?
+  updatedAt  DateTime @updatedAt
+
+  @@map("notification_settings")
+}

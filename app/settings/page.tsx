@@ -4,16 +4,20 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { AlertsProvider } from "@/contexts/AlertsContext";
 import Header from "@/components/specific/header";
+import NotificationPrefsCard from "@/features/settings/components/NotificationPrefsCard";
 import ThresholdsCard from "@/features/settings/components/ThresholdsCard";
+import { notificationPreferenceRepository } from "@/features/settings/repository/notificationPreferenceRepository";
 import { thresholdRepository } from "@/features/settings/repository/thresholdRepository";
 import { getAlerts } from "@/features/notifications/usecase/getAlerts";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const [t, thresholds, initialAlerts] = await Promise.all([
+  const [t, thresholds, sensorPrefs, notifSettings, initialAlerts] = await Promise.all([
     getTranslations("settings"),
     thresholdRepository.findAll(),
+    notificationPreferenceRepository.findAllSensorPrefs(),
+    notificationPreferenceRepository.findSettings(),
     getAlerts(),
   ]);
 
@@ -42,7 +46,16 @@ export default async function SettingsPage() {
                 <p className="text-white/40 text-sm">{t("description")}</p>
               </div>
             </div>
-            <ThresholdsCard initialThresholds={thresholds} />
+
+            <div className="flex flex-col gap-2">
+              <h2 className="text-white/60 text-xs font-semibold uppercase tracking-wider px-1">{t("prefsTitle")}</h2>
+              <NotificationPrefsCard initialSensorPrefs={sensorPrefs} initialSettings={notifSettings} />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <h2 className="text-white/60 text-xs font-semibold uppercase tracking-wider px-1">{t("thresholdsTitle")}</h2>
+              <ThresholdsCard initialThresholds={thresholds} />
+            </div>
           </div>
         </div>
       </div>
