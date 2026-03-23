@@ -13,6 +13,13 @@ export const dataPointRepository = {
     });
   },
 
+  async findByTypeSince(type: DataType, since: Date): Promise<DataPoint[]> {
+    return prisma.dataPoint.findMany({
+      orderBy: { createdAt: "asc" },
+      where: { type: { equals: type }, createdAt: { gte: since } },
+    });
+  },
+
   async create(data: { type: DataType; value: string }): Promise<DataPoint> {
     return prisma.dataPoint.create({ data });
   },

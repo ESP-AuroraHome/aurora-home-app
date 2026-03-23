@@ -142,6 +142,13 @@ export interface AlertDetection {
   suggestions: string[];
 }
 
+export interface ThresholdOverride {
+  highValue?:    number | null;
+  highSeverity?: Severity | null;
+  lowValue?:     number | null;
+  lowSeverity?:  Severity | null;
+}
+
 // ── Labels capteurs ───────────────────────────────────────────────────────────
 
 const SENSOR_LABELS: Record<DataType, string> = {
@@ -192,14 +199,29 @@ export function detectAnomaly(
   sensorType: DataType,
   value: number,
   recentValues: number[],
+  override?: ThresholdOverride,
 ): AlertDetection | null {
   const thresholds = THRESHOLDS[sensorType];
 
-  // 1. Seuils absolus THRESHOLD_HIGH
-  if (thresholds.high) {
-    const triggered = [...thresholds.high]
-      .reverse()
-      .find((t) => value >= t.value);
+  // 1. Seuil haut — override prioritaire sur les defaults
+  const highValue    = override?.highValue    ?? thresholds.high?.[0]?.value;
+  const highSeverity = override?.highSeverity ?? thresholds.high?.[0]?.severity;
+
+  if (highValue != null && highSeverity != null && value >= highValue) {
+    return {
+      type: "THRESHOLD_HIGH",
+      severity: highSeverity,
+      sensorType,
+      value,
+      threshold: highValue,
+      message: buildMessage("THRESHOLD_HIGH", sensorType, value, highValue),
+      suggestions: SUGGESTIONS[sensorType].THRESHOLD_HIGH,
+    };
+  }
+
+  // Falls back to multi-level defaults if no override
+  if (!override?.highValue && thresholds.high) {
+    const triggered = [...thresholds.high].reverse().find((t) => value >= t.value);
     if (triggered) {
       return {
         type: "THRESHOLD_HIGH",
@@ -213,11 +235,24 @@ export function detectAnomaly(
     }
   }
 
-  // 2. Seuils absolus THRESHOLD_LOW
-  if (thresholds.low) {
-    const triggered = [...thresholds.low]
-      .reverse()
-      .find((t) => value <= t.value);
+  // 2. Seuil bas
+  const lowValue    = override?.lowValue    ?? thresholds.low?.[0]?.value;
+  const lowSeverity = override?.lowSeverity ?? thresholds.low?.[0]?.severity;
+
+  if (lowValue != null && lowSeverity != null && value <= lowValue) {
+    return {
+      type: "THRESHOLD_LOW",
+      severity: lowSeverity,
+      sensorType,
+      value,
+      threshold: lowValue,
+      message: buildMessage("THRESHOLD_LOW", sensorType, value, lowValue),
+      suggestions: SUGGESTIONS[sensorType].THRESHOLD_LOW,
+    };
+  }
+
+  if (!override?.lowValue && thresholds.low) {
+    const triggered = [...thresholds.low].reverse().find((t) => value <= t.value);
     if (triggered) {
       return {
         type: "THRESHOLD_LOW",
@@ -241,11 +276,13 @@ export function detectAnomaly(
           deviation >= 0.5 ? "HIGH" : "WARNING";
         const suggestions = SUGGESTIONS[sensorType].SUDDEN_CHANGE;
         if (suggestions.length === 0) return null;
+        const pct = Math.round(Math.abs((value - avg) / Math.abs(avg)) * 100);
         return {
           type: "SUDDEN_CHANGE",
           severity,
           sensorType,
           value,
+          threshold: pct,
           message: buildMessage("SUDDEN_CHANGE", sensorType, value, undefined, avg),
           suggestions,
         };

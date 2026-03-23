@@ -2,6 +2,7 @@
 
 import type { DataType } from "@prisma/client";
 import { type SerializedDataPoint, useSensorData } from "@/hooks/useSensorData";
+import IAQScore from "./IAQScore";
 import ItemDataPoint from "./ItemDatapoint";
 
 interface Props {
@@ -27,14 +28,17 @@ export default function DashboardDatapoints({ initialData }: Props) {
   const { data } = useSensorData(initialData);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-      {DATA_TYPES.map((type) => (
-        <ItemDataPoint
-          key={type}
-          type={type}
-          datapoints={toDataPoints(data[type] || [])}
-        />
-      ))}
+    <div className="flex flex-col gap-4 md:gap-6">
+      <IAQScore data={data} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        {DATA_TYPES.map((type) => (
+          <ItemDataPoint
+            key={type}
+            type={type}
+            datapoints={toDataPoints(data[type] || [])}
+          />
+        ))}
+      </div>
     </div>
   );
 }

@@ -108,3 +108,34 @@ enum Severity {
   HIGH
   CRITICAL
 }
+
+model SystemThreshold {
+  id           String    @id @default(cuid())
+  sensorType   DataType  @unique
+  highValue    Float?
+  highSeverity Severity?
+  lowValue     Float?
+  lowSeverity  Severity?
+  updatedAt    DateTime  @updatedAt
+
+  @@map("system_threshold")
+}
+
+model SensorPreference {
+  id          String   @id @default(cuid())
+  sensorType  DataType @unique
+  enabled     Boolean  @default(true)
+  minSeverity Severity @default(WARNING)
+  updatedAt   DateTime @updatedAt
+
+  @@map("sensor_preference")
+}
+
+model NotificationSettings {
+  id         String   @id @default("default")
+  quietStart Int?
+  quietEnd   Int?
+  updatedAt  DateTime @updatedAt
+
+  @@map("notification_settings")
+}

@@ -9,7 +9,12 @@
     "pressure": "Pressure",
     "co2": "CO2",
     "light": "Light",
-    "recentDataPoints": "Recent data points for {type}"
+    "recentDataPoints": "Recent data points for {type}",
+    "trendUp": "Rising",
+    "trendDown": "Falling",
+    "trendStable": "Stable",
+    "noData": "No data available",
+    "export": "Export CSV"
   },
   "auth": {
     "loginTitle": "Connect",
@@ -32,6 +37,174 @@
     "otpRequired": "Verification code is required",
     "otpLength": "Code must contain 6 digits",
     "isNewUser": "I'm a new user"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Customize your alerts and sensor thresholds",
+    "thresholdsTitle": "Alert thresholds",
+    "thresholdsDescription": "Customize the values that trigger alerts for each sensor",
+    "prefsTitle": "Notification preferences",
+    "prefsDescription": "Choose when and how to receive alerts",
+    "quietHours": "Quiet hours",
+    "quietHoursDesc": "No alerts during this time range",
+    "quietFrom": "From",
+    "quietTo": "To",
+    "quietDisabled": "Disabled",
+    "minSeverity": "Minimum severity",
+    "enabled": "Enabled",
+    "saving": "Saving...",
+    "saveSuccess": "Preferences saved",
+    "saveError": "Error saving preferences",
+    "high": "Maximum",
+    "low": "Minimum",
+    "reset": "Reset",
+    "save": "Save",
+    "saving": "Saving...",
+    "saveSuccess": "Thresholds saved",
+    "saveError": "Error saving thresholds",
+    "severityPlaceholder": "Severity",
+    "severityWarning": "Warning",
+    "severityHigh": "Issue",
+    "severityCritical": "Urgent",
+    "sensor": {
+      "TEMPERATURE": "Temperature",
+      "HUMIDITY": "Humidity",
+      "PRESSURE": "Pressure",
+      "CO2": "CO₂",
+      "LIGHT": "Light"
+    }
+  },
+  "alerts": {
+    "thresholdHigh": "{sensor} high: {value}{unit} (threshold: {threshold}{unit})",
+    "thresholdLow": "{sensor} low: {value}{unit} (threshold: {threshold}{unit})",
+    "suddenChange": "Sudden change in {sensor}: {value}{unit} ({pct}% deviation from average)",
+    "sensors": {
+      "TEMPERATURE": "Temperature",
+      "HUMIDITY": "Humidity",
+      "PRESSURE": "Atmospheric pressure",
+      "CO2": "CO₂",
+      "LIGHT": "Light"
+    },
+    "suggestions": {
+      "TEMPERATURE": {
+        "THRESHOLD_HIGH": {
+          "0": "Close the blinds to block solar radiation",
+          "1": "Turn on air conditioning or a fan",
+          "2": "Open windows during cool hours (morning/evening)",
+          "3": "Check if an unintentional heat source is active"
+        },
+        "THRESHOLD_LOW": {
+          "0": "Turn on heating or increase the temperature setting",
+          "1": "Check if a window has been left open",
+          "2": "Check insulation (door and window seals)",
+          "3": "Verify the thermostat is working correctly"
+        },
+        "SUDDEN_CHANGE": {
+          "0": "Check if a window or door was just opened",
+          "1": "Make sure no heating device was accidentally turned on",
+          "2": "Verify the ESP32 sensor is well positioned (not in direct sunlight)"
+        }
+      },
+      "HUMIDITY": {
+        "THRESHOLD_HIGH": {
+          "0": "Activate the dehumidifier",
+          "1": "Improve room ventilation",
+          "2": "Check for water leaks (plumbing, roof, condensation)",
+          "3": "Avoid drying laundry indoors"
+        },
+        "THRESHOLD_LOW": {
+          "0": "Use an air humidifier",
+          "1": "Check if the heating is too intense",
+          "2": "Place indoor plants to increase humidity"
+        },
+        "SUDDEN_CHANGE": {
+          "0": "Check if a steam-producing device is on",
+          "1": "Check for water leaks near the sensor",
+          "2": "Verify the ESP32 sensor is not exposed to condensation"
+        }
+      },
+      "CO2": {
+        "THRESHOLD_HIGH": {
+          "0": "Open a window immediately to ventilate the room",
+          "1": "Activate the mechanical ventilation system",
+          "2": "Reduce the number of people in the room if possible",
+          "3": "Check if combustion appliances are running",
+          "4": "Avoid intense physical activity in the room"
+        },
+        "THRESHOLD_LOW": {},
+        "SUDDEN_CHANGE": {
+          "0": "Check if several people entered simultaneously",
+          "1": "Make sure no combustion appliance was turned on",
+          "2": "Check the CO₂ SCD30 sensor status (calibration)"
+        }
+      },
+      "PRESSURE": {
+        "THRESHOLD_HIGH": {},
+        "THRESHOLD_LOW": {
+          "0": "A low pressure system is approaching, risk of bad weather",
+          "1": "Close windows in anticipation of rain or strong wind",
+          "2": "Verify the BME280 sensor is not exposed to drafts"
+        },
+        "SUDDEN_CHANGE": {
+          "0": "Rapid weather change detected",
+          "1": "Check weather forecasts for your area",
+          "2": "Make sure windows and shutters are secured"
+        }
+      },
+      "LIGHT": {
+        "THRESHOLD_HIGH": {},
+        "THRESHOLD_LOW": {},
+        "SUDDEN_CHANGE": {
+          "0": "Check if a strong light was turned on/off near the sensor",
+          "1": "Verify the BH1750 sensor is not obstructed"
+        }
+      }
+    }
+  },
+  "notifications": {
+    "sheetTitle": "Home status",
+    "markAllRead": "Mark all as read",
+    "allSensorsNormal": "All sensors are within normal range",
+    "tabAll": "Alerts",
+    "tabUnread": "Unread",
+    "tabResolved": "Resolved",
+    "emptyHealthy": "Your home is healthy",
+    "emptyHealthyDesc": "No anomalies detected on your sensors",
+    "emptyResolved": "No resolved issues",
+    "emptyResolvedDesc": "Resolved alerts will appear here",
+    "resolve": "Mark as resolved",
+    "severityWarning": "Warning",
+    "severityHigh": "Issue",
+    "severityCritical": "Urgent",
+    "justNow": "Just now",
+    "minutesAgo": "{min} min ago",
+    "hoursAgo": "{h}h ago",
+    "daysAgo": "{days}d ago"
+  },
+  "dashboard": {
+    "healthy": "Your home is in good health",
+    "healthyDesc": "All sensors are within normal range",
+    "monitoring": "Monitoring in progress",
+    "monitoringDesc": "{count, plural, one {1 anomaly detected — waiting for return to normal} other {# anomalies detected — waiting for return to normal}}",
+    "severityWarning": "Warning",
+    "severityHigh": "Issue",
+    "severityCritical": "Urgent"
+  },
+  "iaq": {
+    "label": "Air quality",
+    "excellent": "Excellent",
+    "excellentDesc": "All indicators are optimal",
+    "good": "Good",
+    "goodDesc": "Air quality is satisfactory",
+    "moderate": "Moderate",
+    "moderateDesc": "Air is slightly degraded",
+    "poor": "Poor",
+    "poorDesc": "Air quality requires attention"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "This page does not exist or has been moved.",
+    "back": "Back to home"
   },
   "profile": {
     "title": "My Profile",
