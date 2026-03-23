@@ -2,8 +2,28 @@ import type { DataType } from "@prisma/client";
 import mqtt from "mqtt";
 import { alertRepository } from "@/features/notifications/repository/alertRepository";
 import { dataPointRepository } from "@/features/datapoint/repository/dataPointRepository";
-import { detectAnomaly } from "./anomaly-detector";
+import { thresholdRepository } from "@/features/settings/repository/thresholdRepository";
+import { detectAnomaly, type ThresholdOverride } from "./anomaly-detector";
 import { sensorEmitter } from "./sensor-emitter";
+
+// Cache des seuils — rafraîchi toutes les 60s
+let thresholdCache: Record<string, ThresholdOverride> = {};
+let thresholdCacheAt = 0;
+
+async function getThresholds(): Promise<Record<string, ThresholdOverride>> {
+  if (Date.now() - thresholdCacheAt < 60_000) return thresholdCache;
+  const rows = await thresholdRepository.findAll();
+  thresholdCache = Object.fromEntries(
+    rows.map((r) => [r.sensorType, {
+      highValue:    r.highValue,
+      highSeverity: r.highSeverity,
+      lowValue:     r.lowValue,
+      lowSeverity:  r.lowSeverity,
+    }]),
+  );
+  thresholdCacheAt = Date.now();
+  return thresholdCache;
+}
 
 const MQTT_BROKER_URL =
   process.env.MQTT_BROKER_URL || "mqtt://192.168.4.2:1883";
@@ -80,7 +100,8 @@ export function startMqttClient() {
               .map((p) => parseFloat(p.value))
               .filter((v) => !isNaN(v));
 
-            const detection = detectAnomaly(dataType, numericValue, recentValues);
+            const thresholds = await getThresholds();
+          const detection = detectAnomaly(dataType, numericValue, recentValues, thresholds[dataType]);
             if (detection) {
               const alreadyAlerted = await alertRepository.hasRecentUnresolved(
                 dataType,

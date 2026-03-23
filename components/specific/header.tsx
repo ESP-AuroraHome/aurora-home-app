@@ -1,3 +1,5 @@
+import { Settings } from "lucide-react";
+import Link from "next/link";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import NotificationBellClient from "@/features/notifications/components/NotificationBellClient";
@@ -20,6 +22,12 @@ const Header = async () => {
         </p>
         <p className="text-2xl font-semibold">{name}</p>
       </div>
+      <Link
+        href="/settings"
+        className="p-2 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all"
+      >
+        <Settings className="w-5 h-5" />
+      </Link>
       <NotificationBellClient />
     </header>
   );

@@ -37,6 +37,28 @@
     "otpLength": "Le code doit contenir 6 chiffres",
     "isNewUser": "Je suis un nouvel utilisateur"
   },
+  "settings": {
+    "title": "Seuils d'alerte",
+    "description": "Personnalisez les valeurs qui déclenchent les alertes pour chaque capteur",
+    "high": "Maximum",
+    "low": "Minimum",
+    "reset": "Réinitialiser",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "saveSuccess": "Seuils enregistrés",
+    "saveError": "Erreur lors de l'enregistrement",
+    "severityPlaceholder": "Sévérité",
+    "severityWarning": "Attention",
+    "severityHigh": "Problème",
+    "severityCritical": "Urgent",
+    "sensor": {
+      "TEMPERATURE": "Température",
+      "HUMIDITY": "Humidité",
+      "PRESSURE": "Pression",
+      "CO2": "CO₂",
+      "LIGHT": "Luminosité"
+    }
+  },
   "alerts": {
     "thresholdHigh": "{sensor} élevée : {value}{unit} (seuil : {threshold}{unit})",
     "thresholdLow": "{sensor} basse : {value}{unit} (seuil : {threshold}{unit})",

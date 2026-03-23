@@ -37,6 +37,28 @@
     "otpLength": "Code must contain 6 digits",
     "isNewUser": "I'm a new user"
   },
+  "settings": {
+    "title": "Alert thresholds",
+    "description": "Customize the values that trigger alerts for each sensor",
+    "high": "Maximum",
+    "low": "Minimum",
+    "reset": "Reset",
+    "save": "Save",
+    "saving": "Saving...",
+    "saveSuccess": "Thresholds saved",
+    "saveError": "Error saving thresholds",
+    "severityPlaceholder": "Severity",
+    "severityWarning": "Warning",
+    "severityHigh": "Issue",
+    "severityCritical": "Urgent",
+    "sensor": {
+      "TEMPERATURE": "Temperature",
+      "HUMIDITY": "Humidity",
+      "PRESSURE": "Pressure",
+      "CO2": "CO₂",
+      "LIGHT": "Light"
+    }
+  },
   "alerts": {
     "thresholdHigh": "{sensor} high: {value}{unit} (threshold: {threshold}{unit})",
     "thresholdLow": "{sensor} low: {value}{unit} (threshold: {threshold}{unit})",
