@@ -14,9 +14,18 @@ export function useAlerts(initialAlerts: SerializedAlert[] = []) {
 
     es.onmessage = (event) => {
       try {
-        const message = JSON.parse(event.data) as { type: string; data: SerializedAlert };
+        const message = JSON.parse(event.data) as { type: string; data: SerializedAlert & { sensorType?: string } };
         if (message.type === "alert_created") {
           setAlerts((prev) => [message.data, ...prev]);
+        } else if (message.type === "alerts_auto_resolved") {
+          const { sensorType } = message.data;
+          setAlerts((prev) =>
+            prev.map((a) =>
+              a.sensorType === sensorType && !a.resolvedAt
+                ? { ...a, read: true, resolvedAt: new Date().toISOString() }
+                : a,
+            ),
+          );
         }
       } catch {}
     };

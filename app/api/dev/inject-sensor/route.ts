@@ -1,7 +1,7 @@
 import type { DataType } from "@prisma/client";
 import { alertRepository } from "@/features/notifications/repository/alertRepository";
 import { dataPointRepository } from "@/features/datapoint/repository/dataPointRepository";
-import { detectAnomaly } from "@/lib/anomaly-detector";
+import { detectAnomaly, getResolvableAlertTypes } from "@/lib/anomaly-detector";
 import { sensorEmitter } from "@/lib/sensor-emitter";
 
 export const dynamic = "force-dynamic";
@@ -44,6 +44,19 @@ export async function POST(request: Request) {
         .filter((v) => !isNaN(v));
 
       const detection = detectAnomaly(dataType, numericValue, recentValues);
+
+      const resolvable = getResolvableAlertTypes(dataType, numericValue, recentValues);
+      let totalResolved = 0;
+      for (const alertType of resolvable) {
+        totalResolved += await alertRepository.resolveUnresolvedByType(dataType, alertType);
+      }
+      if (totalResolved > 0) {
+        sensorEmitter.emit("alerts_auto_resolved", {
+          type: "alerts_auto_resolved",
+          data: { sensorType: dataType },
+        });
+      }
+
       if (detection) {
         const alreadyAlerted = await alertRepository.hasRecentUnresolved(
           dataType,

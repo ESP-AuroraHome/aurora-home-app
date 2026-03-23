@@ -66,6 +66,22 @@ export const alertRepository = {
     });
   },
 
+  async resolveUnresolvedBySensor(sensorType: DataType): Promise<number> {
+    const result = await prisma.alert.updateMany({
+      where: { sensorType, resolvedAt: null },
+      data: { resolvedAt: new Date(), read: true },
+    });
+    return result.count;
+  },
+
+  async resolveUnresolvedByType(sensorType: DataType, type: AlertType): Promise<number> {
+    const result = await prisma.alert.updateMany({
+      where: { sensorType, type, resolvedAt: null },
+      data: { resolvedAt: new Date(), read: true },
+    });
+    return result.count;
+  },
+
   // Anti-spam : vérifie si une alerte non résolue du même type/capteur existe récemment
   async hasRecentUnresolved(
     sensorType: DataType,
