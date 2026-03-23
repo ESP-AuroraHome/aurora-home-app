@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -18,6 +19,17 @@ const ConnectedLayout = async ({ children }: { children: React.ReactNode }) => {
     redirect("/onboarding");
   }
 
-  return <>{children}</>;
+  return (
+    <div className="relative h-screen w-full overflow-hidden">
+      <Image
+        src="/assets/background-main.jpg"
+        fill
+        alt="Background"
+        className="object-cover object-center"
+        priority
+      />
+      {children}
+    </div>
+  );
 };
 export default ConnectedLayout;
