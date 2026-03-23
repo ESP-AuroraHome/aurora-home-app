@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, CheckCircle2, House } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import {
   Sheet,
@@ -30,6 +31,7 @@ export default function NotificationSheet({
   onResolve,
   onMarkAllRead,
 }: NotificationSheetProps) {
+  const t = useTranslations("notifications");
   const [tab, setTab] = useState<Tab>("all");
   const [isPending, startTransition] = useTransition();
 
@@ -50,9 +52,9 @@ export default function NotificationSheet({
   const hasActiveIssues = activeAlerts.some((a) => !a.read);
 
   const tabs: { key: Tab; label: string; count?: number }[] = [
-    { key: "all",      label: "Alertes",   count: activeAlerts.length },
-    { key: "unread",   label: "Non vues",  count: unreadCount },
-    { key: "resolved", label: "Résolues",  count: alerts.filter((a) => !!a.resolvedAt).length },
+    { key: "all",      label: t("tabAll"),      count: activeAlerts.length },
+    { key: "unread",   label: t("tabUnread"),   count: unreadCount },
+    { key: "resolved", label: t("tabResolved"), count: alerts.filter((a) => !!a.resolvedAt).length },
   ];
 
   return (
@@ -85,7 +87,7 @@ export default function NotificationSheet({
         <SheetHeader className="px-5 pt-5 pb-3 border-b border-white/5">
           <div className="flex items-center justify-between">
             <SheetTitle className="text-white text-base font-semibold">
-              État de la maison
+              {t("sheetTitle")}
             </SheetTitle>
             {unreadCount > 0 && (
               <button
@@ -94,7 +96,7 @@ export default function NotificationSheet({
                 disabled={isPending}
                 className="text-white/40 hover:text-white/70 text-xs transition-colors disabled:opacity-30"
               >
-                Tout marquer comme vu
+                {t("markAllRead")}
               </button>
             )}
           </div>
@@ -104,7 +106,7 @@ export default function NotificationSheet({
             <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/20">
               <House strokeWidth={1} size={20} className="bg-emerald-400 p-0.5 rounded-full flex-shrink-0" />
               <p className="text-emerald-300 text-xs font-medium">
-                Tous les capteurs sont dans les normes
+                {t("allSensorsNormal")}
               </p>
             </div>
           )}
@@ -144,14 +146,10 @@ export default function NotificationSheet({
               </div>
               <div>
                 <p className="text-white text-sm font-medium mb-1">
-                  {tab === "resolved"
-                    ? "Aucun problème résolu"
-                    : "Votre maison est en bonne santé"}
+                  {tab === "resolved" ? t("emptyResolved") : t("emptyHealthy")}
                 </p>
                 <p className="text-white/40 text-xs leading-relaxed">
-                  {tab === "resolved"
-                    ? "Les alertes résolues apparaîtront ici"
-                    : "Aucune anomalie détectée sur vos capteurs"}
+                  {tab === "resolved" ? t("emptyResolvedDesc") : t("emptyHealthyDesc")}
                 </p>
               </div>
             </div>

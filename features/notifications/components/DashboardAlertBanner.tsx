@@ -1,7 +1,9 @@
 "use client";
 
 import { AlertTriangle, House, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import type { DataType } from "@prisma/client";
 import type { SerializedAlert } from "@/hooks/useSensorData";
 
 interface DashboardAlertBannerProps {
@@ -34,10 +36,59 @@ const SEVERITY_STYLES = {
   },
 };
 
-const SEVERITY_LABEL = { CRITICAL: "Urgent", HIGH: "Problème", WARNING: "Attention" };
+function useAlertMessage(alert: SerializedAlert) {
+  const tAlerts = useTranslations("alerts");
+  const sensor = tAlerts(`sensors.${alert.sensorType as DataType}`);
+  const unit = { TEMPERATURE: "°C", HUMIDITY: "%", PRESSURE: " hPa", CO2: " ppm", LIGHT: " lx" }[alert.sensorType];
+  const value = Number(alert.value).toFixed(1);
+  if (alert.type === "THRESHOLD_HIGH") return tAlerts("thresholdHigh", { sensor, value, unit, threshold: alert.threshold ?? "" });
+  if (alert.type === "THRESHOLD_LOW")  return tAlerts("thresholdLow",  { sensor, value, unit, threshold: alert.threshold ?? "" });
+  return tAlerts("suddenChange", { sensor, value, unit, pct: alert.threshold ?? "?" });
+}
+
+function useFirstSuggestion(alert: SerializedAlert) {
+  const tAlerts = useTranslations("alerts");
+  const raw = tAlerts.raw(`suggestions.${alert.sensorType}.${alert.type}`) as Record<string, string>;
+  return Object.values(raw ?? {})[0] ?? null;
+}
+
+function AlertBannerItem({ alert, style, severityLabel, onDismiss }: {
+  alert: SerializedAlert;
+  style: typeof SEVERITY_STYLES[keyof typeof SEVERITY_STYLES];
+  severityLabel: string;
+  onDismiss: () => void;
+}) {
+  const message = useAlertMessage(alert);
+  const firstSuggestion = useFirstSuggestion(alert);
+
+  return (
+    <div className={`flex items-start gap-3 rounded-2xl px-4 py-3 border ${style.container}`}>
+      <AlertTriangle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${style.icon}`} />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5">
+          <p className={`text-sm font-semibold leading-snug ${style.title}`}>{message}</p>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 ${style.badge}`}>
+            {severityLabel}
+          </span>
+        </div>
+        {firstSuggestion && <p className="text-white/70 text-xs">{firstSuggestion}</p>}
+      </div>
+      <button type="button" onClick={onDismiss} className="text-white/50 hover:text-white/80 transition-colors flex-shrink-0 mt-0.5">
+        <X className="w-3.5 h-3.5" />
+      </button>
+    </div>
+  );
+}
 
 export default function DashboardAlertBanner({ alerts }: DashboardAlertBannerProps) {
+  const t = useTranslations("dashboard");
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
+
+  const SEVERITY_LABEL = {
+    CRITICAL: t("severityCritical"),
+    HIGH:     t("severityHigh"),
+    WARNING:  t("severityWarning"),
+  };
 
   // Alertes non résolues (indépendamment du dismiss visuel)
   const unresolvedAlerts = alerts.filter((a) => !a.resolvedAt && !a.read);
@@ -54,8 +105,8 @@ export default function DashboardAlertBanner({ alerts }: DashboardAlertBannerPro
       <div className="flex items-center gap-3 rounded-2xl px-4 py-3 bg-black/20 backdrop-blur-md border border-white/10">
         <House strokeWidth={1} size={24} className="bg-emerald-400 p-1 rounded-full flex-shrink-0" />
         <div className="flex-1 min-w-0">
-          <p className="text-white text-sm font-medium">Votre maison est en bonne santé</p>
-          <p className="text-white/40 text-xs mt-0.5">Tous les capteurs sont dans les normes</p>
+          <p className="text-white text-sm font-medium">{t("healthy")}</p>
+          <p className="text-white/40 text-xs mt-0.5">{t("healthyDesc")}</p>
         </div>
       </div>
     );
@@ -76,11 +127,9 @@ export default function DashboardAlertBanner({ alerts }: DashboardAlertBannerPro
           <div className={`w-2 h-2 rounded-full ${dotColor} animate-pulse`} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-white/80 text-sm font-medium">Surveillance en cours</p>
+          <p className="text-white/80 text-sm font-medium">{t("monitoring")}</p>
           <p className="text-white/40 text-xs mt-0.5">
-            {unresolvedAlerts.length === 1
-              ? "1 anomalie détectée — en attente de retour à la normale"
-              : `${unresolvedAlerts.length} anomalies détectées — en attente de retour à la normale`}
+            {t("monitoringDesc", { count: unresolvedAlerts.length })}
           </p>
         </div>
       </div>
@@ -92,37 +141,15 @@ export default function DashboardAlertBanner({ alerts }: DashboardAlertBannerPro
 
   return (
     <div className="flex flex-col gap-2">
-      {activeAlerts.map((alert) => {
-        const s = SEVERITY_STYLES[alert.severity];
-        return (
-          <div
-            key={alert.id}
-            className={`flex items-start gap-3 rounded-2xl px-4 py-3 border ${s.container}`}
-          >
-            <AlertTriangle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${s.icon}`} />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-0.5">
-                <p className={`text-sm font-semibold leading-snug ${s.title}`}>
-                  {alert.message}
-                </p>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 ${s.badge}`}>
-                  {SEVERITY_LABEL[alert.severity]}
-                </span>
-              </div>
-              {alert.suggestions[0] && (
-                <p className="text-white/70 text-xs">{alert.suggestions[0]}</p>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={() => dismiss(alert.id)}
-              className="text-white/50 hover:text-white/80 transition-colors flex-shrink-0 mt-0.5"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        );
-      })}
+      {activeAlerts.map((alert) => (
+        <AlertBannerItem
+          key={alert.id}
+          alert={alert}
+          style={SEVERITY_STYLES[alert.severity]}
+          severityLabel={SEVERITY_LABEL[alert.severity]}
+          onDismiss={() => dismiss(alert.id)}
+        />
+      ))}
     </div>
   );
 }

@@ -241,11 +241,13 @@ export function detectAnomaly(
           deviation >= 0.5 ? "HIGH" : "WARNING";
         const suggestions = SUGGESTIONS[sensorType].SUDDEN_CHANGE;
         if (suggestions.length === 0) return null;
+        const pct = Math.round(Math.abs((value - avg) / Math.abs(avg)) * 100);
         return {
           type: "SUDDEN_CHANGE",
           severity,
           sensorType,
           value,
+          threshold: pct,
           message: buildMessage("SUDDEN_CHANGE", sensorType, value, undefined, avg),
           suggestions,
         };

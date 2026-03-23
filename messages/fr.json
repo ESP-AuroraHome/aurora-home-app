@@ -9,7 +9,11 @@
     "pressure": "Pression",
     "co2": "CO2",
     "light": "Lumière",
-    "recentDataPoints": "Données récentes pour {type}"
+    "recentDataPoints": "Données récentes pour {type}",
+    "trendUp": "En hausse",
+    "trendDown": "En baisse",
+    "trendStable": "Stable",
+    "noData": "Aucune donnée disponible"
   },
   "auth": {
     "loginTitle": "Connectez-vous",
@@ -32,6 +36,138 @@
     "otpRequired": "Le code de vérification est requis",
     "otpLength": "Le code doit contenir 6 chiffres",
     "isNewUser": "Je suis un nouvel utilisateur"
+  },
+  "alerts": {
+    "thresholdHigh": "{sensor} élevée : {value}{unit} (seuil : {threshold}{unit})",
+    "thresholdLow": "{sensor} basse : {value}{unit} (seuil : {threshold}{unit})",
+    "suddenChange": "Variation brutale de {sensor} : {value}{unit} (variation de {pct}%)",
+    "sensors": {
+      "TEMPERATURE": "Température",
+      "HUMIDITY": "Humidité",
+      "PRESSURE": "Pression atmosphérique",
+      "CO2": "CO₂",
+      "LIGHT": "Luminosité"
+    },
+    "suggestions": {
+      "TEMPERATURE": {
+        "THRESHOLD_HIGH": {
+          "0": "Fermez les volets pour bloquer le rayonnement solaire",
+          "1": "Activez la climatisation ou un ventilateur",
+          "2": "Ouvrez les fenêtres aux heures fraîches (matin/soir)",
+          "3": "Vérifiez si une source de chaleur involontaire est active"
+        },
+        "THRESHOLD_LOW": {
+          "0": "Activez le chauffage ou augmentez sa consigne",
+          "1": "Vérifiez si une fenêtre est restée ouverte",
+          "2": "Contrôlez l'isolation (joints de portes et fenêtres)",
+          "3": "Vérifiez que le thermostat fonctionne correctement"
+        },
+        "SUDDEN_CHANGE": {
+          "0": "Vérifiez si une fenêtre ou porte vient d'être ouverte",
+          "1": "Contrôlez qu'aucun appareil chauffant n'est allumé involontairement",
+          "2": "Vérifiez que le capteur ESP32 est bien positionné (pas en plein soleil)"
+        }
+      },
+      "HUMIDITY": {
+        "THRESHOLD_HIGH": {
+          "0": "Activez le déshumidificateur",
+          "1": "Améliorez la ventilation de la pièce",
+          "2": "Vérifiez les fuites d'eau (plomberie, toiture, condensation)",
+          "3": "Évitez de faire sécher du linge à l'intérieur"
+        },
+        "THRESHOLD_LOW": {
+          "0": "Utilisez un humidificateur d'air",
+          "1": "Vérifiez si le chauffage est trop intense",
+          "2": "Placez des plantes d'intérieur pour augmenter l'hygrométrie"
+        },
+        "SUDDEN_CHANGE": {
+          "0": "Vérifiez si un appareil produisant de la vapeur est allumé",
+          "1": "Contrôlez l'absence de fuite d'eau à proximité du capteur",
+          "2": "Vérifiez que le capteur ESP32 n'est pas exposé à de la condensation"
+        }
+      },
+      "CO2": {
+        "THRESHOLD_HIGH": {
+          "0": "Ouvrez une fenêtre immédiatement pour aérer la pièce",
+          "1": "Activez la VMC ou la ventilation mécanique",
+          "2": "Réduisez le nombre de personnes dans la pièce si possible",
+          "3": "Vérifiez si des appareils à combustion sont en fonctionnement",
+          "4": "Évitez les activités physiques intenses dans la pièce"
+        },
+        "THRESHOLD_LOW": {},
+        "SUDDEN_CHANGE": {
+          "0": "Vérifiez si plusieurs personnes sont entrées simultanément",
+          "1": "Contrôlez qu'aucun appareil à combustion n'a été allumé",
+          "2": "Vérifiez l'état du capteur CO₂ SCD30 (calibration)"
+        }
+      },
+      "PRESSURE": {
+        "THRESHOLD_HIGH": {},
+        "THRESHOLD_LOW": {
+          "0": "Une dépression atmosphérique approche, risque de mauvais temps",
+          "1": "Fermez les fenêtres en prévision de précipitations ou vent fort",
+          "2": "Vérifiez que le capteur BME280 n'est pas exposé à des courants d'air"
+        },
+        "SUDDEN_CHANGE": {
+          "0": "Changement météo rapide détecté",
+          "1": "Vérifiez les prévisions météo pour votre région",
+          "2": "Assurez-vous que les fenêtres et volets sont sécurisés"
+        }
+      },
+      "LIGHT": {
+        "THRESHOLD_HIGH": {},
+        "THRESHOLD_LOW": {},
+        "SUDDEN_CHANGE": {
+          "0": "Vérifiez si une lumière forte a été allumée/éteinte à proximité du capteur",
+          "1": "Contrôlez que le capteur BH1750 n'est pas obstrué"
+        }
+      }
+    }
+  },
+  "notifications": {
+    "sheetTitle": "État de la maison",
+    "markAllRead": "Tout marquer comme vu",
+    "allSensorsNormal": "Tous les capteurs sont dans les normes",
+    "tabAll": "Alertes",
+    "tabUnread": "Non vues",
+    "tabResolved": "Résolues",
+    "emptyHealthy": "Votre maison est en bonne santé",
+    "emptyHealthyDesc": "Aucune anomalie détectée sur vos capteurs",
+    "emptyResolved": "Aucun problème résolu",
+    "emptyResolvedDesc": "Les alertes résolues apparaîtront ici",
+    "resolve": "Marquer comme résolu",
+    "severityWarning": "Attention",
+    "severityHigh": "Problème",
+    "severityCritical": "Urgent",
+    "justNow": "À l'instant",
+    "minutesAgo": "Il y a {min} min",
+    "hoursAgo": "Il y a {h}h",
+    "daysAgo": "Il y a {days}j"
+  },
+  "dashboard": {
+    "healthy": "Votre maison est en bonne santé",
+    "healthyDesc": "Tous les capteurs sont dans les normes",
+    "monitoring": "Surveillance en cours",
+    "monitoringDesc": "{count, plural, one {1 anomalie détectée — en attente de retour à la normale} other {# anomalies détectées — en attente de retour à la normale}}",
+    "severityWarning": "Attention",
+    "severityHigh": "Problème",
+    "severityCritical": "Urgent"
+  },
+  "iaq": {
+    "label": "Qualité de l'air",
+    "excellent": "Excellent",
+    "excellentDesc": "Tous les indicateurs sont optimaux",
+    "good": "Bon",
+    "goodDesc": "La qualité de l'air est satisfaisante",
+    "moderate": "Moyen",
+    "moderateDesc": "L'air est légèrement dégradé",
+    "poor": "Mauvais",
+    "poorDesc": "La qualité de l'air nécessite attention"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "Cette page n'existe pas ou a été déplacée.",
+    "back": "Retour à l'accueil"
   },
   "profile": {
     "title": "Mon Profil",
