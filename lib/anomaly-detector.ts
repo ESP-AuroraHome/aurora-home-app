@@ -317,20 +317,10 @@ export function getResolvableAlertTypes(
     resolvable.push("THRESHOLD_LOW");
   }
 
-  // SUDDEN_CHANGE résolu si pas de variation brutale détectée
-  if (recentValues.length >= 3) {
-    const avg = recentValues.reduce((a, b) => a + b, 0) / recentValues.length;
-    if (avg !== 0) {
-      const deviation = Math.abs(value - avg) / Math.abs(avg);
-      if (deviation < SUDDEN_CHANGE_THRESHOLD) {
-        resolvable.push("SUDDEN_CHANGE");
-      }
-    } else {
-      resolvable.push("SUDDEN_CHANGE");
-    }
-  } else {
-    resolvable.push("SUDDEN_CHANGE");
-  }
+  // SUDDEN_CHANGE is always resolvable — it's a transient event.
+  // If thresholds are back to normal, any prior sudden-change alert is stale.
+  // A new SUDDEN_CHANGE will be created if the current reading genuinely triggers one.
+  resolvable.push("SUDDEN_CHANGE");
 
   return resolvable;
 }
