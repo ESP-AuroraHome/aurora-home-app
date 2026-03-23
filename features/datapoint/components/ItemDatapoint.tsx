@@ -1,7 +1,7 @@
 "use client";
 
 import type { DataPoint, DataType } from "@prisma/client";
-import { Minus, TrendingDown, TrendingUp } from "lucide-react";
+import { Download, Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
 import { useState } from "react";
@@ -134,6 +134,25 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
         ? historicalData
         : datapoints;
 
+  const exportCSV = () => {
+    const rows = [
+      ["date", "value", "type"],
+      ...displayedData.map((dp) => [
+        new Date(dp.createdAt).toISOString(),
+        dp.value,
+        dp.type,
+      ]),
+    ];
+    const csv = rows.map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${type.toLowerCase()}_${period}_${Date.now()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (!lastDatapoint) {
     return (
       <Item
@@ -229,21 +248,31 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
           </div>
         </DrawerHeader>
         <div className="px-4 pb-6 md:px-10 md:pb-10 overflow-auto flex flex-col gap-4">
-          <div className="flex gap-1.5">
-            {PERIODS.map((p) => (
-              <button
-                key={p.value}
-                type="button"
-                onClick={() => handlePeriodChange(p.value)}
-                className={`px-3 py-1 rounded-full text-xs transition-all ${
-                  period === p.value
-                    ? "bg-white/20 border border-white/20 text-white font-medium"
-                    : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70"
-                }`}
-              >
-                {p.label}
-              </button>
-            ))}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex gap-1.5">
+              {PERIODS.map((p) => (
+                <button
+                  key={p.value}
+                  type="button"
+                  onClick={() => handlePeriodChange(p.value)}
+                  className={`px-3 py-1 rounded-full text-xs transition-all ${
+                    period === p.value
+                      ? "bg-white/20 border border-white/20 text-white font-medium"
+                      : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70"
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={exportCSV}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70 transition-all"
+            >
+              <Download className="w-3 h-3" />
+              {t("export")}
+            </button>
           </div>
           <ChartDataPoint
             data={displayedData}

@@ -13,7 +13,8 @@
     "trendUp": "Rising",
     "trendDown": "Falling",
     "trendStable": "Stable",
-    "noData": "No data available"
+    "noData": "No data available",
+    "export": "Export CSV"
   },
   "auth": {
     "loginTitle": "Connect",

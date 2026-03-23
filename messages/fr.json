@@ -13,7 +13,8 @@
     "trendUp": "En hausse",
     "trendDown": "En baisse",
     "trendStable": "Stable",
-    "noData": "Aucune donnée disponible"
+    "noData": "Aucune donnée disponible",
+    "export": "Exporter CSV"
   },
   "auth": {
     "loginTitle": "Connectez-vous",
