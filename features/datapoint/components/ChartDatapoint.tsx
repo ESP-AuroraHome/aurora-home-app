@@ -37,27 +37,72 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
   }, []);
 
   const chartData = useMemo(() => {
-    const sortedData = [...data]
-      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-      .map((dp) => {
-        const numValue = parseFloat(dp.value);
-        const value = Number.isNaN(numValue) ? 0 : numValue;
+    const sortedData = [...data].sort(
+      (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+    );
 
-        return {
-          value,
-          createdAt: dp.createdAt,
-          time: dp.createdAt.toLocaleTimeString("fr-FR", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-          date: dp.createdAt.toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          }),
-        };
-      });
-    return sortedData;
+    if (sortedData.length === 0) return [];
+
+    const spanMs =
+      sortedData[sortedData.length - 1].createdAt.getTime() -
+      sortedData[0].createdAt.getTime();
+    const spanHours = spanMs / (1000 * 60 * 60);
+
+    // Downsample par moyenne de buckets
+    const MAX_POINTS = 80;
+    let sampled = sortedData;
+    if (sortedData.length > MAX_POINTS) {
+      const bucketSize = Math.ceil(sortedData.length / MAX_POINTS);
+      sampled = [];
+      for (let i = 0; i < sortedData.length; i += bucketSize) {
+        const bucket = sortedData.slice(i, i + bucketSize);
+        const avgValue =
+          bucket.reduce((sum, dp) => sum + parseFloat(dp.value), 0) /
+          bucket.length;
+        const mid = bucket[Math.floor(bucket.length / 2)];
+        sampled.push({ ...mid, value: avgValue.toFixed(2) });
+      }
+    }
+
+    return sampled.map((dp) => {
+      const numValue = parseFloat(String(dp.value));
+      const value = Number.isNaN(numValue) ? 0 : numValue;
+
+      let label: string;
+      if (spanHours > 24) {
+        label = new Date(dp.createdAt).toLocaleDateString("fr-FR", {
+          day: "2-digit",
+          month: "2-digit",
+        });
+      } else if (spanHours > 2) {
+        label = new Date(dp.createdAt).toLocaleString("fr-FR", {
+          day: "2-digit",
+          month: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      } else {
+        label = new Date(dp.createdAt).toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      return {
+        value,
+        createdAt: new Date(dp.createdAt),
+        label,
+        time: new Date(dp.createdAt).toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        date: new Date(dp.createdAt).toLocaleDateString("fr-FR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }),
+      };
+    });
   }, [data]);
 
   const domain = useMemo(() => {
@@ -125,10 +170,11 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
         )}
         {!isSmallChart && (
           <XAxis
-            dataKey="time"
+            dataKey="label"
             tickLine={false}
             axisLine={false}
             tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }}
+            interval="preserveStartEnd"
           />
         )}
         <YAxis
