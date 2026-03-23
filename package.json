@@ -18,7 +18,14 @@
     "simulate:co2": "node scripts/simulate-sensors.mjs --anomaly co2",
     "simulate:temp": "node scripts/simulate-sensors.mjs --anomaly temp",
     "simulate:hum": "node scripts/simulate-sensors.mjs --anomaly hum",
-    "simulate:sudden": "node scripts/simulate-sensors.mjs --anomaly sudden"
+    "simulate:sudden": "node scripts/simulate-sensors.mjs --anomaly sudden",
+    "seed:7days": "tsx scripts/seed-7days.ts",
+    "seed:7days:clear": "tsx scripts/seed-7days.ts --clear",
+    "test:iaq": "node scripts/test-iaq.mjs --level all",
+    "test:iaq:excellent": "node scripts/test-iaq.mjs --level excellent",
+    "test:iaq:good": "node scripts/test-iaq.mjs --level bon",
+    "test:iaq:moderate": "node scripts/test-iaq.mjs --level moyen",
+    "test:iaq:poor": "node scripts/test-iaq.mjs --level mauvais"
   },
   "dependencies": {
     "@dicebear/collection": "^9.2.4",
