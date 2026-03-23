@@ -9,3 +9,7 @@ export async function markAlertRead(id: string): Promise<void> {
 export async function markAllAlertsRead(): Promise<void> {
   await alertRepository.markAllRead();
 }
+
+export async function resolveAllAlerts(): Promise<void> {
+  await alertRepository.resolveAll();
+}
