@@ -4,7 +4,7 @@ import { alertRepository } from "@/features/notifications/repository/alertReposi
 import { dataPointRepository } from "@/features/datapoint/repository/dataPointRepository";
 import { notificationPreferenceRepository } from "@/features/settings/repository/notificationPreferenceRepository";
 import { thresholdRepository } from "@/features/settings/repository/thresholdRepository";
-import { detectAnomaly, type ThresholdOverride } from "./anomaly-detector";
+import { detectAnomaly, getResolvableAlertTypes, type ThresholdOverride } from "./anomaly-detector";
 import { sensorEmitter } from "./sensor-emitter";
 
 // Cache des seuils — rafraîchi toutes les 60s
@@ -138,6 +138,20 @@ export function startMqttClient() {
 
             const [thresholds, prefs] = await Promise.all([getThresholds(), getPrefs()]);
             const detection = detectAnomaly(dataType, numericValue, recentValues, thresholds[dataType]);
+
+            const resolvable = getResolvableAlertTypes(dataType, numericValue, recentValues, thresholds[dataType]);
+            let totalResolved = 0;
+            for (const alertType of resolvable) {
+              totalResolved += await alertRepository.resolveUnresolvedByType(dataType, alertType);
+            }
+            if (totalResolved > 0) {
+              console.log(`✅ ${totalResolved} alerte(s) auto-résolue(s) pour ${dataType}`);
+              sensorEmitter.emit("alerts_auto_resolved", {
+                type: "alerts_auto_resolved",
+                data: { sensorType: dataType },
+              });
+            }
+
             if (detection) {
               const sensorPref = prefs.sensors[dataType];
               const isEnabled = sensorPref?.enabled ?? true;
