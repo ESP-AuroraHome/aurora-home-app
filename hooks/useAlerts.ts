@@ -48,7 +48,12 @@ export function useAlerts(initialAlerts: SerializedAlert[] = []) {
   const markAllReadLocally = () =>
     setAlerts((prev) => prev.map((a) => ({ ...a, read: true })));
 
-  const unreadCount = alerts.filter((a) => !a.read).length;
+  const resolveAllLocally = () =>
+    setAlerts((prev) =>
+      prev.map((a) => ({ ...a, read: true, resolvedAt: a.resolvedAt ?? new Date().toISOString() })),
+    );
 
-  return { alerts, unreadCount, markAlertRead, resolveAlertLocally, markAllReadLocally };
+  const unreadCount = alerts.filter((a) => !a.read && !a.resolvedAt).length;
+
+  return { alerts, unreadCount, markAlertRead, resolveAlertLocally, markAllReadLocally, resolveAllLocally };
 }

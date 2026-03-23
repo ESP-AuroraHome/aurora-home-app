@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import type { SerializedAlert } from "@/hooks/useSensorData";
-import { markAllAlertsRead } from "../usecase/markAlertRead";
+import { resolveAllAlerts } from "../usecase/markAlertRead";
 import AlertCard from "./AlertCard";
 
 type Tab = "all" | "unread" | "resolved";
@@ -22,6 +22,7 @@ interface NotificationSheetProps {
   onRead: (id: string) => void;
   onResolve: (id: string) => void;
   onMarkAllRead: () => void;
+  onResolveAll: () => void;
 }
 
 export default function NotificationSheet({
@@ -30,6 +31,7 @@ export default function NotificationSheet({
   onRead,
   onResolve,
   onMarkAllRead,
+  onResolveAll,
 }: NotificationSheetProps) {
   const t = useTranslations("notifications");
   const [tab, setTab] = useState<Tab>("all");
@@ -41,15 +43,15 @@ export default function NotificationSheet({
     return !a.resolvedAt;
   });
 
-  const handleMarkAllRead = () => {
+  const handleResolveAll = () => {
     startTransition(async () => {
-      await markAllAlertsRead();
-      onMarkAllRead();
+      await resolveAllAlerts();
+      onResolveAll();
     });
   };
 
   const activeAlerts = alerts.filter((a) => !a.resolvedAt);
-  const hasActiveIssues = activeAlerts.some((a) => !a.read);
+  const hasActiveIssues = activeAlerts.length > 0;
 
   const tabs: { key: Tab; label: string; count?: number }[] = [
     { key: "all",      label: t("tabAll"),      count: activeAlerts.length },
@@ -89,10 +91,10 @@ export default function NotificationSheet({
             <SheetTitle className="text-white text-base font-semibold">
               {t("sheetTitle")}
             </SheetTitle>
-            {unreadCount > 0 && (
+            {activeAlerts.length > 0 && (
               <button
                 type="button"
-                onClick={handleMarkAllRead}
+                onClick={handleResolveAll}
                 disabled={isPending}
                 className="text-white/40 hover:text-white/70 text-xs transition-colors disabled:opacity-30"
               >
