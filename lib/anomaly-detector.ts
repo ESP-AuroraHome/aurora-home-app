@@ -292,3 +292,35 @@ export function detectAnomaly(
 
   return null;
 }
+
+// ── Types d'alertes à auto-résoudre ──────────────────────────────────────────
+// Retourne les types d'alertes qui peuvent être résolus car la valeur est revenue normale
+
+export function getResolvableAlertTypes(
+  sensorType: DataType,
+  value: number,
+  recentValues: number[],
+  override?: ThresholdOverride,
+): AlertType[] {
+  const thresholds = THRESHOLDS[sensorType];
+  const resolvable: AlertType[] = [];
+
+  // THRESHOLD_HIGH résolu si valeur sous le seuil haut
+  const highValue = override?.highValue ?? thresholds.high?.[0]?.value;
+  if (highValue == null || value < highValue) {
+    resolvable.push("THRESHOLD_HIGH");
+  }
+
+  // THRESHOLD_LOW résolu si valeur sur le seuil bas
+  const lowValue = override?.lowValue ?? thresholds.low?.[0]?.value;
+  if (lowValue == null || value > lowValue) {
+    resolvable.push("THRESHOLD_LOW");
+  }
+
+  // SUDDEN_CHANGE is always resolvable — it's a transient event.
+  // If thresholds are back to normal, any prior sudden-change alert is stale.
+  // A new SUDDEN_CHANGE will be created if the current reading genuinely triggers one.
+  resolvable.push("SUDDEN_CHANGE");
+
+  return resolvable;
+}
