@@ -182,6 +182,8 @@
     "daysAgo": "Il y a {days}j"
   },
   "dashboard": {
+    "warmup": "Aurora observe votre environnement",
+    "warmupDesc": "Les capteurs collectent les données de référence. Les alertes démarreront automatiquement.",
     "healthy": "Votre maison est en bonne santé",
     "healthyDesc": "Tous les capteurs sont dans les normes",
     "monitoring": "Surveillance en cours",

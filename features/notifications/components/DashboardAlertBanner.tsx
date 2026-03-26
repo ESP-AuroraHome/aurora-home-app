@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, House, X } from "lucide-react";
+import { AlertTriangle, House, ScanEye, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { DataType } from "@prisma/client";
@@ -8,6 +8,7 @@ import type { SerializedAlert } from "@/hooks/useSensorData";
 
 interface DashboardAlertBannerProps {
   alerts: SerializedAlert[];
+  isWarmingUp?: boolean;
 }
 
 const SEVERITY_ORDER = { CRITICAL: 0, HIGH: 1, WARNING: 2 };
@@ -80,7 +81,7 @@ function AlertBannerItem({ alert, style, severityLabel, onDismiss }: {
   );
 }
 
-export default function DashboardAlertBanner({ alerts }: DashboardAlertBannerProps) {
+export default function DashboardAlertBanner({ alerts, isWarmingUp = false }: DashboardAlertBannerProps) {
   const t = useTranslations("dashboard");
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
 
@@ -99,6 +100,18 @@ export default function DashboardAlertBanner({ alerts }: DashboardAlertBannerPro
 
   const isHealthy = unresolvedAlerts.length === 0;
   const allDismissed = unresolvedAlerts.length > 0 && activeAlerts.length === 0;
+
+  if (isWarmingUp) {
+    return (
+      <div className="flex items-center gap-3 rounded-2xl px-4 py-3 bg-black/20 backdrop-blur-md border border-white/10">
+        <ScanEye strokeWidth={1} size={24} className="bg-sky-400 p-1 rounded-full flex-shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-white text-sm font-medium">{t("warmup")}</p>
+          <p className="text-white/40 text-xs mt-0.5">{t("warmupDesc")}</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isHealthy) {
     return (

@@ -10,12 +10,14 @@ const AlertsContext = createContext<AlertsContextValue | null>(null);
 
 export function AlertsProvider({
   initialAlerts,
+  initialIsWarmingUp = false,
   children,
 }: {
   initialAlerts: SerializedAlert[];
+  initialIsWarmingUp?: boolean;
   children: React.ReactNode;
 }) {
-  const value = useAlerts(initialAlerts);
+  const value = useAlerts(initialAlerts, initialIsWarmingUp);
   return <AlertsContext.Provider value={value}>{children}</AlertsContext.Provider>;
 }
 

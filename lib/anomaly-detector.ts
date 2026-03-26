@@ -49,6 +49,9 @@ const THRESHOLDS: Record<DataType, SensorThresholds> = {
   LIGHT: {},
 };
 
+// Nombre minimum de points en base par capteur avant de déclencher des alertes (~10 min à 5s/point)
+export const WARMUP_MIN_POINTS = 120;
+
 // Variation brutale : seuil de déviation relatif depuis la moyenne glissante
 const SUDDEN_CHANGE_THRESHOLD = 0.25; // 25%
 

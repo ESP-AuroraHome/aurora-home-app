@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { SerializedAlert } from "./useSensorData";
 
-export function useAlerts(initialAlerts: SerializedAlert[] = []) {
+export function useAlerts(initialAlerts: SerializedAlert[] = [], initialIsWarmingUp = false) {
   const [alerts, setAlerts] = useState<SerializedAlert[]>(initialAlerts);
+  const [isWarmingUp, setIsWarmingUp] = useState(initialIsWarmingUp);
   const esRef = useRef<EventSource | null>(null);
   const reconnectRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -26,6 +27,8 @@ export function useAlerts(initialAlerts: SerializedAlert[] = []) {
                 : a,
             ),
           );
+        } else if (message.type === "warmup_complete") {
+          setIsWarmingUp(false);
         }
       } catch {}
     };
@@ -64,5 +67,5 @@ export function useAlerts(initialAlerts: SerializedAlert[] = []) {
 
   const unreadCount = alerts.filter((a) => !a.read && !a.resolvedAt).length;
 
-  return { alerts, unreadCount, markAlertRead, resolveAlertLocally, markAllReadLocally, resolveAllLocally };
+  return { alerts, unreadCount, isWarmingUp, markAlertRead, resolveAlertLocally, markAllReadLocally, resolveAllLocally };
 }
