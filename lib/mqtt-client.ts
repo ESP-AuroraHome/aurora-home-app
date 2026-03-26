@@ -4,7 +4,7 @@ import { alertRepository } from "@/features/notifications/repository/alertReposi
 import { dataPointRepository } from "@/features/datapoint/repository/dataPointRepository";
 import { notificationPreferenceRepository } from "@/features/settings/repository/notificationPreferenceRepository";
 import { thresholdRepository } from "@/features/settings/repository/thresholdRepository";
-import { detectAnomaly, getResolvableAlertTypes, type ThresholdOverride } from "./anomaly-detector";
+import { detectAnomaly, getResolvableAlertTypes, WARMUP_MIN_POINTS, type ThresholdOverride } from "./anomaly-detector";
 import { sensorEmitter } from "./sensor-emitter";
 
 // Cache des seuils — rafraîchi toutes les 60s
@@ -60,6 +60,9 @@ function isInQuietHours(quietStart: number | null, quietEnd: number | null): boo
   if (quietStart <= quietEnd) return hour >= quietStart && hour < quietEnd;
   return hour >= quietStart || hour < quietEnd; // ex: 23h → 7h (overnight)
 }
+
+// Émis une seule fois quand le seuil de chauffe est franchi
+let warmupCompleteEmitted = false;
 
 const MQTT_BROKER_URL =
   process.env.MQTT_BROKER_URL || "mqtt://192.168.4.2:1883";
@@ -130,15 +133,16 @@ export function startMqttClient() {
           // Détection d'anomalie
           const numericValue = parseFloat(valueStr);
           if (!isNaN(numericValue)) {
-            const recent = await dataPointRepository.findLatestByType(dataType, 6);
+            // Récupérer WARMUP_MIN_POINTS + 1 pour vérifier le warmup ET avoir l'historique récent
+            const recent = await dataPointRepository.findLatestByType(dataType, WARMUP_MIN_POINTS + 1);
             const recentValues = recent
               .slice(1) // exclure le point qu'on vient de créer
               .map((p) => parseFloat(p.value))
               .filter((v) => !isNaN(v));
 
             const [thresholds, prefs] = await Promise.all([getThresholds(), getPrefs()]);
-            const detection = detectAnomaly(dataType, numericValue, recentValues, thresholds[dataType]);
 
+            // Auto-resolve toujours actif, même en période de chauffe
             const resolvable = getResolvableAlertTypes(dataType, numericValue, recentValues, thresholds[dataType]);
             let totalResolved = 0;
             for (const alertType of resolvable) {
@@ -152,36 +156,51 @@ export function startMqttClient() {
               });
             }
 
-            if (detection) {
-              const sensorPref = prefs.sensors[dataType];
-              const isEnabled = sensorPref?.enabled ?? true;
-              const minSeverity = sensorPref?.minSeverity ?? "WARNING";
-              const severityOk = SEVERITY_LEVEL[detection.severity] >= SEVERITY_LEVEL[minSeverity];
-              const quietOk = !isInQuietHours(prefs.quietStart, prefs.quietEnd);
+            // Période de chauffe : attendre WARMUP_MIN_POINTS points en base avant d'alerter
+            const totalPoints = recent.length; // recent inclut le point courant
+            if (totalPoints <= WARMUP_MIN_POINTS) {
+              console.log(`⏳ Chauffe ${dataType} : ${totalPoints}/${WARMUP_MIN_POINTS} points collectés — alertes désactivées`);
+            } else {
+              // Émettre warmup_complete une seule fois au passage du seuil
+              if (!warmupCompleteEmitted) {
+                warmupCompleteEmitted = true;
+                console.log(`🎓 Chauffe terminée — alertes activées`);
+                sensorEmitter.emit("warmup_complete", { type: "warmup_complete", data: {} });
+              }
 
-              const alreadyAlerted = await alertRepository.hasRecentUnresolved(
-                dataType,
-                detection.type,
-              );
-              if (!alreadyAlerted && isEnabled && severityOk && quietOk) {
-                const alert = await alertRepository.create(detection);
-                sensorEmitter.emit("alert_created", {
-                  type: "alert_created",
-                  data: {
-                    id: alert.id,
-                    type: alert.type,
-                    severity: alert.severity,
-                    sensorType: alert.sensorType,
-                    value: alert.value,
-                    threshold: alert.threshold,
-                    message: alert.message,
-                    suggestions: JSON.parse(alert.suggestions) as string[],
-                    read: alert.read,
-                    resolvedAt: null,
-                    createdAt: alert.createdAt.toISOString(),
-                  },
-                });
-                console.log(`🚨 Alerte créée : ${alert.message}`);
+              const detection = detectAnomaly(dataType, numericValue, recentValues, thresholds[dataType]);
+
+              if (detection) {
+                const sensorPref = prefs.sensors[dataType];
+                const isEnabled = sensorPref?.enabled ?? true;
+                const minSeverity = sensorPref?.minSeverity ?? "WARNING";
+                const severityOk = SEVERITY_LEVEL[detection.severity] >= SEVERITY_LEVEL[minSeverity];
+                const quietOk = !isInQuietHours(prefs.quietStart, prefs.quietEnd);
+
+                const alreadyAlerted = await alertRepository.hasRecentUnresolved(
+                  dataType,
+                  detection.type,
+                );
+                if (!alreadyAlerted && isEnabled && severityOk && quietOk) {
+                  const alert = await alertRepository.create(detection);
+                  sensorEmitter.emit("alert_created", {
+                    type: "alert_created",
+                    data: {
+                      id: alert.id,
+                      type: alert.type,
+                      severity: alert.severity,
+                      sensorType: alert.sensorType,
+                      value: alert.value,
+                      threshold: alert.threshold,
+                      message: alert.message,
+                      suggestions: JSON.parse(alert.suggestions) as string[],
+                      read: alert.read,
+                      resolvedAt: null,
+                      createdAt: alert.createdAt.toISOString(),
+                    },
+                  });
+                  console.log(`🚨 Alerte créée : ${alert.message}`);
+                }
               }
             }
           }

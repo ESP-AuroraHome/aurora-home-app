@@ -11,6 +11,8 @@
     "format": "biome format --write .",
     "prisma-seed-fake-data": "tsx prisma/seedFakeData.ts",
     "test-mqtt": "tsx scripts/test-mqtt-subscribe.ts",
+    "test-warmup-reset": "tsx scripts/test-warmup-reset.ts",
+    "test-warmup-fill": "tsx scripts/test-warmup-fill.ts",
     "prisma-clear-data": "tsx prisma/clearData.ts",
     "test": "vitest run",
     "test:watch": "vitest",

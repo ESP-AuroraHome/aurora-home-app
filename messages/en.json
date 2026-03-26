@@ -182,6 +182,8 @@
     "daysAgo": "{days}d ago"
   },
   "dashboard": {
+    "warmup": "Aurora is learning your home",
+    "warmupDesc": "Sensors are collecting baseline data. Alerts will start automatically.",
     "healthy": "Your home is in good health",
     "healthyDesc": "All sensors are within normal range",
     "monitoring": "Monitoring in progress",

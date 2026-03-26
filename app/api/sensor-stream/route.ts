@@ -20,6 +20,7 @@ export async function GET(request: Request) {
     sensorEmitter.removeListener("sensor_update", onUpdate);
     sensorEmitter.removeListener("alert_created", onUpdate);
     sensorEmitter.removeListener("alerts_auto_resolved", onUpdate);
+    sensorEmitter.removeListener("warmup_complete", onUpdate);
     if (keepAlive) {
       clearInterval(keepAlive);
       keepAlive = null;
@@ -34,6 +35,7 @@ export async function GET(request: Request) {
   sensorEmitter.on("sensor_update", onUpdate);
   sensorEmitter.on("alert_created", onUpdate);
   sensorEmitter.on("alerts_auto_resolved", onUpdate);
+  sensorEmitter.on("warmup_complete", onUpdate);
 
   keepAlive = setInterval(() => {
     writer.write(encoder.encode(": keepalive\n\n")).catch(() => cleanup());

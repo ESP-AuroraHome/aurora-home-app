@@ -1,20 +1,28 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
+import { useEffect } from "react";
 
-// On the first page load (direct URL / SSR), we skip the slide-in animation
-// to avoid a hydration mismatch (server renders at animate state, client would
-// start at initial state). On subsequent client-side navigations we animate normally.
+// Persists across client-side navigations (component remounts), reset on hard refresh.
+// Never read during render — only in useEffect — so StrictMode double-invoke is safe.
 let hasNavigated = false;
 
 export default function PageTransition({ children }: { children: React.ReactNode }) {
-  const shouldAnimate = hasNavigated;
-  hasNavigated = true;
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (hasNavigated) {
+      // Client navigation: jump to initial state then animate in
+      controls.set({ opacity: 0, x: "100%" });
+      controls.start({ opacity: 1, x: 0 });
+    }
+    hasNavigated = true;
+  }, [controls]);
 
   return (
     <motion.div
-      initial={shouldAnimate ? { opacity: 0, x: "100%" } : false}
-      animate={{ opacity: 1, x: 0 }}
+      initial={false}
+      animate={controls}
       exit={{ opacity: 0, x: "-20%" }}
       transition={{
         type: "spring",
