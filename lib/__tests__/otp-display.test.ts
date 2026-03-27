@@ -45,11 +45,23 @@ describe("otp-display (dev mode)", () => {
   });
 
   it("does nothing when not dev mode and not linux", async () => {
+    const originalPlatform = process.platform;
     process.env.DISPLAY_OTP_DEV_MODE = "false";
     process.env.DISPLAY_OTP_ENABLED = "true";
-    const { displayOTPOnScreen } = await import("../otp-display");
-    displayOTPOnScreen("123456", "user@test.com");
-    const { spawn } = await import("node:child_process");
-    expect(spawn).not.toHaveBeenCalled();
+    Object.defineProperty(process, "platform", {
+      value: "darwin",
+      configurable: true,
+    });
+    try {
+      const { displayOTPOnScreen } = await import("../otp-display");
+      displayOTPOnScreen("123456", "user@test.com");
+      const { spawn } = await import("node:child_process");
+      expect(spawn).not.toHaveBeenCalled();
+    } finally {
+      Object.defineProperty(process, "platform", {
+        value: originalPlatform,
+        configurable: true,
+      });
+    }
   });
 });
