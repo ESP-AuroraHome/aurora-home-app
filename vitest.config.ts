@@ -40,18 +40,13 @@ export default defineConfig({
         "features/notifications/components/NotificationBellClient.tsx",
         "features/profile/components/ProfilePageContent.tsx",
         "features/profile/components/ProfileSheet.tsx",
-        "features/profile/components/ProfileSheetWrapper.tsx",
-        // purely visual / icon maps
-        "features/datapoint/components/IconDataType.tsx",
         // chart / heavy third-party rendering
         "features/datapoint/components/ChartDatapoint.tsx",
         // complex hooks (useAnimatedValue, useTrend, Drawer)
         "features/datapoint/components/ItemDatapoint.tsx",
-        "features/datapoint/components/DashboardDatapoints.tsx",
         // too large / sub-form fragments — tested indirectly
         "features/profile/components/ProfileCard.tsx",
         "features/profile/components/AvatarSelector.tsx",
-        "features/profile/components/EditableFields.tsx",
         "**/__tests__/**",
         "**/*.test.ts",
         "**/*.test.tsx",
