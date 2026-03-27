@@ -103,7 +103,6 @@ export default function NotificationSheet({
             )}
           </div>
 
-          {/* Indicateur santé globale */}
           {!hasActiveIssues && (
             <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/20">
               <House strokeWidth={1} size={20} className="bg-emerald-400 p-0.5 rounded-full flex-shrink-0" />
@@ -113,7 +112,6 @@ export default function NotificationSheet({
             </div>
           )}
 
-          {/* Tabs */}
           <div className="flex gap-1 mt-3">
             {tabs.map((t) => (
               <button
@@ -139,7 +137,6 @@ export default function NotificationSheet({
           </div>
         </SheetHeader>
 
-        {/* Liste */}
         <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2">
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full gap-4 py-16 px-6 text-center">

@@ -91,7 +91,6 @@ export default function NotificationPrefsCard({ initialSensorPrefs, initialSetti
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Per-sensor toggles */}
       <div className="bg-black/20 backdrop-blur-md rounded-3xl overflow-hidden">
         {DATA_TYPES.map((type, i) => {
           const meta = SENSOR_META[type];
@@ -108,7 +107,6 @@ export default function NotificationPrefsCard({ initialSensorPrefs, initialSetti
                 <span className="text-sm">{t(`sensor.${type}`)}</span>
               </div>
 
-              {/* Min severity */}
               <div className="w-28">
                 <Select
                   value={pref.minSeverity}
@@ -131,7 +129,6 @@ export default function NotificationPrefsCard({ initialSensorPrefs, initialSetti
                 </Select>
               </div>
 
-              {/* Toggle */}
               <Switch
                 checked={pref.enabled}
                 onCheckedChange={(v) =>
@@ -146,7 +143,6 @@ export default function NotificationPrefsCard({ initialSensorPrefs, initialSetti
         })}
       </div>
 
-      {/* Quiet hours */}
       <div className="bg-black/20 backdrop-blur-md rounded-3xl overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
           <div className="flex flex-col gap-0.5">
@@ -185,7 +181,6 @@ export default function NotificationPrefsCard({ initialSensorPrefs, initialSetti
         )}
       </div>
 
-      {/* Save */}
       {hasChanges && (
         <div className="bg-black/20 backdrop-blur-md rounded-3xl p-4">
           <ButtonForm

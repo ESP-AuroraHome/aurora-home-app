@@ -119,7 +119,6 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
 
         return (
           <div key={type} className="bg-black/20 backdrop-blur-md rounded-3xl overflow-hidden">
-            {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
               <div className="flex items-center gap-2 text-white">
                 {meta.icon}
@@ -135,7 +134,6 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
               </button>
             </div>
 
-            {/* High threshold */}
             {hasHigh && (
               <div className="flex items-center gap-3 px-6 py-3 border-b border-white/5">
                 <span className="text-white/50 text-xs w-16 flex-shrink-0">{t("high")}</span>
@@ -156,7 +154,6 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
               </div>
             )}
 
-            {/* Low threshold */}
             {hasLow && (
               <div className="flex items-center gap-3 px-6 py-3">
                 <span className="text-white/50 text-xs w-16 flex-shrink-0">{t("low")}</span>
@@ -180,7 +177,6 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
         );
       })}
 
-      {/* Save button */}
       {hasChanges && (
         <div className="bg-black/20 backdrop-blur-md rounded-3xl p-4">
           <ButtonForm

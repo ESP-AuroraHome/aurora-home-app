@@ -17,9 +17,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
       {steps.map((step, i) => (
         <div key={step.label} className="flex items-center">
           <div className="flex flex-col items-center gap-2">
-            {/* Circle */}
             <div className="relative flex items-center justify-center">
-              {/* Glow behind active step */}
               {i === currentStep && (
                 <div className="absolute inset-0 rounded-full bg-white/20 blur-md scale-150" />
               )}
@@ -44,7 +42,6 @@ export function Stepper({ steps, currentStep }: StepperProps) {
               </div>
             </div>
 
-            {/* Label */}
             <span
               className={`
                 text-[11px] font-medium tracking-wide transition-all duration-300
@@ -55,7 +52,6 @@ export function Stepper({ steps, currentStep }: StepperProps) {
             </span>
           </div>
 
-          {/* Connector */}
           {i < steps.length - 1 && (
             <div className="relative mx-3 mb-6 flex-1 w-14 h-px overflow-hidden">
               <div className="absolute inset-0 bg-white/15 rounded-full" />

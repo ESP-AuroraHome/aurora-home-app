@@ -91,15 +91,12 @@ export default function AlertCard({ alert, onRead, onResolve }: AlertCardProps) 
       } ${isResolved ? "opacity-50" : ""}`}
       onClick={handleRead}
     >
-      {/* Barre de sévérité */}
       <div className={`absolute left-0 top-3 bottom-3 w-0.5 rounded-full ${style.bar}`} />
 
-      {/* Icône capteur */}
       <div className={`flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center ${style.badge} mt-0.5`}>
         {SENSOR_ICONS[alert.sensorType]}
       </div>
 
-      {/* Contenu */}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2 mb-1">
           <p className={`text-sm font-medium leading-snug ${isResolved ? "text-white/40" : "text-white"}`}>
@@ -108,12 +105,10 @@ export default function AlertCard({ alert, onRead, onResolve }: AlertCardProps) 
           <span className="text-white/30 text-xs flex-shrink-0">{timeAgo}</span>
         </div>
 
-        {/* Badge sévérité */}
         <span className={`inline-block text-xs px-2 py-0.5 rounded-full mb-2 ${style.badge}`}>
           {severityLabel}
         </span>
 
-        {/* Suggestions */}
         {!isResolved && suggestions.length > 0 && (
           <div className="flex flex-col gap-1 mb-3">
             {suggestions.map((s) => (
@@ -125,7 +120,6 @@ export default function AlertCard({ alert, onRead, onResolve }: AlertCardProps) 
           </div>
         )}
 
-        {/* Bouton résoudre */}
         {!isResolved && (
           <button
             type="button"
@@ -139,7 +133,6 @@ export default function AlertCard({ alert, onRead, onResolve }: AlertCardProps) 
         )}
       </div>
 
-      {/* Point non lu */}
       {!alert.read && !isResolved && (
         <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-white/60" />
       )}
