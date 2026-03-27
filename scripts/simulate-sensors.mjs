@@ -15,7 +15,7 @@
 const args = process.argv.slice(2);
 
 const BASE_URL = getArg("--url") ?? "http://localhost:3000";
-const INTERVAL_MS = parseInt(getArg("--interval") ?? "3000");
+const INTERVAL_MS = parseInt(getArg("--interval") ?? "3000", 10);
 const ANOMALY_TYPE = getArg("--anomaly"); // "co2" | "temp" | "hum" | null
 
 function getArg(flag) {
@@ -59,7 +59,11 @@ function applyAnomaly() {
     case "temp":
       // Montée de température → dépasse 28°C (WARNING) puis 32°C (HIGH)
       if (step <= 15) {
-        state.temperature = clamp(state.temperature + 1.2 + Math.random() * 0.5, 10, 45);
+        state.temperature = clamp(
+          state.temperature + 1.2 + Math.random() * 0.5,
+          10,
+          45,
+        );
       }
       break;
 
@@ -87,20 +91,20 @@ async function sendData() {
 
   // Dérive naturelle
   state.temperature = drift(state.temperature, 15, 30, 0.3);
-  state.humidity    = drift(state.humidity,    30, 70, 0.5);
-  state.pressure    = drift(state.pressure,   995, 1025, 0.2);
-  state.co2         = drift(state.co2,         350, 700, 8);
-  state.light       = drift(state.light,        50, 800, 25);
+  state.humidity = drift(state.humidity, 30, 70, 0.5);
+  state.pressure = drift(state.pressure, 995, 1025, 0.2);
+  state.co2 = drift(state.co2, 350, 700, 8);
+  state.light = drift(state.light, 50, 800, 25);
 
   // Appliquer l'anomalie par-dessus
   if (ANOMALY_TYPE) applyAnomaly();
 
   const payload = {
     temperature: state.temperature.toFixed(1),
-    humidity:    state.humidity.toFixed(1),
-    pressure:    state.pressure.toFixed(1),
-    co2:         Math.round(state.co2).toString(),
-    light:       Math.round(state.light).toString(),
+    humidity: state.humidity.toFixed(1),
+    pressure: state.pressure.toFixed(1),
+    co2: Math.round(state.co2).toString(),
+    light: Math.round(state.light).toString(),
   };
 
   try {
@@ -114,11 +118,11 @@ async function sendData() {
       const time = new Date().toLocaleTimeString("fr-FR");
       console.log(
         `[${time}] step=${String(step).padStart(3)} | ` +
-        `T=${payload.temperature.padStart(5)}°C  ` +
-        `H=${payload.humidity.padStart(5)}%  ` +
-        `P=${payload.pressure.padStart(7)}hPa  ` +
-        `CO₂=${String(payload.co2).padStart(4)}ppm  ` +
-        `L=${String(payload.light).padStart(4)}lx`,
+          `T=${payload.temperature.padStart(5)}°C  ` +
+          `H=${payload.humidity.padStart(5)}%  ` +
+          `P=${payload.pressure.padStart(7)}hPa  ` +
+          `CO₂=${String(payload.co2).padStart(4)}ppm  ` +
+          `L=${String(payload.light).padStart(4)}lx`,
       );
     } else {
       const text = await res.text();
