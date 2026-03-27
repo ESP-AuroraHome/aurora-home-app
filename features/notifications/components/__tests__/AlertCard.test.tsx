@@ -60,7 +60,7 @@ beforeEach(() => {
   );
 
   vi.mocked(useTranslations).mockImplementation(
-    (ns?: string) =>
+    (_ns?: string) =>
       Object.assign(
         (key: string, _params?: unknown) => {
           const map: Record<string, string> = {
@@ -72,8 +72,8 @@ beforeEach(() => {
             severityWarning: "Attention",
             severityHigh: "Problème",
             severityCritical: "Urgent",
-            [`sensors.TEMPERATURE`]: "Température",
-            [`sensors.HUMIDITY`]: "Humidité",
+            "sensors.TEMPERATURE": "Température",
+            "sensors.HUMIDITY": "Humidité",
           };
           return map[key] ?? key;
         },

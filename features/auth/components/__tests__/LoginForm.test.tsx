@@ -30,6 +30,7 @@ describe("LoginForm", () => {
 
   it("shows validation error when submitting empty email", async () => {
     render(<LoginForm />);
+    // biome-ignore lint/style/noNonNullAssertion: form always rendered in test
     fireEvent.submit(document.querySelector("form")!);
     await waitFor(() => {
       expect(screen.getByText("emailInvalid")).toBeInTheDocument();
@@ -40,6 +41,7 @@ describe("LoginForm", () => {
   it("shows validation error for invalid email format", async () => {
     render(<LoginForm />);
     await userEvent.type(screen.getByRole("textbox"), "notanemail");
+    // biome-ignore lint/style/noNonNullAssertion: form always rendered in test
     fireEvent.submit(document.querySelector("form")!);
     await waitFor(() => {
       expect(screen.getByText("emailInvalid")).toBeInTheDocument();
@@ -51,6 +53,7 @@ describe("LoginForm", () => {
     mockLogin.mockResolvedValue({ success: true });
     render(<LoginForm />);
     await userEvent.type(screen.getByRole("textbox"), "user@example.com");
+    // biome-ignore lint/style/noNonNullAssertion: form always rendered in test
     fireEvent.submit(document.querySelector("form")!);
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledWith({ email: "user@example.com" });
@@ -62,6 +65,7 @@ describe("LoginForm", () => {
     mockLogin.mockResolvedValue({ success: false, error: "Email inconnu" });
     render(<LoginForm />);
     await userEvent.type(screen.getByRole("textbox"), "user@example.com");
+    // biome-ignore lint/style/noNonNullAssertion: form always rendered in test
     fireEvent.submit(document.querySelector("form")!);
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalled();

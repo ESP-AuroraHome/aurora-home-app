@@ -41,6 +41,7 @@ describe("OtpForm", () => {
 
     const otpInput = getOtpInput(container);
     fireEvent.change(otpInput, { target: { value: "123456" } });
+    // biome-ignore lint/style/noNonNullAssertion: form always rendered in test
     fireEvent.submit(document.querySelector("form")!);
 
     await waitFor(() => {
@@ -55,6 +56,7 @@ describe("OtpForm", () => {
 
     const otpInput = getOtpInput(container);
     fireEvent.change(otpInput, { target: { value: "123456" } });
+    // biome-ignore lint/style/noNonNullAssertion: form always rendered in test
     fireEvent.submit(document.querySelector("form")!);
 
     await waitFor(() => {

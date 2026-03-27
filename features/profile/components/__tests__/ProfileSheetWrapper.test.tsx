@@ -8,8 +8,8 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("next/image", () => ({
-  // biome-ignore lint/performance/noImgElement: test stub
   default: ({ alt, src }: { alt: string; src: string }) => (
+    // biome-ignore lint/performance/noImgElement: test stub
     <img alt={alt} src={src} />
   ),
 }));
