@@ -18,17 +18,17 @@ export const thresholdRepository = {
     return prisma.systemThreshold.upsert({
       where: { sensorType: data.sensorType },
       update: {
-        highValue:    data.highValue    ?? null,
+        highValue: data.highValue ?? null,
         highSeverity: data.highSeverity ?? null,
-        lowValue:     data.lowValue     ?? null,
-        lowSeverity:  data.lowSeverity  ?? null,
+        lowValue: data.lowValue ?? null,
+        lowSeverity: data.lowSeverity ?? null,
       },
       create: {
-        sensorType:   data.sensorType,
-        highValue:    data.highValue    ?? null,
+        sensorType: data.sensorType,
+        highValue: data.highValue ?? null,
         highSeverity: data.highSeverity ?? null,
-        lowValue:     data.lowValue     ?? null,
-        lowSeverity:  data.lowSeverity  ?? null,
+        lowValue: data.lowValue ?? null,
+        lowSeverity: data.lowSeverity ?? null,
       },
     });
   },

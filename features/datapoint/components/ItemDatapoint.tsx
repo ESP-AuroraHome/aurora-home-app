@@ -2,8 +2,7 @@
 
 import type { DataPoint, DataType } from "@prisma/client";
 import { Download, Minus, TrendingDown, TrendingUp } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import {
   Drawer,
@@ -117,10 +116,17 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
       );
       const json = await res.json();
       setHistoricalData(
-        json.map((dp: { id: string; type: DataType; value: string; createdAt: string }) => ({
-          ...dp,
-          createdAt: new Date(dp.createdAt),
-        })),
+        json.map(
+          (dp: {
+            id: string;
+            type: DataType;
+            value: string;
+            createdAt: string;
+          }) => ({
+            ...dp,
+            createdAt: new Date(dp.createdAt),
+          }),
+        ),
       );
     } finally {
       setLoadingHistory(false);
@@ -184,7 +190,7 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
   const numericValue = parseFloat(lastDatapoint.value);
   const numericValues = sortedDatapoints
     .map((dp) => parseFloat(dp.value))
-    .filter((v) => !isNaN(v));
+    .filter((v) => !Number.isNaN(v));
 
   return (
     <Drawer>
@@ -201,7 +207,15 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
               </div>
 
               <p className="text-slate-200 text-sm">
-                {lastDatapoint.createdAt.toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short", year: "numeric" }).replace(/,/g, "").replace(/\b\w/g, (c) => c.toUpperCase())}
+                {lastDatapoint.createdAt
+                  .toLocaleDateString(locale, {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })
+                  .replace(/,/g, "")
+                  .replace(/\b\w/g, (c) => c.toUpperCase())}
               </p>
             </div>
             <div className="flex flex-col items-end gap-1">
@@ -234,7 +248,15 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
                 </DrawerTitle>
               </div>
               <DrawerDescription className="text-slate-200 text-sm">
-                {lastDatapoint.createdAt.toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short", year: "numeric" }).replace(/,/g, "").replace(/\b\w/g, (c) => c.toUpperCase())}
+                {lastDatapoint.createdAt
+                  .toLocaleDateString(locale, {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })
+                  .replace(/,/g, "")
+                  .replace(/\b\w/g, (c) => c.toUpperCase())}
               </DrawerDescription>
             </div>
             <div className="flex flex-col items-end gap-1">

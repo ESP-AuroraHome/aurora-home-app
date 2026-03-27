@@ -1,10 +1,15 @@
 import type { DataType, Severity } from "@prisma/client";
 import mqtt from "mqtt";
-import { alertRepository } from "@/features/notifications/repository/alertRepository";
 import { dataPointRepository } from "@/features/datapoint/repository/dataPointRepository";
+import { alertRepository } from "@/features/notifications/repository/alertRepository";
 import { notificationPreferenceRepository } from "@/features/settings/repository/notificationPreferenceRepository";
 import { thresholdRepository } from "@/features/settings/repository/thresholdRepository";
-import { detectAnomaly, getResolvableAlertTypes, WARMUP_MIN_POINTS, type ThresholdOverride } from "./anomaly-detector";
+import {
+  detectAnomaly,
+  getResolvableAlertTypes,
+  type ThresholdOverride,
+  WARMUP_MIN_POINTS,
+} from "./anomaly-detector";
 import { sensorEmitter } from "./sensor-emitter";
 
 let thresholdCache: Record<string, ThresholdOverride> = {};
@@ -19,12 +24,15 @@ async function getThresholds(): Promise<Record<string, ThresholdOverride>> {
   if (Date.now() - thresholdCacheAt < 60_000) return thresholdCache;
   const rows = await thresholdRepository.findAll();
   thresholdCache = Object.fromEntries(
-    rows.map((r) => [r.sensorType, {
-      highValue:    r.highValue,
-      highSeverity: r.highSeverity,
-      lowValue:     r.lowValue,
-      lowSeverity:  r.lowSeverity,
-    }]),
+    rows.map((r) => [
+      r.sensorType,
+      {
+        highValue: r.highValue,
+        highSeverity: r.highSeverity,
+        lowValue: r.lowValue,
+        lowSeverity: r.lowSeverity,
+      },
+    ]),
   );
   thresholdCacheAt = Date.now();
   return thresholdCache;
@@ -52,7 +60,10 @@ async function getPrefs(): Promise<PrefsCache> {
   ]);
   prefsCache = {
     sensors: Object.fromEntries(
-      sensorPrefs.map((p) => [p.sensorType, { enabled: p.enabled, minSeverity: p.minSeverity }]),
+      sensorPrefs.map((p) => [
+        p.sensorType,
+        { enabled: p.enabled, minSeverity: p.minSeverity },
+      ]),
     ),
     quietStart: settings?.quietStart ?? null,
     quietEnd: settings?.quietEnd ?? null,
@@ -61,7 +72,11 @@ async function getPrefs(): Promise<PrefsCache> {
   return prefsCache;
 }
 
-const SEVERITY_LEVEL: Record<Severity, number> = { WARNING: 0, HIGH: 1, CRITICAL: 2 };
+const SEVERITY_LEVEL: Record<Severity, number> = {
+  WARNING: 0,
+  HIGH: 1,
+  CRITICAL: 2,
+};
 
 /**
  * Returns `true` if the current hour falls within the user-defined quiet hours window.
@@ -70,7 +85,10 @@ const SEVERITY_LEVEL: Record<Severity, number> = { WARNING: 0, HIGH: 1, CRITICAL
  * @param quietStart - Start hour (0–23), or `null` if not configured.
  * @param quietEnd - End hour (0–23), or `null` if not configured.
  */
-function isInQuietHours(quietStart: number | null, quietEnd: number | null): boolean {
+function isInQuietHours(
+  quietStart: number | null,
+  quietEnd: number | null,
+): boolean {
   if (quietStart === null || quietEnd === null) return false;
   const hour = new Date().getHours();
   if (quietStart <= quietEnd) return hour >= quietStart && hour < quietEnd;
@@ -167,22 +185,38 @@ export function startMqttClient() {
           };
 
           const numericValue = parseFloat(valueStr);
-          if (!isNaN(numericValue)) {
-            const recent = await dataPointRepository.findLatestByType(dataType, WARMUP_MIN_POINTS + 1);
+          if (!Number.isNaN(numericValue)) {
+            const recent = await dataPointRepository.findLatestByType(
+              dataType,
+              WARMUP_MIN_POINTS + 1,
+            );
             const recentValues = recent
               .slice(1)
               .map((p) => parseFloat(p.value))
-              .filter((v) => !isNaN(v));
+              .filter((v) => !Number.isNaN(v));
 
-            const [thresholds, prefs] = await Promise.all([getThresholds(), getPrefs()]);
+            const [thresholds, prefs] = await Promise.all([
+              getThresholds(),
+              getPrefs(),
+            ]);
 
-            const resolvable = getResolvableAlertTypes(dataType, numericValue, recentValues, thresholds[dataType]);
+            const resolvable = getResolvableAlertTypes(
+              dataType,
+              numericValue,
+              recentValues,
+              thresholds[dataType],
+            );
             let totalResolved = 0;
             for (const alertType of resolvable) {
-              totalResolved += await alertRepository.resolveUnresolvedByType(dataType, alertType);
+              totalResolved += await alertRepository.resolveUnresolvedByType(
+                dataType,
+                alertType,
+              );
             }
             if (totalResolved > 0) {
-              console.log(`✅ ${totalResolved} alerte(s) auto-résolue(s) pour ${dataType}`);
+              console.log(
+                `✅ ${totalResolved} alerte(s) auto-résolue(s) pour ${dataType}`,
+              );
               sensorEmitter.emit("alerts_auto_resolved", {
                 type: "alerts_auto_resolved",
                 data: { sensorType: dataType },
@@ -191,27 +225,43 @@ export function startMqttClient() {
 
             const totalPoints = recent.length;
             if (totalPoints <= WARMUP_MIN_POINTS) {
-              console.log(`⏳ Chauffe ${dataType} : ${totalPoints}/${WARMUP_MIN_POINTS} points collectés — alertes désactivées`);
+              console.log(
+                `⏳ Chauffe ${dataType} : ${totalPoints}/${WARMUP_MIN_POINTS} points collectés — alertes désactivées`,
+              );
             } else {
               if (!warmupCompleteEmitted) {
                 warmupCompleteEmitted = true;
                 console.log(`🎓 Chauffe terminée — alertes activées`);
-                sensorEmitter.emit("warmup_complete", { type: "warmup_complete", data: {} });
+                sensorEmitter.emit("warmup_complete", {
+                  type: "warmup_complete",
+                  data: {},
+                });
               }
 
-              const detection = detectAnomaly(dataType, numericValue, recentValues, thresholds[dataType]);
+              const detection = detectAnomaly(
+                dataType,
+                numericValue,
+                recentValues,
+                thresholds[dataType],
+              );
 
               if (detection) {
                 const sensorPref = prefs.sensors[dataType];
                 const isEnabled = sensorPref?.enabled ?? true;
                 const minSeverity = sensorPref?.minSeverity ?? "WARNING";
-                const severityOk = SEVERITY_LEVEL[detection.severity] >= SEVERITY_LEVEL[minSeverity];
-                const quietOk = !isInQuietHours(prefs.quietStart, prefs.quietEnd);
-
-                const alreadyAlerted = await alertRepository.hasRecentUnresolved(
-                  dataType,
-                  detection.type,
+                const severityOk =
+                  SEVERITY_LEVEL[detection.severity] >=
+                  SEVERITY_LEVEL[minSeverity];
+                const quietOk = !isInQuietHours(
+                  prefs.quietStart,
+                  prefs.quietEnd,
                 );
+
+                const alreadyAlerted =
+                  await alertRepository.hasRecentUnresolved(
+                    dataType,
+                    detection.type,
+                  );
                 if (!alreadyAlerted && isEnabled && severityOk && quietOk) {
                   const alert = await alertRepository.create(detection);
                   sensorEmitter.emit("alert_created", {

@@ -10,13 +10,14 @@ export async function GET() {
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const { sensorType, highValue, highSeverity, lowValue, lowSeverity } = body as {
-    sensorType:   DataType;
-    highValue:    number | null;
-    highSeverity: Severity | null;
-    lowValue:     number | null;
-    lowSeverity:  Severity | null;
-  };
+  const { sensorType, highValue, highSeverity, lowValue, lowSeverity } =
+    body as {
+      sensorType: DataType;
+      highValue: number | null;
+      highSeverity: Severity | null;
+      lowValue: number | null;
+      lowSeverity: Severity | null;
+    };
 
   if (!sensorType) {
     return NextResponse.json({ error: "Missing sensorType" }, { status: 400 });

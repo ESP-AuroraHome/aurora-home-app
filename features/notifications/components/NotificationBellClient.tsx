@@ -4,8 +4,14 @@ import { useAlertsContext } from "@/contexts/AlertsContext";
 import NotificationSheet from "./NotificationSheet";
 
 export default function NotificationBellClient() {
-  const { alerts, unreadCount, markAlertRead, resolveAlertLocally, markAllReadLocally, resolveAllLocally } =
-    useAlertsContext();
+  const {
+    alerts,
+    unreadCount,
+    markAlertRead,
+    resolveAlertLocally,
+    markAllReadLocally,
+    resolveAllLocally,
+  } = useAlertsContext();
 
   return (
     <NotificationSheet

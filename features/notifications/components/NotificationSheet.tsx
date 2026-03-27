@@ -30,7 +30,7 @@ export default function NotificationSheet({
   unreadCount,
   onRead,
   onResolve,
-  onMarkAllRead,
+  onMarkAllRead: _onMarkAllRead,
   onResolveAll,
 }: NotificationSheetProps) {
   const t = useTranslations("notifications");
@@ -38,7 +38,7 @@ export default function NotificationSheet({
   const [isPending, startTransition] = useTransition();
 
   const filtered = alerts.filter((a) => {
-    if (tab === "unread")   return !a.read && !a.resolvedAt;
+    if (tab === "unread") return !a.read && !a.resolvedAt;
     if (tab === "resolved") return !!a.resolvedAt;
     return !a.resolvedAt;
   });
@@ -54,9 +54,13 @@ export default function NotificationSheet({
   const hasActiveIssues = activeAlerts.length > 0;
 
   const tabs: { key: Tab; label: string; count?: number }[] = [
-    { key: "all",      label: t("tabAll"),      count: activeAlerts.length },
-    { key: "unread",   label: t("tabUnread"),   count: unreadCount },
-    { key: "resolved", label: t("tabResolved"), count: alerts.filter((a) => !!a.resolvedAt).length },
+    { key: "all", label: t("tabAll"), count: activeAlerts.length },
+    { key: "unread", label: t("tabUnread"), count: unreadCount },
+    {
+      key: "resolved",
+      label: t("tabResolved"),
+      count: alerts.filter((a) => !!a.resolvedAt).length,
+    },
   ];
 
   return (
@@ -69,13 +73,15 @@ export default function NotificationSheet({
         >
           <Bell className="w-5 h-5" />
           {unreadCount > 0 && (
-            <span className={`absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold rounded-full px-1 text-white ${
-              alerts.some((a) => !a.read && a.severity === "CRITICAL")
-                ? "bg-red-500"
-                : alerts.some((a) => !a.read && a.severity === "HIGH")
-                  ? "bg-orange-500"
-                  : "bg-yellow-500"
-            }`}>
+            <span
+              className={`absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold rounded-full px-1 text-white ${
+                alerts.some((a) => !a.read && a.severity === "CRITICAL")
+                  ? "bg-red-500"
+                  : alerts.some((a) => !a.read && a.severity === "HIGH")
+                    ? "bg-orange-500"
+                    : "bg-yellow-500"
+              }`}
+            >
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
@@ -105,7 +111,11 @@ export default function NotificationSheet({
 
           {!hasActiveIssues && (
             <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/20">
-              <House strokeWidth={1} size={20} className="bg-emerald-400 p-0.5 rounded-full flex-shrink-0" />
+              <House
+                strokeWidth={1}
+                size={20}
+                className="bg-emerald-400 p-0.5 rounded-full flex-shrink-0"
+              />
               <p className="text-emerald-300 text-xs font-medium">
                 {t("allSensorsNormal")}
               </p>
@@ -126,9 +136,11 @@ export default function NotificationSheet({
               >
                 {t.label}
                 {t.count !== undefined && t.count > 0 && (
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                    tab === t.key ? "bg-white/20" : "bg-white/10"
-                  }`}>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                      tab === t.key ? "bg-white/20" : "bg-white/10"
+                    }`}
+                  >
                     {t.count}
                   </span>
                 )}
@@ -148,7 +160,9 @@ export default function NotificationSheet({
                   {tab === "resolved" ? t("emptyResolved") : t("emptyHealthy")}
                 </p>
                 <p className="text-white/40 text-xs leading-relaxed">
-                  {tab === "resolved" ? t("emptyResolvedDesc") : t("emptyHealthyDesc")}
+                  {tab === "resolved"
+                    ? t("emptyResolvedDesc")
+                    : t("emptyHealthyDesc")}
                 </p>
               </div>
             </div>

@@ -3,8 +3,8 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
 import { userRepository } from "@/features/profile/repository/userRepository";
+import { auth } from "@/lib/auth";
 
 const onboardingSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),

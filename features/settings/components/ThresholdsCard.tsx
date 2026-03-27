@@ -1,7 +1,16 @@
 "use client";
 
 import type { DataType, Severity, SystemThreshold } from "@prisma/client";
-import { Cloud, Droplet, Gauge, Minus, Plus, RotateCcw, Sun, Thermometer } from "lucide-react";
+import {
+  Cloud,
+  Droplet,
+  Gauge,
+  Minus,
+  Plus,
+  RotateCcw,
+  Sun,
+  Thermometer,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,22 +24,28 @@ import {
 } from "@/components/ui/select";
 
 const DEFAULTS: Record<DataType, { highValue?: number; lowValue?: number }> = {
-  TEMPERATURE: { highValue: 28,  lowValue: 14  },
-  HUMIDITY:    { highValue: 70,  lowValue: 25  },
-  PRESSURE:    {                 lowValue: 970 },
-  CO2:         { highValue: 800               },
-  LIGHT:       {},
+  TEMPERATURE: { highValue: 28, lowValue: 14 },
+  HUMIDITY: { highValue: 70, lowValue: 25 },
+  PRESSURE: { lowValue: 970 },
+  CO2: { highValue: 800 },
+  LIGHT: {},
 };
 
 const SENSOR_META: Record<DataType, { icon: React.ReactNode; unit: string }> = {
-  TEMPERATURE: { icon: <Thermometer className="w-4 h-4" />, unit: "°C"  },
-  HUMIDITY:    { icon: <Droplet className="w-4 h-4" />,     unit: "%"   },
-  PRESSURE:    { icon: <Gauge className="w-4 h-4" />,       unit: "hPa" },
-  CO2:         { icon: <Cloud className="w-4 h-4" />,       unit: "ppm" },
-  LIGHT:       { icon: <Sun className="w-4 h-4" />,         unit: "lx"  },
+  TEMPERATURE: { icon: <Thermometer className="w-4 h-4" />, unit: "°C" },
+  HUMIDITY: { icon: <Droplet className="w-4 h-4" />, unit: "%" },
+  PRESSURE: { icon: <Gauge className="w-4 h-4" />, unit: "hPa" },
+  CO2: { icon: <Cloud className="w-4 h-4" />, unit: "ppm" },
+  LIGHT: { icon: <Sun className="w-4 h-4" />, unit: "lx" },
 };
 
-const DATA_TYPES: DataType[] = ["TEMPERATURE", "HUMIDITY", "PRESSURE", "CO2", "LIGHT"];
+const DATA_TYPES: DataType[] = [
+  "TEMPERATURE",
+  "HUMIDITY",
+  "PRESSURE",
+  "CO2",
+  "LIGHT",
+];
 
 type LocalThreshold = {
   highValue: string;
@@ -41,10 +56,10 @@ type LocalThreshold = {
 
 function toLocal(t?: SystemThreshold): LocalThreshold {
   return {
-    highValue:    t?.highValue    != null ? String(t.highValue)    : "",
+    highValue: t?.highValue != null ? String(t.highValue) : "",
     highSeverity: t?.highSeverity ?? "",
-    lowValue:     t?.lowValue     != null ? String(t.lowValue)     : "",
-    lowSeverity:  t?.lowSeverity  ?? "",
+    lowValue: t?.lowValue != null ? String(t.lowValue) : "",
+    lowSeverity: t?.lowSeverity ?? "",
   };
 }
 
@@ -65,13 +80,22 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
     return map;
   });
 
-  const [saved, setSaved] = useState<Record<DataType, LocalThreshold>>({ ...values });
+  const [saved, setSaved] = useState<Record<DataType, LocalThreshold>>({
+    ...values,
+  });
   const [loading, setLoading] = useState(false);
 
   const hasChanges = JSON.stringify(values) !== JSON.stringify(saved);
 
-  const update = (type: DataType, field: keyof LocalThreshold, value: string) => {
-    setValues((prev) => ({ ...prev, [type]: { ...prev[type], [field]: value } }));
+  const update = (
+    type: DataType,
+    field: keyof LocalThreshold,
+    value: string,
+  ) => {
+    setValues((prev) => ({
+      ...prev,
+      [type]: { ...prev[type], [field]: value },
+    }));
   };
 
   const reset = (type: DataType) => {
@@ -88,19 +112,19 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              sensorType:   type,
-              highValue:    v.highValue    !== "" ? parseFloat(v.highValue)    : null,
-              highSeverity: v.highSeverity !== "" ? v.highSeverity             : null,
-              lowValue:     v.lowValue     !== "" ? parseFloat(v.lowValue)     : null,
-              lowSeverity:  v.lowSeverity  !== "" ? v.lowSeverity              : null,
+              sensorType: type,
+              highValue: v.highValue !== "" ? parseFloat(v.highValue) : null,
+              highSeverity: v.highSeverity !== "" ? v.highSeverity : null,
+              lowValue: v.lowValue !== "" ? parseFloat(v.lowValue) : null,
+              lowSeverity: v.lowSeverity !== "" ? v.lowSeverity : null,
             }),
           });
         }),
       );
       setSaved({ ...values });
-      toast.success(t("saveSuccess"));
+      toast.success(t("saveSuccessThresholds"));
     } catch {
-      toast.error(t("saveError"));
+      toast.error(t("saveErrorThresholds"));
     } finally {
       setLoading(false);
     }
@@ -109,20 +133,25 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
   return (
     <div className="flex flex-col gap-4">
       {DATA_TYPES.map((type) => {
-        const meta    = SENSOR_META[type];
-        const def     = DEFAULTS[type];
-        const v       = values[type];
+        const meta = SENSOR_META[type];
+        const def = DEFAULTS[type];
+        const v = values[type];
         const hasHigh = def.highValue !== undefined;
-        const hasLow  = def.lowValue  !== undefined;
+        const hasLow = def.lowValue !== undefined;
 
         if (!hasHigh && !hasLow) return null;
 
         return (
-          <div key={type} className="bg-black/20 backdrop-blur-md rounded-3xl overflow-hidden">
+          <div
+            key={type}
+            className="bg-black/20 backdrop-blur-md rounded-3xl overflow-hidden"
+          >
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
               <div className="flex items-center gap-2 text-white">
                 {meta.icon}
-                <span className="text-sm font-semibold">{t(`sensor.${type}`)}</span>
+                <span className="text-sm font-semibold">
+                  {t(`sensor.${type}`)}
+                </span>
               </div>
               <button
                 type="button"
@@ -136,7 +165,9 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
 
             {hasHigh && (
               <div className="flex items-center gap-3 px-6 py-3 border-b border-white/5">
-                <span className="text-white/50 text-xs w-16 flex-shrink-0">{t("high")}</span>
+                <span className="text-white/50 text-xs w-16 flex-shrink-0">
+                  {t("high")}
+                </span>
                 <div className="flex items-center gap-2 flex-1">
                   <NumberInput
                     value={v.highValue}
@@ -144,7 +175,9 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
                     placeholder={String(def.highValue)}
                     step={type === "PRESSURE" ? 1 : type === "CO2" ? 50 : 1}
                   />
-                  <span className="text-white/30 text-xs flex-shrink-0">{meta.unit}</span>
+                  <span className="text-white/30 text-xs flex-shrink-0">
+                    {meta.unit}
+                  </span>
                   <SeveritySelect
                     value={v.highSeverity}
                     onChange={(val) => update(type, "highSeverity", val)}
@@ -156,7 +189,9 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
 
             {hasLow && (
               <div className="flex items-center gap-3 px-6 py-3">
-                <span className="text-white/50 text-xs w-16 flex-shrink-0">{t("low")}</span>
+                <span className="text-white/50 text-xs w-16 flex-shrink-0">
+                  {t("low")}
+                </span>
                 <div className="flex items-center gap-2 flex-1">
                   <NumberInput
                     value={v.lowValue}
@@ -164,7 +199,9 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
                     placeholder={String(def.lowValue)}
                     step={type === "PRESSURE" ? 1 : type === "CO2" ? 50 : 1}
                   />
-                  <span className="text-white/30 text-xs flex-shrink-0">{meta.unit}</span>
+                  <span className="text-white/30 text-xs flex-shrink-0">
+                    {meta.unit}
+                  </span>
                   <SeveritySelect
                     value={v.lowSeverity}
                     onChange={(val) => update(type, "lowSeverity", val)}
@@ -182,7 +219,7 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
           <ButtonForm
             loading={loading}
             text={t("save")}
-            loadingText={t("saving")}
+            loadingText={t("savingThresholds")}
             variant="liquid-glass"
             onClick={save}
           />
@@ -246,9 +283,24 @@ function SeveritySelect({
         <SelectValue placeholder={t("severityPlaceholder")} />
       </SelectTrigger>
       <SelectContent className="bg-white/10 backdrop-blur-xl border-white/10">
-        <SelectItem value="WARNING"  className="text-white focus:bg-white/10 focus:text-white text-xs">{t("severityWarning")}</SelectItem>
-        <SelectItem value="HIGH"     className="text-white focus:bg-white/10 focus:text-white text-xs">{t("severityHigh")}</SelectItem>
-        <SelectItem value="CRITICAL" className="text-white focus:bg-white/10 focus:text-white text-xs">{t("severityCritical")}</SelectItem>
+        <SelectItem
+          value="WARNING"
+          className="text-white focus:bg-white/10 focus:text-white text-xs"
+        >
+          {t("severityWarning")}
+        </SelectItem>
+        <SelectItem
+          value="HIGH"
+          className="text-white focus:bg-white/10 focus:text-white text-xs"
+        >
+          {t("severityHigh")}
+        </SelectItem>
+        <SelectItem
+          value="CRITICAL"
+          className="text-white focus:bg-white/10 focus:text-white text-xs"
+        >
+          {t("severityCritical")}
+        </SelectItem>
       </SelectContent>
     </Select>
   );

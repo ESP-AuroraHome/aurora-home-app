@@ -156,23 +156,26 @@ function StepWelcome({
           Bienvenue sur Aurora Home
         </h1>
         <p className="text-white/60 text-sm leading-relaxed">
-          Commençons par personnaliser votre espace. Comment souhaitez-vous
-          être appelé ?
+          Commençons par personnaliser votre espace. Comment souhaitez-vous être
+          appelé ?
         </p>
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-white/70 text-xs font-medium uppercase tracking-wider">
+        <label
+          htmlFor="onboarding-name"
+          className="text-white/70 text-xs font-medium uppercase tracking-wider"
+        >
           Votre prénom
         </label>
         <input
+          id="onboarding-name"
           type="text"
           value={name}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Ex : Marie"
           className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 outline-none focus:border-white/50 focus:bg-white/15 transition-all"
           onKeyDown={(e) => e.key === "Enter" && name.trim() && onNext()}
-          autoFocus
         />
       </div>
 

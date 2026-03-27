@@ -96,6 +96,31 @@ describe("updateUserProfile", () => {
     }
   });
 
+  it("should treat empty string image as null", async () => {
+    const updatedUser = {
+      id: "user-1",
+      name: "Alice",
+      email: "alice@test.com",
+      image: null,
+    };
+    mockAuth.api.getSession.mockResolvedValue({ user: { id: "user-1" } });
+    mockRepo.findByEmail.mockResolvedValue(null);
+    mockRepo.update.mockResolvedValue(updatedUser);
+
+    const { default: updateUserProfile } = await import("../updateUserProfile");
+    const result = await updateUserProfile({
+      name: "Alice",
+      email: "alice@test.com",
+      image: "",
+    });
+
+    expect(result.success).toBe(true);
+    expect(mockRepo.update).toHaveBeenCalledWith(
+      "user-1",
+      expect.objectContaining({ image: null }),
+    );
+  });
+
   it("should fail when email already used by another user", async () => {
     mockAuth.api.getSession.mockResolvedValue({
       user: { id: "user-1" },

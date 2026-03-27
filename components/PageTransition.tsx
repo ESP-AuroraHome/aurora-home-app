@@ -5,7 +5,11 @@ import { useEffect } from "react";
 
 let hasNavigated = false;
 
-export default function PageTransition({ children }: { children: React.ReactNode }) {
+export default function PageTransition({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const controls = useAnimation();
 
   useEffect(() => {

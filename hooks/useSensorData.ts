@@ -45,7 +45,9 @@ export function useSensorData(
   const [data, setData] = useState<DataPointsByType>(initialData);
   const [alerts, setAlerts] = useState<SerializedAlert[]>(initialAlerts);
   const esRef = useRef<EventSource | null>(null);
-  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   const connect = useCallback(() => {
     const es = new EventSource("/api/sensor-stream");
@@ -72,7 +74,10 @@ export function useSensorData(
                     : new Date(dp.createdAt).toISOString(),
               };
               const existing = next[key] || [];
-              next[key] = [serialized, ...existing].slice(0, MAX_POINTS_PER_TYPE);
+              next[key] = [serialized, ...existing].slice(
+                0,
+                MAX_POINTS_PER_TYPE,
+              );
             }
             return next;
           });
@@ -96,7 +101,8 @@ export function useSensorData(
   useEffect(() => {
     connect();
     return () => {
-      if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
+      if (reconnectTimeoutRef.current)
+        clearTimeout(reconnectTimeoutRef.current);
       esRef.current?.close();
     };
   }, [connect]);
@@ -110,7 +116,9 @@ export function useSensorData(
   const resolveAlertLocally = (id: string) => {
     setAlerts((prev) =>
       prev.map((a) =>
-        a.id === id ? { ...a, read: true, resolvedAt: new Date().toISOString() } : a,
+        a.id === id
+          ? { ...a, read: true, resolvedAt: new Date().toISOString() }
+          : a,
       ),
     );
   };
@@ -121,5 +129,12 @@ export function useSensorData(
 
   const unreadCount = alerts.filter((a) => !a.read).length;
 
-  return { data, alerts, unreadCount, markAlertRead, resolveAlertLocally, markAllReadLocally };
+  return {
+    data,
+    alerts,
+    unreadCount,
+    markAlertRead,
+    resolveAlertLocally,
+    markAllReadLocally,
+  };
 }

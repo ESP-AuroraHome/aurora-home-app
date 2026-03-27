@@ -18,11 +18,14 @@ export function AlertsProvider({
   children: React.ReactNode;
 }) {
   const value = useAlerts(initialAlerts, initialIsWarmingUp);
-  return <AlertsContext.Provider value={value}>{children}</AlertsContext.Provider>;
+  return (
+    <AlertsContext.Provider value={value}>{children}</AlertsContext.Provider>
+  );
 }
 
 export function useAlertsContext(): AlertsContextValue {
   const ctx = useContext(AlertsContext);
-  if (!ctx) throw new Error("useAlertsContext must be used within AlertsProvider");
+  if (!ctx)
+    throw new Error("useAlertsContext must be used within AlertsProvider");
   return ctx;
 }

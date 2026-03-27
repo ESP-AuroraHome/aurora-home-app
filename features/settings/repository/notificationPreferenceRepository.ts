@@ -1,4 +1,9 @@
-import type { DataType, NotificationSettings, Severity, SensorPreference } from "@prisma/client";
+import type {
+  DataType,
+  NotificationSettings,
+  SensorPreference,
+  Severity,
+} from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 export const notificationPreferenceRepository = {
@@ -14,7 +19,11 @@ export const notificationPreferenceRepository = {
     return prisma.sensorPreference.upsert({
       where: { sensorType: data.sensorType },
       update: { enabled: data.enabled, minSeverity: data.minSeverity },
-      create: { sensorType: data.sensorType, enabled: data.enabled, minSeverity: data.minSeverity },
+      create: {
+        sensorType: data.sensorType,
+        enabled: data.enabled,
+        minSeverity: data.minSeverity,
+      },
     });
   },
 
@@ -29,7 +38,11 @@ export const notificationPreferenceRepository = {
     return prisma.notificationSettings.upsert({
       where: { id: "default" },
       update: { quietStart: data.quietStart, quietEnd: data.quietEnd },
-      create: { id: "default", quietStart: data.quietStart, quietEnd: data.quietEnd },
+      create: {
+        id: "default",
+        quietStart: data.quietStart,
+        quietEnd: data.quietEnd,
+      },
     });
   },
 };

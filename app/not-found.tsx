@@ -1,6 +1,6 @@
+import { House } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { House } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 export default async function NotFound() {

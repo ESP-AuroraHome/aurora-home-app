@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
-import { AlertsProvider } from "@/contexts/AlertsContext";
 import Header from "@/components/specific/header";
+import { AlertsProvider } from "@/contexts/AlertsContext";
 import DashboardDatapoints from "@/features/datapoint/components/DashboardDatapoints";
 import { getInitialDataPoints } from "@/features/datapoint/usecase/getInitialDataPoints";
 import DashboardAlertShell from "@/features/notifications/components/DashboardAlertShell";
@@ -18,7 +18,10 @@ export default async function Home() {
   ]);
 
   return (
-    <AlertsProvider initialAlerts={initialAlerts} initialIsWarmingUp={initialIsWarmingUp}>
+    <AlertsProvider
+      initialAlerts={initialAlerts}
+      initialIsWarmingUp={initialIsWarmingUp}
+    >
       <div className="flex flex-col h-full w-full">
         <div className="flex flex-col gap-6 md:gap-8 lg:gap-12 p-6 md:p-8 lg:p-12 pb-6 md:pb-8 lg:pb-12 overflow-y-auto flex-1 z-10">
           <div className="max-w-7xl mx-auto w-full flex flex-col gap-15 md:gap-8 lg:gap-12">
@@ -35,5 +38,4 @@ export default async function Home() {
       </div>
     </AlertsProvider>
   );
-
 }

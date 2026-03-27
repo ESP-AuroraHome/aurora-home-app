@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { SerializedAlert } from "./useSensorData";
 
-export function useAlerts(initialAlerts: SerializedAlert[] = [], initialIsWarmingUp = false) {
+export function useAlerts(
+  initialAlerts: SerializedAlert[] = [],
+  initialIsWarmingUp = false,
+) {
   const [alerts, setAlerts] = useState<SerializedAlert[]>(initialAlerts);
   const [isWarmingUp, setIsWarmingUp] = useState(initialIsWarmingUp);
   const esRef = useRef<EventSource | null>(null);
@@ -15,7 +18,10 @@ export function useAlerts(initialAlerts: SerializedAlert[] = [], initialIsWarmin
 
     es.onmessage = (event) => {
       try {
-        const message = JSON.parse(event.data) as { type: string; data: SerializedAlert & { sensorType?: string } };
+        const message = JSON.parse(event.data) as {
+          type: string;
+          data: SerializedAlert & { sensorType?: string };
+        };
         if (message.type === "alert_created") {
           setAlerts((prev) => [message.data, ...prev]);
         } else if (message.type === "alerts_auto_resolved") {
@@ -48,12 +54,16 @@ export function useAlerts(initialAlerts: SerializedAlert[] = [], initialIsWarmin
   }, [connect]);
 
   const markAlertRead = (id: string) =>
-    setAlerts((prev) => prev.map((a) => (a.id === id ? { ...a, read: true } : a)));
+    setAlerts((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, read: true } : a)),
+    );
 
   const resolveAlertLocally = (id: string) =>
     setAlerts((prev) =>
       prev.map((a) =>
-        a.id === id ? { ...a, read: true, resolvedAt: new Date().toISOString() } : a,
+        a.id === id
+          ? { ...a, read: true, resolvedAt: new Date().toISOString() }
+          : a,
       ),
     );
 
@@ -62,10 +72,22 @@ export function useAlerts(initialAlerts: SerializedAlert[] = [], initialIsWarmin
 
   const resolveAllLocally = () =>
     setAlerts((prev) =>
-      prev.map((a) => ({ ...a, read: true, resolvedAt: a.resolvedAt ?? new Date().toISOString() })),
+      prev.map((a) => ({
+        ...a,
+        read: true,
+        resolvedAt: a.resolvedAt ?? new Date().toISOString(),
+      })),
     );
 
   const unreadCount = alerts.filter((a) => !a.read && !a.resolvedAt).length;
 
-  return { alerts, unreadCount, isWarmingUp, markAlertRead, resolveAlertLocally, markAllReadLocally, resolveAllLocally };
+  return {
+    alerts,
+    unreadCount,
+    isWarmingUp,
+    markAlertRead,
+    resolveAlertLocally,
+    markAllReadLocally,
+    resolveAllLocally,
+  };
 }

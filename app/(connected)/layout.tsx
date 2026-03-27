@@ -1,8 +1,8 @@
-import Image from "next/image";
 import { headers } from "next/headers";
+import Image from "next/image";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
 import { userRepository } from "@/features/profile/repository/userRepository";
+import { auth } from "@/lib/auth";
 
 const ConnectedLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth.api.getSession({
