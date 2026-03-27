@@ -8,17 +8,24 @@ interface Props {
   data: Record<DataType, SerializedDataPoint[]>;
 }
 
-function getLatest(data: Record<DataType, SerializedDataPoint[]>, type: DataType): number | null {
+function getLatest(
+  data: Record<DataType, SerializedDataPoint[]>,
+  type: DataType,
+): number | null {
   const points = data[type];
   if (!points || points.length === 0) return null;
   const sorted = [...points].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
   const val = parseFloat(sorted[0].value);
-  return isNaN(val) ? null : val;
+  return Number.isNaN(val) ? null : val;
 }
 
-function computeIAQ(temp: number | null, humidity: number | null, co2: number | null): number | null {
+function computeIAQ(
+  temp: number | null,
+  humidity: number | null,
+  co2: number | null,
+): number | null {
   if (temp === null && humidity === null && co2 === null) return null;
 
   let score = 0;
@@ -49,22 +56,48 @@ function computeIAQ(temp: number | null, humidity: number | null, co2: number | 
 }
 
 const LEVEL_KEYS = [
-  { min: 80, key: "excellent" as const, dot: "bg-emerald-400", text: "text-emerald-300", bar: "bg-emerald-400" },
-  { min: 60, key: "good"      as const, dot: "bg-sky-400",     text: "text-sky-300",     bar: "bg-sky-400"     },
-  { min: 40, key: "moderate"  as const, dot: "bg-yellow-400",  text: "text-yellow-300",  bar: "bg-yellow-400"  },
-  { min: 0,  key: "poor"      as const, dot: "bg-red-400",     text: "text-red-300",     bar: "bg-red-400"     },
+  {
+    min: 80,
+    key: "excellent" as const,
+    dot: "bg-emerald-400",
+    text: "text-emerald-300",
+    bar: "bg-emerald-400",
+  },
+  {
+    min: 60,
+    key: "good" as const,
+    dot: "bg-sky-400",
+    text: "text-sky-300",
+    bar: "bg-sky-400",
+  },
+  {
+    min: 40,
+    key: "moderate" as const,
+    dot: "bg-yellow-400",
+    text: "text-yellow-300",
+    bar: "bg-yellow-400",
+  },
+  {
+    min: 0,
+    key: "poor" as const,
+    dot: "bg-red-400",
+    text: "text-red-300",
+    bar: "bg-red-400",
+  },
 ];
 
 function getLevelKey(score: number) {
-  return LEVEL_KEYS.find((l) => score >= l.min) ?? LEVEL_KEYS[LEVEL_KEYS.length - 1];
+  return (
+    LEVEL_KEYS.find((l) => score >= l.min) ?? LEVEL_KEYS[LEVEL_KEYS.length - 1]
+  );
 }
 
 export default function IAQScore({ data }: Props) {
-  const t        = useTranslations("iaq");
-  const temp     = getLatest(data, "TEMPERATURE");
+  const t = useTranslations("iaq");
+  const temp = getLatest(data, "TEMPERATURE");
   const humidity = getLatest(data, "HUMIDITY");
-  const co2      = getLatest(data, "CO2");
-  const score    = computeIAQ(temp, humidity, co2);
+  const co2 = getLatest(data, "CO2");
+  const score = computeIAQ(temp, humidity, co2);
 
   if (score === null) return null;
 
@@ -87,7 +120,10 @@ export default function IAQScore({ data }: Props) {
         <p className="text-white/40 text-xs">{t(`${level.key}Desc`)}</p>
       </div>
 
-      <span className={`text-sm font-bold flex-shrink-0 ${level.text}`}>{score}<span className="text-white/30 font-normal text-xs">/100</span></span>
+      <span className={`text-sm font-bold flex-shrink-0 ${level.text}`}>
+        {score}
+        <span className="text-white/30 font-normal text-xs">/100</span>
+      </span>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { Settings } from "lucide-react";
-import Link from "next/link";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import NotificationBellClient from "@/features/notifications/components/NotificationBellClient";
 import ProfileSheetProvider from "@/features/profile/components/ProfileSheetProvider";

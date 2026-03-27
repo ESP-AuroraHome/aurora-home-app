@@ -10,7 +10,9 @@ const prisma = new PrismaClient();
 
 async function main() {
   const deleted = await prisma.dataPoint.deleteMany({});
-  console.log(`✅ ${deleted.count} DataPoints supprimés — app en état de chauffe`);
+  console.log(
+    `✅ ${deleted.count} DataPoints supprimés — app en état de chauffe`,
+  );
   console.log("   Rechargez le dashboard pour voir le banner de chauffe.");
 }
 

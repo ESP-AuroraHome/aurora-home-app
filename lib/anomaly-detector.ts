@@ -16,7 +16,7 @@ const THRESHOLDS: Record<DataType, SensorThresholds> = {
     low: [
       { value: 14, severity: "WARNING" },
       { value: 10, severity: "HIGH" },
-      { value: 5,  severity: "CRITICAL" },
+      { value: 5, severity: "CRITICAL" },
     ],
   },
   HUMIDITY: {
@@ -33,7 +33,7 @@ const THRESHOLDS: Record<DataType, SensorThresholds> = {
   },
   CO2: {
     high: [
-      { value: 800,  severity: "WARNING" },
+      { value: 800, severity: "WARNING" },
       { value: 1500, severity: "HIGH" },
       { value: 2000, severity: "CRITICAL" },
     ],
@@ -140,26 +140,26 @@ export interface AlertDetection {
 }
 
 export interface ThresholdOverride {
-  highValue?:    number | null;
+  highValue?: number | null;
   highSeverity?: Severity | null;
-  lowValue?:     number | null;
-  lowSeverity?:  Severity | null;
+  lowValue?: number | null;
+  lowSeverity?: Severity | null;
 }
 
 const SENSOR_LABELS: Record<DataType, string> = {
   TEMPERATURE: "Température",
-  HUMIDITY:    "Humidité",
-  PRESSURE:    "Pression atmosphérique",
-  CO2:         "CO₂",
-  LIGHT:       "Luminosité",
+  HUMIDITY: "Humidité",
+  PRESSURE: "Pression atmosphérique",
+  CO2: "CO₂",
+  LIGHT: "Luminosité",
 };
 
 const SENSOR_UNITS: Record<DataType, string> = {
   TEMPERATURE: "°C",
-  HUMIDITY:    "%",
-  PRESSURE:    "hPa",
-  CO2:         "ppm",
-  LIGHT:       "lx",
+  HUMIDITY: "%",
+  PRESSURE: "hPa",
+  CO2: "ppm",
+  LIGHT: "lx",
 };
 
 /**
@@ -180,8 +180,8 @@ function buildMessage(
   avg?: number,
 ): string {
   const label = SENSOR_LABELS[sensorType];
-  const unit  = SENSOR_UNITS[sensorType];
-  const v     = value.toFixed(1);
+  const unit = SENSOR_UNITS[sensorType];
+  const v = value.toFixed(1);
 
   if (type === "THRESHOLD_HIGH") {
     return `${label} élevée : ${v}${unit} (seuil : ${threshold}${unit})`;
@@ -218,7 +218,7 @@ export function detectAnomaly(
 ): AlertDetection | null {
   const thresholds = THRESHOLDS[sensorType];
 
-  const highValue    = override?.highValue    ?? thresholds.high?.[0]?.value;
+  const highValue = override?.highValue ?? thresholds.high?.[0]?.value;
   const highSeverity = override?.highSeverity ?? thresholds.high?.[0]?.severity;
 
   if (highValue != null && highSeverity != null && value >= highValue) {
@@ -234,7 +234,9 @@ export function detectAnomaly(
   }
 
   if (!override?.highValue && thresholds.high) {
-    const triggered = [...thresholds.high].reverse().find((t) => value >= t.value);
+    const triggered = [...thresholds.high]
+      .reverse()
+      .find((t) => value >= t.value);
     if (triggered) {
       return {
         type: "THRESHOLD_HIGH",
@@ -242,13 +244,18 @@ export function detectAnomaly(
         sensorType,
         value,
         threshold: triggered.value,
-        message: buildMessage("THRESHOLD_HIGH", sensorType, value, triggered.value),
+        message: buildMessage(
+          "THRESHOLD_HIGH",
+          sensorType,
+          value,
+          triggered.value,
+        ),
         suggestions: SUGGESTIONS[sensorType].THRESHOLD_HIGH,
       };
     }
   }
 
-  const lowValue    = override?.lowValue    ?? thresholds.low?.[0]?.value;
+  const lowValue = override?.lowValue ?? thresholds.low?.[0]?.value;
   const lowSeverity = override?.lowSeverity ?? thresholds.low?.[0]?.severity;
 
   if (lowValue != null && lowSeverity != null && value <= lowValue) {
@@ -264,7 +271,9 @@ export function detectAnomaly(
   }
 
   if (!override?.lowValue && thresholds.low) {
-    const triggered = [...thresholds.low].reverse().find((t) => value <= t.value);
+    const triggered = [...thresholds.low]
+      .reverse()
+      .find((t) => value <= t.value);
     if (triggered) {
       return {
         type: "THRESHOLD_LOW",
@@ -272,7 +281,12 @@ export function detectAnomaly(
         sensorType,
         value,
         threshold: triggered.value,
-        message: buildMessage("THRESHOLD_LOW", sensorType, value, triggered.value),
+        message: buildMessage(
+          "THRESHOLD_LOW",
+          sensorType,
+          value,
+          triggered.value,
+        ),
         suggestions: SUGGESTIONS[sensorType].THRESHOLD_LOW,
       };
     }
@@ -283,8 +297,7 @@ export function detectAnomaly(
     if (avg !== 0) {
       const deviation = Math.abs(value - avg) / Math.abs(avg);
       if (deviation >= SUDDEN_CHANGE_THRESHOLD) {
-        const severity: Severity =
-          deviation >= 0.5 ? "HIGH" : "WARNING";
+        const severity: Severity = deviation >= 0.5 ? "HIGH" : "WARNING";
         const suggestions = SUGGESTIONS[sensorType].SUDDEN_CHANGE;
         if (suggestions.length === 0) return null;
         const pct = Math.round(Math.abs((value - avg) / Math.abs(avg)) * 100);
@@ -294,7 +307,13 @@ export function detectAnomaly(
           sensorType,
           value,
           threshold: pct,
-          message: buildMessage("SUDDEN_CHANGE", sensorType, value, undefined, avg),
+          message: buildMessage(
+            "SUDDEN_CHANGE",
+            sensorType,
+            value,
+            undefined,
+            avg,
+          ),
           suggestions,
         };
       }
@@ -320,7 +339,7 @@ export function detectAnomaly(
 export function getResolvableAlertTypes(
   sensorType: DataType,
   value: number,
-  recentValues: number[],
+  _recentValues: number[],
   override?: ThresholdOverride,
 ): AlertType[] {
   const thresholds = THRESHOLDS[sensorType];

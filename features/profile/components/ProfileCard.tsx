@@ -229,7 +229,7 @@ export default function ProfileCard({
                           className="bg-white/10 border-white/20 text-white text-center h-9 text-base"
                           autoFocus
                           {...field}
-                          onBlur={(e) => {
+                          onBlur={(_e) => {
                             field.onBlur();
                             handleBlur();
                           }}
@@ -275,7 +275,7 @@ export default function ProfileCard({
                         className="bg-white/10 border-white/20 text-white h-8 text-sm"
                         autoFocus
                         {...field}
-                        onBlur={(e) => {
+                        onBlur={(_e) => {
                           field.onBlur();
                           handleBlur();
                         }}
@@ -374,7 +374,6 @@ export default function ProfileCard({
               )}
             </div>
           </div>
-
         </div>
 
         {hasChanges && (

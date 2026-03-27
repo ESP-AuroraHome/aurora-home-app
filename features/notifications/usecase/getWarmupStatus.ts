@@ -1,8 +1,14 @@
-import { WARMUP_MIN_POINTS } from "@/lib/anomaly-detector";
-import { dataPointRepository } from "@/features/datapoint/repository/dataPointRepository";
 import type { DataType } from "@prisma/client";
+import { dataPointRepository } from "@/features/datapoint/repository/dataPointRepository";
+import { WARMUP_MIN_POINTS } from "@/lib/anomaly-detector";
 
-const SENSOR_TYPES: DataType[] = ["TEMPERATURE", "HUMIDITY", "CO2", "PRESSURE", "LIGHT"];
+const SENSOR_TYPES: DataType[] = [
+  "TEMPERATURE",
+  "HUMIDITY",
+  "CO2",
+  "PRESSURE",
+  "LIGHT",
+];
 
 /**
  * Determines whether the system is still in its warmup period.

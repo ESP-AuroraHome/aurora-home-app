@@ -10,10 +10,7 @@ const STABILITY_THRESHOLDS: Record<DataType, number> = {
   LIGHT: 30,
 };
 
-export function useTrend(
-  type: DataType,
-  values: number[],
-): TrendDirection {
+export function useTrend(type: DataType, values: number[]): TrendDirection {
   if (values.length < 2) return "stable";
 
   const latest = values[0];

@@ -1,6 +1,11 @@
 "use client";
 
-import type { DataType, NotificationSettings, SensorPreference, Severity } from "@prisma/client";
+import type {
+  DataType,
+  NotificationSettings,
+  SensorPreference,
+  Severity,
+} from "@prisma/client";
 import { Cloud, Droplet, Gauge, Sun, Thermometer } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -15,14 +20,20 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
-const DATA_TYPES: DataType[] = ["TEMPERATURE", "HUMIDITY", "PRESSURE", "CO2", "LIGHT"];
+const DATA_TYPES: DataType[] = [
+  "TEMPERATURE",
+  "HUMIDITY",
+  "PRESSURE",
+  "CO2",
+  "LIGHT",
+];
 
 const SENSOR_META: Record<DataType, { icon: React.ReactNode }> = {
   TEMPERATURE: { icon: <Thermometer className="w-4 h-4" /> },
-  HUMIDITY:    { icon: <Droplet className="w-4 h-4" /> },
-  PRESSURE:    { icon: <Gauge className="w-4 h-4" /> },
-  CO2:         { icon: <Cloud className="w-4 h-4" /> },
-  LIGHT:       { icon: <Sun className="w-4 h-4" /> },
+  HUMIDITY: { icon: <Droplet className="w-4 h-4" /> },
+  PRESSURE: { icon: <Gauge className="w-4 h-4" /> },
+  CO2: { icon: <Cloud className="w-4 h-4" /> },
+  LIGHT: { icon: <Sun className="w-4 h-4" /> },
 };
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -35,26 +46,38 @@ interface Props {
   initialSettings: NotificationSettings | null;
 }
 
-export default function NotificationPrefsCard({ initialSensorPrefs, initialSettings }: Props) {
+export default function NotificationPrefsCard({
+  initialSensorPrefs,
+  initialSettings,
+}: Props) {
   const t = useTranslations("settings");
 
-  const [sensorPrefs, setSensorPrefs] = useState<Record<DataType, LocalSensorPref>>(() =>
-    Object.fromEntries(
-      DATA_TYPES.map((type) => {
-        const found = initialSensorPrefs.find((p) => p.sensorType === type);
-        return [type, { enabled: found?.enabled ?? true, minSeverity: found?.minSeverity ?? "WARNING" }];
-      }),
-    ) as Record<DataType, LocalSensorPref>,
+  const [sensorPrefs, setSensorPrefs] = useState<
+    Record<DataType, LocalSensorPref>
+  >(
+    () =>
+      Object.fromEntries(
+        DATA_TYPES.map((type) => {
+          const found = initialSensorPrefs.find((p) => p.sensorType === type);
+          return [
+            type,
+            {
+              enabled: found?.enabled ?? true,
+              minSeverity: found?.minSeverity ?? "WARNING",
+            },
+          ];
+        }),
+      ) as Record<DataType, LocalSensorPref>,
   );
 
   const [settings, setSettings] = useState<LocalSettings>({
     quietStart: initialSettings?.quietStart ?? null,
-    quietEnd:   initialSettings?.quietEnd   ?? null,
+    quietEnd: initialSettings?.quietEnd ?? null,
   });
 
   const [savedSensorPrefs, setSavedSensorPrefs] = useState({ ...sensorPrefs });
-  const [savedSettings, setSavedSettings]       = useState({ ...settings });
-  const [loading, setLoading]                   = useState(false);
+  const [savedSettings, setSavedSettings] = useState({ ...settings });
+  const [loading, setLoading] = useState(false);
 
   const hasChanges =
     JSON.stringify(sensorPrefs) !== JSON.stringify(savedSensorPrefs) ||
@@ -68,7 +91,11 @@ export default function NotificationPrefsCard({ initialSensorPrefs, initialSetti
           fetch("/api/preferences", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ type: "sensor", sensorType: type, ...sensorPrefs[type] }),
+            body: JSON.stringify({
+              type: "sensor",
+              sensorType: type,
+              ...sensorPrefs[type],
+            }),
           }),
         ),
         fetch("/api/preferences", {
@@ -87,7 +114,8 @@ export default function NotificationPrefsCard({ initialSensorPrefs, initialSetti
     }
   };
 
-  const quietEnabled = settings.quietStart !== null && settings.quietEnd !== null;
+  const quietEnabled =
+    settings.quietStart !== null && settings.quietEnd !== null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -122,9 +150,24 @@ export default function NotificationPrefsCard({ initialSensorPrefs, initialSetti
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white/10 backdrop-blur-xl border-white/10">
-                    <SelectItem value="WARNING"  className="text-white focus:bg-white/10 focus:text-white text-xs">{t("severityWarning")}</SelectItem>
-                    <SelectItem value="HIGH"     className="text-white focus:bg-white/10 focus:text-white text-xs">{t("severityHigh")}</SelectItem>
-                    <SelectItem value="CRITICAL" className="text-white focus:bg-white/10 focus:text-white text-xs">{t("severityCritical")}</SelectItem>
+                    <SelectItem
+                      value="WARNING"
+                      className="text-white focus:bg-white/10 focus:text-white text-xs"
+                    >
+                      {t("severityWarning")}
+                    </SelectItem>
+                    <SelectItem
+                      value="HIGH"
+                      className="text-white focus:bg-white/10 focus:text-white text-xs"
+                    >
+                      {t("severityHigh")}
+                    </SelectItem>
+                    <SelectItem
+                      value="CRITICAL"
+                      className="text-white focus:bg-white/10 focus:text-white text-xs"
+                    >
+                      {t("severityCritical")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -146,13 +189,15 @@ export default function NotificationPrefsCard({ initialSensorPrefs, initialSetti
       <div className="bg-black/20 backdrop-blur-md rounded-3xl overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
           <div className="flex flex-col gap-0.5">
-            <span className="text-white text-sm font-semibold">{t("quietHours")}</span>
+            <span className="text-white text-sm font-semibold">
+              {t("quietHours")}
+            </span>
             <span className="text-white/40 text-xs">{t("quietHoursDesc")}</span>
           </div>
           <Switch
             checked={quietEnabled}
             onCheckedChange={(v) =>
-              setSettings((prev) =>
+              setSettings((_prev) =>
                 !v
                   ? { quietStart: null, quietEnd: null }
                   : { quietStart: 23, quietEnd: 7 },
@@ -167,14 +212,18 @@ export default function NotificationPrefsCard({ initialSensorPrefs, initialSetti
               <span className="text-white/50 text-xs">{t("quietFrom")}</span>
               <HourSelect
                 value={settings.quietStart ?? 23}
-                onChange={(v) => setSettings((prev) => ({ ...prev, quietStart: v }))}
+                onChange={(v) =>
+                  setSettings((prev) => ({ ...prev, quietStart: v }))
+                }
               />
             </div>
             <div className="flex items-center gap-2 flex-1">
               <span className="text-white/50 text-xs">{t("quietTo")}</span>
               <HourSelect
                 value={settings.quietEnd ?? 7}
-                onChange={(v) => setSettings((prev) => ({ ...prev, quietEnd: v }))}
+                onChange={(v) =>
+                  setSettings((prev) => ({ ...prev, quietEnd: v }))
+                }
               />
             </div>
           </div>
@@ -196,8 +245,13 @@ export default function NotificationPrefsCard({ initialSensorPrefs, initialSetti
   );
 }
 
-
-function HourSelect({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+function HourSelect({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+}) {
   return (
     <Select value={String(value)} onValueChange={(v) => onChange(Number(v))}>
       <SelectTrigger className="bg-white/10 border-white/10 h-8 text-xs flex-1 text-white">
@@ -205,7 +259,11 @@ function HourSelect({ value, onChange }: { value: number; onChange: (v: number) 
       </SelectTrigger>
       <SelectContent className="bg-white/10 backdrop-blur-xl border-white/10 max-h-48">
         {HOURS.map((h) => (
-          <SelectItem key={h} value={String(h)} className="text-white focus:bg-white/10 focus:text-white text-xs">
+          <SelectItem
+            key={h}
+            value={String(h)}
+            className="text-white focus:bg-white/10 focus:text-white text-xs"
+          >
             {String(h).padStart(2, "0")}:00
           </SelectItem>
         ))}
