@@ -5,7 +5,6 @@ const isLinux = process.platform === "linux";
 
 const scriptPath = path.join(process.cwd(), "scripts", "display-otp.mjs");
 
-// ANSI helpers
 const reset = "\x1b[0m";
 const bold = "\x1b[1m";
 const cyan = "\x1b[36m";

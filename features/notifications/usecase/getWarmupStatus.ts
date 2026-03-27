@@ -4,6 +4,16 @@ import type { DataType } from "@prisma/client";
 
 const SENSOR_TYPES: DataType[] = ["TEMPERATURE", "HUMIDITY", "CO2", "PRESSURE", "LIGHT"];
 
+/**
+ * Determines whether the system is still in its warmup period.
+ *
+ * The warmup period ends once every active sensor has accumulated at least
+ * `WARMUP_MIN_POINTS` data points in the database. A sensor is considered
+ * "active" if it has recorded at least one data point. If no sensor has any
+ * data at all, the system is considered to be warming up.
+ *
+ * @returns `true` if one or more active sensors have not yet reached the warmup threshold.
+ */
 export async function getWarmupStatus(): Promise<boolean> {
   const counts = await Promise.all(
     SENSOR_TYPES.map((type) =>
@@ -12,8 +22,7 @@ export async function getWarmupStatus(): Promise<boolean> {
         .then((rows) => rows.length),
     ),
   );
-  // En chauffe si au moins un capteur actif n'a pas encore assez de données
   const activeCounts = counts.filter((c) => c > 0);
-  if (activeCounts.length === 0) return true; // aucune donnée du tout
+  if (activeCounts.length === 0) return true;
   return activeCounts.some((c) => c <= WARMUP_MIN_POINTS);
 }

@@ -99,7 +99,6 @@ export default function OnboardingFlow({ user }: { user: User }) {
 
   return (
     <div className="w-full max-w-md flex flex-col items-center gap-8">
-      {/* Logo */}
       <Image
         src="/assets/logo/logo-black.png"
         alt="Aurora Home"
@@ -109,7 +108,6 @@ export default function OnboardingFlow({ user }: { user: User }) {
 
       <Stepper steps={STEPS} currentStep={step} />
 
-      {/* Card */}
       <div
         className={`w-full bg-black/20 backdrop-blur-md rounded-3xl shadow-2xl p-8 transition-all duration-200 ${
           animating ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"

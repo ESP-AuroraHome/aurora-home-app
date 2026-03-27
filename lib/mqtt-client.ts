@@ -7,10 +7,14 @@ import { thresholdRepository } from "@/features/settings/repository/thresholdRep
 import { detectAnomaly, getResolvableAlertTypes, WARMUP_MIN_POINTS, type ThresholdOverride } from "./anomaly-detector";
 import { sensorEmitter } from "./sensor-emitter";
 
-// Cache des seuils — rafraîchi toutes les 60s
 let thresholdCache: Record<string, ThresholdOverride> = {};
 let thresholdCacheAt = 0;
 
+/**
+ * Returns the per-sensor threshold overrides, refreshed from the database at most once every 60 seconds.
+ *
+ * @returns A map of sensor type to {@link ThresholdOverride}.
+ */
 async function getThresholds(): Promise<Record<string, ThresholdOverride>> {
   if (Date.now() - thresholdCacheAt < 60_000) return thresholdCache;
   const rows = await thresholdRepository.findAll();
@@ -26,7 +30,6 @@ async function getThresholds(): Promise<Record<string, ThresholdOverride>> {
   return thresholdCache;
 }
 
-// Cache des préférences — rafraîchi toutes les 60s
 type PrefsCache = {
   sensors: Record<string, { enabled: boolean; minSeverity: Severity }>;
   quietStart: number | null;
@@ -35,6 +38,12 @@ type PrefsCache = {
 let prefsCache: PrefsCache = { sensors: {}, quietStart: null, quietEnd: null };
 let prefsCacheAt = 0;
 
+/**
+ * Returns the user notification preferences (per-sensor toggles, severity filter, quiet hours),
+ * refreshed from the database at most once every 60 seconds.
+ *
+ * @returns The cached {@link PrefsCache}.
+ */
 async function getPrefs(): Promise<PrefsCache> {
   if (Date.now() - prefsCacheAt < 60_000) return prefsCache;
   const [sensorPrefs, settings] = await Promise.all([
@@ -54,14 +63,20 @@ async function getPrefs(): Promise<PrefsCache> {
 
 const SEVERITY_LEVEL: Record<Severity, number> = { WARNING: 0, HIGH: 1, CRITICAL: 2 };
 
+/**
+ * Returns `true` if the current hour falls within the user-defined quiet hours window.
+ * Supports overnight ranges (e.g. 23h → 7h).
+ *
+ * @param quietStart - Start hour (0–23), or `null` if not configured.
+ * @param quietEnd - End hour (0–23), or `null` if not configured.
+ */
 function isInQuietHours(quietStart: number | null, quietEnd: number | null): boolean {
   if (quietStart === null || quietEnd === null) return false;
   const hour = new Date().getHours();
   if (quietStart <= quietEnd) return hour >= quietStart && hour < quietEnd;
-  return hour >= quietStart || hour < quietEnd; // ex: 23h → 7h (overnight)
+  return hour >= quietStart || hour < quietEnd;
 }
 
-// Émis une seule fois quand le seuil de chauffe est franchi
 let warmupCompleteEmitted = false;
 
 const MQTT_BROKER_URL =
@@ -76,11 +91,32 @@ const SENSOR_KEYS: Record<string, DataType> = {
   light: "LIGHT",
 };
 
+/**
+ * Strips any trailing unit suffix from a raw sensor value string and returns the numeric part.
+ *
+ * @param raw - Raw value string from the MQTT payload (e.g. `"23.5°C"` or `"23.5"`).
+ * @returns The numeric string (e.g. `"23.5"`).
+ */
 function parseNumericValue(raw: string): string {
   const match = raw.match(/^([\d.]+)/);
   return match ? match[1] : raw;
 }
 
+/**
+ * Connects to the MQTT broker, subscribes to the sensor topic, and starts the
+ * real-time data ingestion pipeline.
+ *
+ * For each incoming message the pipeline:
+ * 1. Persists every sensor reading as a `DataPoint` in the database.
+ * 2. Auto-resolves stale alerts whose sensor value has returned to normal.
+ * 3. Skips anomaly detection during the warmup period (`WARMUP_MIN_POINTS` readings per sensor).
+ * 4. Emits a one-time `warmup_complete` SSE event when the warmup threshold is crossed.
+ * 5. Runs anomaly detection and creates a new `Alert` when an anomaly is confirmed,
+ *    respecting per-sensor preferences, severity filters, and quiet hours.
+ * 6. Broadcasts `sensor_update` and `alert_created` SSE events to connected clients.
+ *
+ * @returns The underlying MQTT client instance.
+ */
 export function startMqttClient() {
   const clientId = `aurora-home-app-${Date.now()}`;
 
@@ -130,19 +166,16 @@ export function startMqttClient() {
             createdAt: dp.createdAt.toISOString(),
           };
 
-          // Détection d'anomalie
           const numericValue = parseFloat(valueStr);
           if (!isNaN(numericValue)) {
-            // Récupérer WARMUP_MIN_POINTS + 1 pour vérifier le warmup ET avoir l'historique récent
             const recent = await dataPointRepository.findLatestByType(dataType, WARMUP_MIN_POINTS + 1);
             const recentValues = recent
-              .slice(1) // exclure le point qu'on vient de créer
+              .slice(1)
               .map((p) => parseFloat(p.value))
               .filter((v) => !isNaN(v));
 
             const [thresholds, prefs] = await Promise.all([getThresholds(), getPrefs()]);
 
-            // Auto-resolve toujours actif, même en période de chauffe
             const resolvable = getResolvableAlertTypes(dataType, numericValue, recentValues, thresholds[dataType]);
             let totalResolved = 0;
             for (const alertType of resolvable) {
@@ -156,12 +189,10 @@ export function startMqttClient() {
               });
             }
 
-            // Période de chauffe : attendre WARMUP_MIN_POINTS points en base avant d'alerter
-            const totalPoints = recent.length; // recent inclut le point courant
+            const totalPoints = recent.length;
             if (totalPoints <= WARMUP_MIN_POINTS) {
               console.log(`⏳ Chauffe ${dataType} : ${totalPoints}/${WARMUP_MIN_POINTS} points collectés — alertes désactivées`);
             } else {
-              // Émettre warmup_complete une seule fois au passage du seuil
               if (!warmupCompleteEmitted) {
                 warmupCompleteEmitted = true;
                 console.log(`🎓 Chauffe terminée — alertes activées`);

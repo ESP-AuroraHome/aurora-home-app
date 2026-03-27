@@ -145,7 +145,6 @@ export default function ProfileCard({
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-4"
       >
-        {/* Identity card */}
         <div className="bg-black/20 backdrop-blur-md rounded-3xl overflow-hidden">
           {pickingAvatar ? (
             /* ── Avatar picker mode ── */
@@ -219,7 +218,6 @@ export default function ProfileCard({
                 </div>
               </button>
 
-              {/* Editable name */}
               {editingField === "name" ? (
                 <FormField
                   control={form.control}
@@ -260,9 +258,7 @@ export default function ProfileCard({
           )}
         </div>
 
-        {/* Settings card */}
         <div className="bg-black/20 backdrop-blur-md rounded-3xl overflow-hidden">
-          {/* Email row */}
           <div className="flex items-center gap-4 px-6 py-4 border-b border-white/5">
             <span className="text-white/50 text-sm w-20 flex-shrink-0">
               {t("email")}
@@ -305,7 +301,6 @@ export default function ProfileCard({
             )}
           </div>
 
-          {/* Language row */}
           <div className="flex items-center gap-4 px-6 py-4 border-b border-white/5">
             <span className="text-white/50 text-sm w-20 flex-shrink-0">
               {t("language")}
@@ -362,7 +357,6 @@ export default function ProfileCard({
             )}
           </div>
 
-          {/* Email verified row */}
           <div className="flex items-center gap-4 px-6 py-4">
             <span className="text-white/50 text-sm w-20 flex-shrink-0">
               {t("emailVerified")}
@@ -383,7 +377,6 @@ export default function ProfileCard({
 
         </div>
 
-        {/* Save card */}
         {hasChanges && (
           <div className="bg-black/20 backdrop-blur-md rounded-3xl p-4">
             <ButtonForm
@@ -395,7 +388,6 @@ export default function ProfileCard({
           </div>
         )}
 
-        {/* SignOut card */}
         <div className="bg-black/20 backdrop-blur-md rounded-3xl px-6 py-4 flex items-center justify-between">
           <div>
             <p className="text-white text-sm font-medium">{t("signOut")}</p>

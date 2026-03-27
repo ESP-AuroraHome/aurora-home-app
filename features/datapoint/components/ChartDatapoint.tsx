@@ -48,7 +48,6 @@ const ChartDataPoint = ({ data, type, className, unit }: Props) => {
       sortedData[0].createdAt.getTime();
     const spanHours = spanMs / (1000 * 60 * 60);
 
-    // Downsample par moyenne de buckets
     const MAX_POINTS = 80;
     let sampled = sortedData;
     if (sortedData.length > MAX_POINTS) {

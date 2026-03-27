@@ -82,7 +82,16 @@ export const alertRepository = {
     return result.count;
   },
 
-  // Anti-spam : vérifie si une alerte non résolue du même type/capteur existe récemment
+  /**
+   * Returns `true` if an unresolved alert of the same sensor type and alert type
+   * was created within the last `ANTI_SPAM_MINUTES` minutes.
+   *
+   * Used to prevent duplicate alerts from being created on every sensor reading
+   * while an anomaly persists.
+   *
+   * @param sensorType - The sensor type to check.
+   * @param type - The alert type to check.
+   */
   async hasRecentUnresolved(
     sensorType: DataType,
     type: AlertType,

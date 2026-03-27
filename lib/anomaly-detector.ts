@@ -1,11 +1,9 @@
 import type { AlertType, DataType, Severity } from "@prisma/client";
 
-// ── Thresholds ────────────────────────────────────────────────────────────────
-
 type ThresholdLevel = { value: number; severity: Severity };
 type SensorThresholds = {
-  high?: ThresholdLevel[];   // ascending: WARNING → HIGH → CRITICAL
-  low?: ThresholdLevel[];    // descending: WARNING → HIGH → CRITICAL
+  high?: ThresholdLevel[];
+  low?: ThresholdLevel[];
 };
 
 const THRESHOLDS: Record<DataType, SensorThresholds> = {
@@ -49,13 +47,11 @@ const THRESHOLDS: Record<DataType, SensorThresholds> = {
   LIGHT: {},
 };
 
-// Nombre minimum de points en base par capteur avant de déclencher des alertes (~10 min à 5s/point)
+/** Minimum number of data points required per sensor before alerts are triggered (~10 min at 5s/point). */
 export const WARMUP_MIN_POINTS = 120;
 
-// Variation brutale : seuil de déviation relatif depuis la moyenne glissante
-const SUDDEN_CHANGE_THRESHOLD = 0.25; // 25%
-
-// ── Suggestions ───────────────────────────────────────────────────────────────
+/** Relative deviation threshold from rolling average that triggers a SUDDEN_CHANGE alert (25%). */
+const SUDDEN_CHANGE_THRESHOLD = 0.25;
 
 const SUGGESTIONS: Record<DataType, Record<AlertType, string[]>> = {
   TEMPERATURE: {
@@ -133,8 +129,6 @@ const SUGGESTIONS: Record<DataType, Record<AlertType, string[]>> = {
   },
 };
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 export interface AlertDetection {
   type: AlertType;
   severity: Severity;
@@ -152,8 +146,6 @@ export interface ThresholdOverride {
   lowSeverity?:  Severity | null;
 }
 
-// ── Labels capteurs ───────────────────────────────────────────────────────────
-
 const SENSOR_LABELS: Record<DataType, string> = {
   TEMPERATURE: "Température",
   HUMIDITY:    "Humidité",
@@ -170,8 +162,16 @@ const SENSOR_UNITS: Record<DataType, string> = {
   LIGHT:       "lx",
 };
 
-// ── Messages ──────────────────────────────────────────────────────────────────
-
+/**
+ * Builds a human-readable alert message for the given alert type and sensor reading.
+ *
+ * @param type - The alert type (THRESHOLD_HIGH, THRESHOLD_LOW, SUDDEN_CHANGE).
+ * @param sensorType - The sensor that triggered the alert.
+ * @param value - The current sensor reading.
+ * @param threshold - The threshold value that was breached (for threshold alerts).
+ * @param avg - The rolling average (for sudden change alerts).
+ * @returns A localised alert message string.
+ */
 function buildMessage(
   type: AlertType,
   sensorType: DataType,
@@ -196,8 +196,20 @@ function buildMessage(
   return `Anomalie détectée sur ${label} : ${v}${unit}`;
 }
 
-// ── Détection principale ──────────────────────────────────────────────────────
-
+/**
+ * Analyses a sensor reading and returns an alert detection if an anomaly is found.
+ *
+ * Checks are performed in the following order:
+ * 1. High threshold breach (override takes priority over defaults).
+ * 2. Low threshold breach (override takes priority over defaults).
+ * 3. Sudden change — deviation ≥ 25% from the rolling average of recent values.
+ *
+ * @param sensorType - The type of sensor being evaluated.
+ * @param value - The current numeric reading.
+ * @param recentValues - Ordered list of recent readings (excluding the current one) used for rolling average.
+ * @param override - Optional user-defined threshold overrides that supersede the built-in defaults.
+ * @returns An {@link AlertDetection} if an anomaly is detected, or `null` if the reading is normal.
+ */
 export function detectAnomaly(
   sensorType: DataType,
   value: number,
@@ -206,7 +218,6 @@ export function detectAnomaly(
 ): AlertDetection | null {
   const thresholds = THRESHOLDS[sensorType];
 
-  // 1. Seuil haut — override prioritaire sur les defaults
   const highValue    = override?.highValue    ?? thresholds.high?.[0]?.value;
   const highSeverity = override?.highSeverity ?? thresholds.high?.[0]?.severity;
 
@@ -222,7 +233,6 @@ export function detectAnomaly(
     };
   }
 
-  // Falls back to multi-level defaults if no override
   if (!override?.highValue && thresholds.high) {
     const triggered = [...thresholds.high].reverse().find((t) => value >= t.value);
     if (triggered) {
@@ -238,7 +248,6 @@ export function detectAnomaly(
     }
   }
 
-  // 2. Seuil bas
   const lowValue    = override?.lowValue    ?? thresholds.low?.[0]?.value;
   const lowSeverity = override?.lowSeverity ?? thresholds.low?.[0]?.severity;
 
@@ -269,7 +278,6 @@ export function detectAnomaly(
     }
   }
 
-  // 3. Variation brutale (rolling average sur les N dernières valeurs)
   if (recentValues.length >= 3) {
     const avg = recentValues.reduce((a, b) => a + b, 0) / recentValues.length;
     if (avg !== 0) {
@@ -296,9 +304,19 @@ export function detectAnomaly(
   return null;
 }
 
-// ── Types d'alertes à auto-résoudre ──────────────────────────────────────────
-// Retourne les types d'alertes qui peuvent être résolus car la valeur est revenue normale
-
+/**
+ * Returns the alert types that can be auto-resolved for a given sensor reading.
+ *
+ * SUDDEN_CHANGE is always resolvable as it is a transient event — if a new reading
+ * genuinely triggers one, a fresh alert will be created. THRESHOLD alerts are
+ * resolvable only when the value has returned within the normal range.
+ *
+ * @param sensorType - The type of sensor being evaluated.
+ * @param value - The current numeric reading.
+ * @param recentValues - Recent readings used for context (currently unused but kept for API symmetry).
+ * @param override - Optional user-defined threshold overrides.
+ * @returns Array of {@link AlertType} values that should be resolved in the database.
+ */
 export function getResolvableAlertTypes(
   sensorType: DataType,
   value: number,
@@ -308,21 +326,16 @@ export function getResolvableAlertTypes(
   const thresholds = THRESHOLDS[sensorType];
   const resolvable: AlertType[] = [];
 
-  // THRESHOLD_HIGH résolu si valeur sous le seuil haut
   const highValue = override?.highValue ?? thresholds.high?.[0]?.value;
   if (highValue == null || value < highValue) {
     resolvable.push("THRESHOLD_HIGH");
   }
 
-  // THRESHOLD_LOW résolu si valeur sur le seuil bas
   const lowValue = override?.lowValue ?? thresholds.low?.[0]?.value;
   if (lowValue == null || value > lowValue) {
     resolvable.push("THRESHOLD_LOW");
   }
 
-  // SUDDEN_CHANGE is always resolvable — it's a transient event.
-  // If thresholds are back to normal, any prior sudden-change alert is stale.
-  // A new SUDDEN_CHANGE will be created if the current reading genuinely triggers one.
   resolvable.push("SUDDEN_CHANGE");
 
   return resolvable;
