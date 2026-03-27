@@ -14,8 +14,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// ── Defaults (mirrors anomaly-detector.ts) ────────────────────────────────────
-
 const DEFAULTS: Record<DataType, { highValue?: number; lowValue?: number }> = {
   TEMPERATURE: { highValue: 28,  lowValue: 14  },
   HUMIDITY:    { highValue: 70,  lowValue: 25  },

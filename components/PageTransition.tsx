@@ -3,8 +3,6 @@
 import { motion, useAnimation } from "framer-motion";
 import { useEffect } from "react";
 
-// Persists across client-side navigations (component remounts), reset on hard refresh.
-// Never read during render — only in useEffect — so StrictMode double-invoke is safe.
 let hasNavigated = false;
 
 export default function PageTransition({ children }: { children: React.ReactNode }) {
@@ -12,7 +10,6 @@ export default function PageTransition({ children }: { children: React.ReactNode
 
   useEffect(() => {
     if (hasNavigated) {
-      // Client navigation: jump to initial state then animate in
       controls.set({ opacity: 0, x: "100%" });
       controls.start({ opacity: 1, x: 0 });
     }

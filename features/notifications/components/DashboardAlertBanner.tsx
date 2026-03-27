@@ -91,7 +91,6 @@ export default function DashboardAlertBanner({ alerts, isWarmingUp = false }: Da
     WARNING:  t("severityWarning"),
   };
 
-  // Alertes non résolues (indépendamment du dismiss visuel)
   const unresolvedAlerts = alerts.filter((a) => !a.resolvedAt && !a.read);
 
   const activeAlerts = unresolvedAlerts
