@@ -23,6 +23,7 @@ export default defineConfig({
         "components/ui/stepper.tsx",
         "components/ui/spinner.tsx",
         "app/api/**/route.ts",
+        "hooks/*.ts",
       ],
       exclude: [
         // infrastructure — no testable logic
