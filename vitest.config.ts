@@ -42,11 +42,6 @@ export default defineConfig({
         "features/profile/components/ProfileSheet.tsx",
         // chart / heavy third-party rendering
         "features/datapoint/components/ChartDatapoint.tsx",
-        // complex hooks (useAnimatedValue, useTrend, Drawer)
-        "features/datapoint/components/ItemDatapoint.tsx",
-        // too large / sub-form fragments — tested indirectly
-        "features/profile/components/ProfileCard.tsx",
-        "features/profile/components/AvatarSelector.tsx",
         "**/__tests__/**",
         "**/*.test.ts",
         "**/*.test.tsx",
