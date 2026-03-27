@@ -30,7 +30,6 @@ export default defineConfig({
         "lib/prisma.ts",
         "lib/auth.ts",
         "lib/auth-client.ts",
-        "lib/mqtt-client.ts",
         "app/api/auth/**",
         // server components — require Next.js server runtime
         "components/specific/header.tsx",
