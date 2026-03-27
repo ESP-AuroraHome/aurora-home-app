@@ -50,9 +50,38 @@ describe("calculateChartDomain", () => {
     expect(domain.max).toBeGreaterThan(25);
   });
 
-  it("should handle single value", () => {
+  it("should handle single value for TEMPERATURE (min === max branch)", () => {
     const domain = calculateChartDomain("TEMPERATURE", [22]);
     expect(domain.min).toBeLessThan(22);
     expect(domain.max).toBeGreaterThan(22);
+  });
+
+  it("should handle PRESSURE single high value (min === max branch)", () => {
+    // Value above 1050 so max doesn't get inflated → min === max after switch
+    const domain = calculateChartDomain("PRESSURE", [1100]);
+    expect(domain.min).toBe(1090);
+    expect(domain.max).toBe(1110);
+  });
+
+  it("should handle HUMIDITY single value (default min === max branch)", () => {
+    const domain = calculateChartDomain("HUMIDITY", [50]);
+    expect(domain.min).toBe(49);
+    expect(domain.max).toBe(51);
+  });
+
+  it("should handle CO2 single value (default min === max branch)", () => {
+    const domain = calculateChartDomain("CO2", [600]);
+    expect(domain.min).toBe(599);
+    expect(domain.max).toBe(601);
+  });
+
+  it("should return default domains for empty values for all sensor types", () => {
+    expect(calculateChartDomain("HUMIDITY", [])).toEqual({ min: 0, max: 100 });
+    expect(calculateChartDomain("PRESSURE", [])).toEqual({
+      min: 950,
+      max: 1050,
+    });
+    expect(calculateChartDomain("CO2", [])).toEqual({ min: 300, max: 2000 });
+    expect(calculateChartDomain("LIGHT", [])).toEqual({ min: 0, max: 1000 });
   });
 });
