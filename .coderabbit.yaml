@@ -10,6 +10,19 @@ reviews:
   auto_review:
     enabled: true
     drafts: false
+  path_filters:
+    - "!**/*.lock"
+    - "!**/node_modules/**"
+    - "!dev.db"
+  path_instructions:
+    - path: "**/*.test.ts"
+      instructions: "Check that mocks are realistic, edge cases are covered, and no implementation details leak into tests."
+    - path: "lib/mqtt-client.ts"
+      instructions: "Pay attention to race conditions, error handling on malformed payloads, and cache invalidation logic."
+    - path: "features/**/repository/*.ts"
+      instructions: "Ensure all Prisma queries handle errors properly and don't expose raw DB errors to callers."
+    - path: "app/api/**/route.ts"
+      instructions: "Check input validation, HTTP status codes, and that no sensitive data is returned."
 
 chat:
   auto_reply: true
