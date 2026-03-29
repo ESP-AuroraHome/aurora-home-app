@@ -117,12 +117,12 @@ export default function IAQScore({ data }: Props) {
             style={{ width: `${score}%` }}
           />
         </div>
-        <p className="text-white/40 text-xs">{t(`${level.key}Desc`)}</p>
+        <p className="text-slate-200 text-xs">{t(`${level.key}Desc`)}</p>
       </div>
 
       <span className={`text-sm font-bold flex-shrink-0 ${level.text}`}>
         {score}
-        <span className="text-white/30 font-normal text-xs">/100</span>
+        <span className="text-slate-200 font-normal text-xs">/100</span>
       </span>
     </div>
   );

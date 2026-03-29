@@ -138,11 +138,13 @@ export default function AlertCard({
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2 mb-1">
           <p
-            className={`text-sm font-medium leading-snug ${isResolved ? "text-white/40" : "text-white"}`}
+            className={`text-sm font-medium leading-snug ${isResolved ? "text-slate-200" : "text-white"}`}
           >
             {message}
           </p>
-          <span className="text-white/30 text-xs flex-shrink-0">{timeAgo}</span>
+          <span className="text-slate-200 text-xs flex-shrink-0">
+            {timeAgo}
+          </span>
         </div>
 
         <span
@@ -156,7 +158,7 @@ export default function AlertCard({
             {suggestions.map((s) => (
               <div
                 key={s}
-                className="flex items-start gap-1.5 text-white/50 text-xs"
+                className="flex items-start gap-1.5 text-slate-200 text-xs"
               >
                 <span className="mt-0.5 flex-shrink-0 w-1 h-1 rounded-full bg-white/30" />
                 {s}
@@ -173,7 +175,7 @@ export default function AlertCard({
               handleResolve();
             }}
             disabled={isPending}
-            className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors disabled:opacity-30"
+            className="flex items-center gap-1.5 text-xs text-slate-200 hover:text-white/70 transition-colors disabled:opacity-30"
           >
             <CheckCheck className="w-3.5 h-3.5" />
             {t("resolve")}

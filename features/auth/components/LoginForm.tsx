@@ -63,7 +63,7 @@ const LoginForm = () => {
               <FormControl>
                 <Input
                   type="email"
-                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40 transition-all"
+                  className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-slate-200 focus:bg-white/15 focus:border-white/40 transition-all"
                   placeholder={t("emailPlaceholder")}
                   {...field}
                 />

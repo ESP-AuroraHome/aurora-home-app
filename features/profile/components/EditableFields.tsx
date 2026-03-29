@@ -46,7 +46,7 @@ export function EditableNameField({
           <FormItem className="flex-1 min-w-0">
             <FormControl>
               <Input
-                className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40 transition-all h-8 text-sm"
+                className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-slate-200 focus:bg-white/15 focus:border-white/40 transition-all h-8 text-sm"
                 placeholder={t("namePlaceholder")}
                 autoFocus
                 {...field}
@@ -95,7 +95,7 @@ export function EditableEmailField({
             <FormControl>
               <Input
                 type="email"
-                className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40 transition-all h-8 text-sm"
+                className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-slate-200 focus:bg-white/15 focus:border-white/40 transition-all h-8 text-sm"
                 placeholder={t("emailPlaceholder")}
                 autoFocus
                 {...field}

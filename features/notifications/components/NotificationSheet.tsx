@@ -68,7 +68,7 @@ export default function NotificationSheet({
       <SheetTrigger asChild>
         <button
           type="button"
-          className="relative p-2 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all"
+          className="relative p-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/10 transition-all"
           aria-label="Notifications"
         >
           <Bell className="w-5 h-5" />
@@ -109,13 +109,13 @@ export default function NotificationSheet({
             </button>
           )}
           {!hasActiveIssues && (
-            <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/20">
+            <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-emerald-400/80">
               <House
                 strokeWidth={1}
                 size={20}
-                className="bg-emerald-400 p-0.5 rounded-full flex-shrink-0"
+                className="bg-emerald-400/80 p-0.5 rounded-full flex-shrink-0"
               />
-              <p className="text-emerald-300 text-xs font-medium">
+              <p className="text-emerald-700 text-xs font-medium">
                 {t("allSensorsNormal")}
               </p>
             </div>
@@ -130,7 +130,7 @@ export default function NotificationSheet({
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   tab === t.key
                     ? "bg-white/15 text-white"
-                    : "text-white/40 hover:text-white/60"
+                    : "text-slate-200 hover:text-slate-200"
                 }`}
               >
                 {t.label}
@@ -151,14 +151,14 @@ export default function NotificationSheet({
         <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2">
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full gap-4 py-16 px-6 text-center">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                <CheckCircle2 className="w-7 h-7 text-emerald-400" />
+              <div className="w-14 h-14 rounded-2xl bg-emerald-400/80 flex items-center justify-center">
+                <CheckCircle2 className="w-7 h-7 text-emerald-700" />
               </div>
               <div>
                 <p className="text-white text-sm font-medium mb-1">
                   {tab === "resolved" ? t("emptyResolved") : t("emptyHealthy")}
                 </p>
-                <p className="text-white/40 text-xs leading-relaxed">
+                <p className="text-slate-200 text-xs leading-relaxed">
                   {tab === "resolved"
                     ? t("emptyResolvedDesc")
                     : t("emptyHealthyDesc")}

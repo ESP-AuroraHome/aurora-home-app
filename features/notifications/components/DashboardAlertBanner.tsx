@@ -115,7 +115,7 @@ function AlertBannerItem({
       <button
         type="button"
         onClick={onDismiss}
-        className="text-white/50 hover:text-white/80 transition-colors flex-shrink-0 mt-0.5"
+        className="text-slate-200 hover:text-white/80 transition-colors flex-shrink-0 mt-0.5"
       >
         <X className="w-3.5 h-3.5" />
       </button>
@@ -155,7 +155,7 @@ export default function DashboardAlertBanner({
         />
         <div className="flex-1 min-w-0">
           <p className="text-white text-sm font-medium">{t("warmup")}</p>
-          <p className="text-white/40 text-xs mt-0.5">{t("warmupDesc")}</p>
+          <p className="text-slate-200 text-xs mt-0.5">{t("warmupDesc")}</p>
         </div>
       </div>
     );
@@ -167,11 +167,11 @@ export default function DashboardAlertBanner({
         <House
           strokeWidth={1}
           size={24}
-          className="bg-emerald-400 p-1 rounded-full flex-shrink-0"
+          className="bg-emerald-400/80 p-1 rounded-full flex-shrink-0"
         />
         <div className="flex-1 min-w-0">
           <p className="text-white text-sm font-medium">{t("healthy")}</p>
-          <p className="text-white/40 text-xs mt-0.5">{t("healthyDesc")}</p>
+          <p className="text-slate-200 text-xs mt-0.5">{t("healthyDesc")}</p>
         </div>
       </div>
     );
@@ -194,7 +194,7 @@ export default function DashboardAlertBanner({
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-white/80 text-sm font-medium">{t("monitoring")}</p>
-          <p className="text-white/40 text-xs mt-0.5">
+          <p className="text-slate-200 text-xs mt-0.5">
             {t("monitoringDesc", { count: unresolvedAlerts.length })}
           </p>
         </div>

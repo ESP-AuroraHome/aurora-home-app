@@ -131,7 +131,7 @@ export default function NotificationPrefsCard({
               className={`flex items-center gap-3 px-6 py-3 ${!isLast ? "border-b border-white/5" : ""}`}
             >
               <div className="flex items-center gap-2 text-white flex-1">
-                <span className="text-white/60">{meta.icon}</span>
+                <span className="text-slate-200">{meta.icon}</span>
                 <span className="text-sm">{t(`sensor.${type}`)}</span>
               </div>
 
@@ -192,7 +192,9 @@ export default function NotificationPrefsCard({
             <span className="text-white text-sm font-semibold">
               {t("quietHours")}
             </span>
-            <span className="text-white/40 text-xs">{t("quietHoursDesc")}</span>
+            <span className="text-slate-200 text-xs">
+              {t("quietHoursDesc")}
+            </span>
           </div>
           <Switch
             checked={quietEnabled}
@@ -209,7 +211,7 @@ export default function NotificationPrefsCard({
         {quietEnabled && (
           <div className="flex items-center gap-4 px-6 py-4">
             <div className="flex items-center gap-2 flex-1">
-              <span className="text-white/50 text-xs">{t("quietFrom")}</span>
+              <span className="text-slate-200 text-xs">{t("quietFrom")}</span>
               <HourSelect
                 value={settings.quietStart ?? 23}
                 onChange={(v) =>
@@ -218,7 +220,7 @@ export default function NotificationPrefsCard({
               />
             </div>
             <div className="flex items-center gap-2 flex-1">
-              <span className="text-white/50 text-xs">{t("quietTo")}</span>
+              <span className="text-slate-200 text-xs">{t("quietTo")}</span>
               <HourSelect
                 value={settings.quietEnd ?? 7}
                 onChange={(v) =>

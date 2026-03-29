@@ -155,7 +155,7 @@ function StepWelcome({
         <h1 className="text-white text-2xl font-semibold mb-2">
           Bienvenue sur Aurora Home
         </h1>
-        <p className="text-white/60 text-sm leading-relaxed">
+        <p className="text-slate-200 text-sm leading-relaxed">
           Commençons par personnaliser votre espace. Comment souhaitez-vous être
           appelé ?
         </p>
@@ -212,7 +212,7 @@ function StepAvatar({
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-1.5 text-white/40 hover:text-white/70 text-xs mb-4 transition-colors"
+          className="flex items-center gap-1.5 text-slate-200 hover:text-white/70 text-xs mb-4 transition-colors"
         >
           <ArrowLeft className="w-3 h-3" />
           Retour
@@ -220,7 +220,7 @@ function StepAvatar({
         <h2 className="text-white text-2xl font-semibold mb-2">
           Choisissez votre avatar
         </h2>
-        <p className="text-white/60 text-sm">
+        <p className="text-slate-200 text-sm">
           Sélectionnez un style qui vous correspond.
         </p>
       </div>
@@ -293,7 +293,7 @@ function StepLocale({
           type="button"
           onClick={onBack}
           disabled={isPending}
-          className="flex items-center gap-1.5 text-white/40 hover:text-white/70 text-xs mb-4 transition-colors disabled:opacity-30"
+          className="flex items-center gap-1.5 text-slate-200 hover:text-white/70 text-xs mb-4 transition-colors disabled:opacity-30"
         >
           <ArrowLeft className="w-3 h-3" />
           Retour
@@ -301,7 +301,7 @@ function StepLocale({
         <h2 className="text-white text-2xl font-semibold mb-2">
           Quelle est votre langue ?
         </h2>
-        <p className="text-white/60 text-sm">
+        <p className="text-slate-200 text-sm">
           L'interface sera affichée dans la langue choisie.
         </p>
       </div>
