@@ -92,23 +92,22 @@ export default function NotificationSheet({
         side="right"
         className="w-full sm:max-w-sm bg-black/60 backdrop-blur-2xl border-white/10 flex flex-col p-0"
       >
-        <SheetHeader className="px-5 pt-5 pb-3 border-b border-white/5">
+        <SheetHeader className="px-5 pb-3 border-b border-white/5">
           <div className="flex items-center justify-between">
             <SheetTitle className="text-white text-base font-semibold">
               {t("sheetTitle")}
             </SheetTitle>
-            {activeAlerts.length > 0 && (
-              <button
-                type="button"
-                onClick={handleResolveAll}
-                disabled={isPending}
-                className="text-white/40 hover:text-white/70 text-xs transition-colors disabled:opacity-30"
-              >
-                {t("markAllRead")}
-              </button>
-            )}
           </div>
-
+          {activeAlerts.length > 0 && (
+            <button
+              type="button"
+              onClick={handleResolveAll}
+              disabled={isPending}
+              className="text-white/40 hover:text-white/70 text-xs transition-colors disabled:opacity-30 place-self-end"
+            >
+              {t("markAllRead")}
+            </button>
+          )}
           {!hasActiveIssues && (
             <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/20">
               <House
