@@ -16,9 +16,12 @@ import { markAlertRead } from "../usecase/markAlertRead";
 import { resolveAlert } from "../usecase/resolveAlert";
 
 const SEVERITY_STYLES = {
-  WARNING: { bar: "bg-yellow-400", badge: "bg-yellow-400/15 text-yellow-300" },
-  HIGH: { bar: "bg-orange-400", badge: "bg-orange-400/15 text-orange-300" },
-  CRITICAL: { bar: "bg-red-400", badge: "bg-red-400/15 text-red-300" },
+  WARNING: {
+    bar: "border-yellow-400",
+    badge: "bg-yellow-400/15 text-yellow-300",
+  },
+  HIGH: { bar: "border-orange-400", badge: "bg-orange-400/15 text-orange-300" },
+  CRITICAL: { bar: "border-red-400", badge: "bg-red-400/15 text-red-300" },
 };
 
 const SENSOR_ICONS: Record<DataType, React.ReactNode> = {
@@ -121,15 +124,11 @@ export default function AlertCard({
   return (
     <button
       type="button"
-      className={`relative flex w-full gap-3 rounded-2xl p-4 text-left transition-all ${
+      className={`relative flex w-full gap-3 rounded-2xl p-4 text-left transition-all border-l-2 ${
         !alert.read && !isResolved ? "bg-white/8" : "bg-white/3"
-      } ${isResolved ? "opacity-50" : ""}`}
+      } ${isResolved ? "opacity-50" : ""} ${style.bar}`}
       onClick={handleRead}
     >
-      <div
-        className={`absolute left-0 top-3 bottom-3 w-0.5 rounded-full ${style.bar}`}
-      />
-
       <div
         className={`flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center ${style.badge} mt-0.5`}
       >
