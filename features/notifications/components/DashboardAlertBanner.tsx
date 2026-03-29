@@ -15,24 +15,24 @@ const SEVERITY_ORDER = { CRITICAL: 0, HIGH: 1, WARNING: 2 };
 
 const SEVERITY_STYLES = {
   CRITICAL: {
-    container: "bg-red-500/40 border-red-400/60",
+    container: "border-red-400",
     icon: "text-red-300",
-    title: "text-red-100",
-    badge: "bg-red-400/20 text-red-200",
+    title: "text-red-300",
+    badge: "bg-red-400/15 text-red-300",
     dot: "bg-red-400",
   },
   HIGH: {
-    container: "bg-orange-500/40 border-orange-400/60",
+    container: "border-orange-400",
     icon: "text-orange-300",
-    title: "text-orange-100",
-    badge: "bg-orange-400/20 text-orange-200",
+    title: "text-orange-300",
+    badge: "bg-orange-400/15 text-orange-300",
     dot: "bg-orange-400",
   },
   WARNING: {
-    container: "bg-yellow-500/30 border-yellow-400/50",
+    container: "border-yellow-400",
     icon: "text-yellow-300",
-    title: "text-yellow-100",
-    badge: "bg-yellow-400/20 text-yellow-200",
+    title: "text-yellow-300",
+    badge: "bg-yellow-400/15 text-yellow-300",
     dot: "bg-yellow-400",
   },
 };
@@ -94,7 +94,7 @@ function AlertBannerItem({
 
   return (
     <div
-      className={`flex items-start gap-3 rounded-2xl px-4 py-3 border ${style.container}`}
+      className={`flex items-start gap-3 rounded-2xl px-4 py-3 bg-black/20 backdrop-blur-md  border-l-2 ${style.container}`}
     >
       <AlertTriangle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${style.icon}`} />
       <div className="flex-1 min-w-0">
