@@ -90,7 +90,7 @@ export default function NotificationSheet({
 
       <SheetContent
         side="right"
-        className="w-full sm:max-w-sm bg-black/60 backdrop-blur-2xl border-white/10 flex flex-col p-0"
+        className="w-full sm:max-w-sm bg-black/20 backdrop-blur-md border-white/10 flex flex-col p-0"
       >
         <SheetHeader className="px-5 pt-5 pb-3 border-b border-white/5">
           <div className="flex items-center justify-between">
