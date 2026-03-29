@@ -1,7 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import Header from "@/components/specific/header";
 import { AlertsProvider } from "@/contexts/AlertsContext";
 import { getAlerts } from "@/features/notifications/usecase/getAlerts";
 import NotificationPrefsCard from "@/features/settings/components/NotificationPrefsCard";
@@ -26,7 +25,6 @@ export default async function SettingsPage() {
       <div className="flex flex-col h-full w-full">
         <div className="flex flex-col gap-6 md:gap-8 lg:gap-12 p-6 md:p-8 lg:p-12 overflow-y-auto flex-1 z-10">
           <div className="max-w-7xl mx-auto w-full flex flex-col gap-8">
-            <Header />
             <div className="flex flex-col gap-6 max-w-sm mx-auto w-full">
               <div className="flex items-center gap-3">
                 <Link
