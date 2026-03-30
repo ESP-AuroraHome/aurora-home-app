@@ -3,6 +3,7 @@
 import { Bell, CheckCircle2, House } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
+import { GlassButton } from "@/components/ui/glass-button";
 import {
   Sheet,
   SheetContent,
@@ -66,10 +67,9 @@ export default function NotificationSheet({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <button
-          type="button"
-          className="relative p-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/10 transition-all"
+        <GlassButton
           aria-label="Notifications"
+          className="relative overflow-visible"
         >
           <Bell className="w-5 h-5" />
           {unreadCount > 0 && (
@@ -85,7 +85,7 @@ export default function NotificationSheet({
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
-        </button>
+        </GlassButton>
       </SheetTrigger>
 
       <SheetContent

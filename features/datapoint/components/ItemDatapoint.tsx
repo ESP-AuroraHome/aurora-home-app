@@ -12,6 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { GlassButton } from "@/components/ui/glass-button";
 import { Item, ItemHeader } from "@/components/ui/item";
 import { useAnimatedValue } from "@/hooks/useAnimatedValue";
 import { useTrend } from "@/hooks/useTrend";
@@ -287,14 +288,14 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
                 </button>
               ))}
             </div>
-            <button
+            <GlassButton
               type="button"
               onClick={exportCSV}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white/70 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs"
             >
               <Download className="w-3 h-3" />
               {t("export")}
-            </button>
+            </GlassButton>
           </div>
           <ChartDataPoint
             data={displayedData}
