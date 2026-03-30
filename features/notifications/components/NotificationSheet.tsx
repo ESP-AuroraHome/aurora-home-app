@@ -109,13 +109,13 @@ export default function NotificationSheet({
             </button>
           )}
           {!hasActiveIssues && (
-            <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-emerald-400/80">
+            <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl bg-emerald-400/40">
               <House
                 strokeWidth={1}
                 size={20}
                 className="bg-emerald-400/80 p-0.5 rounded-full flex-shrink-0"
               />
-              <p className="text-emerald-700 text-xs font-medium">
+              <p className="text-emerald-100 text-xs font-medium">
                 {t("allSensorsNormal")}
               </p>
             </div>

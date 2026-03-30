@@ -64,7 +64,7 @@ function TrendIndicator({
 
   if (trend === "up") {
     return (
-      <span className="flex items-center gap-1 text-xs text-orange-700">
+      <span className="flex items-center gap-1 text-xs text-orange-300">
         <TrendingUp className="w-3.5 h-3.5" />
         {t("trendUp")}
       </span>
@@ -73,7 +73,7 @@ function TrendIndicator({
 
   if (trend === "down") {
     return (
-      <span className="flex items-center gap-1 text-xs text-emerald-700">
+      <span className="flex items-center gap-1 text-xs text-emerald-300">
         <TrendingDown className="w-3.5 h-3.5" />
         {t("trendDown")}
       </span>
