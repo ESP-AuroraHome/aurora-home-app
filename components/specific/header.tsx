@@ -2,6 +2,7 @@ import { Settings } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { GlassButton } from "@/components/ui/glass-button";
 import NotificationBellClient from "@/features/notifications/components/NotificationBellClient";
 import ProfileSheetProvider from "@/features/profile/components/ProfileSheetProvider";
 import { auth } from "@/lib/auth";
@@ -22,12 +23,11 @@ const Header = async () => {
         </p>
         <p className="text-2xl font-semibold">{name}</p>
       </div>
-      <Link
-        href="/settings"
-        className="p-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/10 transition-all"
-      >
-        <Settings className="w-5 h-5" />
-      </Link>
+      <GlassButton asChild>
+        <Link href="/settings">
+          <Settings className="w-5 h-5" />
+        </Link>
+      </GlassButton>
       <NotificationBellClient />
     </header>
   );

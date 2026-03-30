@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { GlassButton } from "@/components/ui/glass-button";
 import { AlertsProvider } from "@/contexts/AlertsContext";
 import { getAlerts } from "@/features/notifications/usecase/getAlerts";
 import NotificationPrefsCard from "@/features/settings/components/NotificationPrefsCard";
@@ -27,12 +28,11 @@ export default async function SettingsPage() {
           <div className="max-w-7xl mx-auto w-full flex flex-col gap-8">
             <div className="flex flex-col gap-6 max-w-sm mx-auto w-full">
               <div className="flex items-center gap-3">
-                <Link
-                  href="/"
-                  className="p-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/10 transition-all"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </Link>
+                <GlassButton asChild>
+                  <Link href="/">
+                    <ArrowLeft className="w-5 h-5" />
+                  </Link>
+                </GlassButton>
                 <div className="flex flex-col gap-0.5">
                   <h1 className="text-white text-xl font-semibold">
                     {t("title")}

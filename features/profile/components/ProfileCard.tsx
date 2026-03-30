@@ -15,6 +15,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { GlassButton } from "@/components/ui/glass-button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -117,14 +118,14 @@ export default function ProfileCard({
                 <span className="text-white text-sm font-medium">
                   {t("chooseAvatar")}
                 </span>
-                <button
+                <GlassButton
                   type="button"
                   onClick={() => setPickingAvatar(false)}
-                  className="text-slate-200 hover:text-white/70 transition-colors"
+                  className="p-1.5"
                   aria-label={t("close")}
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </GlassButton>
               </div>
               <div className="grid grid-cols-5 gap-2.5">
                 {avatarOptions.map((option) => {
@@ -207,16 +208,16 @@ export default function ProfileCard({
                   )}
                 />
               ) : (
-                <button
+                <GlassButton
                   type="button"
                   onClick={() => setEditingField("name")}
-                  className="flex items-center gap-1.5 group"
+                  className="flex items-center gap-1.5 group p-1.5"
                 >
                   <span className="text-white text-lg font-semibold">
                     {watchedValues.name}
                   </span>
-                  <SquarePen className="w-3.5 h-3.5 text-slate-200 group-hover:text-slate-200 transition-colors" />
-                </button>
+                  <SquarePen className="w-3.5 h-3.5" />
+                </GlassButton>
               )}
             </div>
           )}
@@ -254,13 +255,13 @@ export default function ProfileCard({
                 <span className="text-white text-sm truncate">
                   {watchedValues.email}
                 </span>
-                <button
+                <GlassButton
                   type="button"
                   onClick={() => setEditingField("email")}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 p-1.5"
                 >
-                  <SquarePen className="w-3.5 h-3.5 text-slate-200 hover:text-slate-200 transition-colors" />
-                </button>
+                  <SquarePen className="w-3.5 h-3.5" />
+                </GlassButton>
               </div>
             )}
           </div>
@@ -310,13 +311,13 @@ export default function ProfileCard({
                 <span className="text-white text-sm">
                   {watchedValues.locale === "fr" ? t("french") : t("english")}
                 </span>
-                <button
+                <GlassButton
                   type="button"
                   onClick={() => setEditingField("locale")}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 p-1.5"
                 >
-                  <SquarePen className="w-3.5 h-3.5 text-slate-200 hover:text-slate-200 transition-colors" />
-                </button>
+                  <SquarePen className="w-3.5 h-3.5" />
+                </GlassButton>
               </div>
             )}
           </div>
