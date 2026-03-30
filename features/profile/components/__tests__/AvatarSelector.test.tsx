@@ -81,10 +81,10 @@ describe("AvatarSelector", () => {
       />,
     );
     await userEvent.click(screen.getByRole("button", { name: "changeAvatar" }));
-    const avatarImg = screen.getByAltText("Avatar adventurer");
+    const avatarImg = screen.getByAltText("Avatar Avatar 1");
     const avatarBtn = avatarImg.closest("button");
     if (avatarBtn) await userEvent.click(avatarBtn);
-    expect(onSelect).toHaveBeenCalledWith("data:image/svg+xml,mock");
+    expect(onSelect).toHaveBeenCalledWith("1");
     expect(screen.queryByText("chooseAvatar")).toBeNull();
   });
 });

@@ -117,7 +117,7 @@ describe("updateUserProfile", () => {
     expect(result.success).toBe(true);
     expect(mockRepo.update).toHaveBeenCalledWith(
       "user-1",
-      expect.objectContaining({ image: null }),
+      expect.objectContaining({ image: "" }),
     );
   });
 

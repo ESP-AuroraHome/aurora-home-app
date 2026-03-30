@@ -97,7 +97,7 @@ describe("signInOtp", () => {
 
     expect(mockUserRepo.update).toHaveBeenCalledWith(
       "user-1",
-      expect.objectContaining({ image: expect.stringContaining("data:") }),
+      expect.objectContaining({ image: expect.any(String) }),
     );
   });
 

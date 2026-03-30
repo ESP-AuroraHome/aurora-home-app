@@ -109,7 +109,7 @@ describe("ProfileCard", () => {
     await userEvent.click(screen.getByRole("button", { name: "changeAvatar" }));
     const avatarBtns = screen.getAllByRole("button");
     const avatarOptionBtn = avatarBtns.find((btn) =>
-      btn.querySelector("img[alt='adventurer']"),
+      btn.querySelector("img[alt='Avatar 1']"),
     );
     if (avatarOptionBtn) await userEvent.click(avatarOptionBtn);
     expect(screen.getByText("save")).toBeTruthy();
