@@ -1,19 +1,14 @@
 "use server";
 
-import { adventurer } from "@dicebear/collection";
-import { createAvatar } from "@dicebear/core";
 import { cookies } from "next/headers";
 import { userRepository } from "@/features/profile/repository/userRepository";
 import { auth } from "@/lib/auth";
 import { clearScreen } from "@/lib/otp-display";
 import usecase from "@/lib/usecase";
 
-const generateRandomAvatar = (seed: string): string => {
-  const avatar = createAvatar(adventurer, {
-    seed: seed,
-    size: 128,
-  });
-  return avatar.toDataUri();
+const generateRandomAvatar = (): string => {
+  const randomId = Math.floor(Math.random() * 15) + 1;
+  return `/assets/profil/${randomId}.png`;
 };
 
 const extractNameFromEmail = (email: string): string => {
@@ -55,7 +50,7 @@ const signInOtp = usecase(async ({ otp }: { otp: string }) => {
       const updates: { image?: string; name?: string } = {};
 
       if (!user.image) {
-        updates.image = generateRandomAvatar(user.email || user.id);
+        updates.image = generateRandomAvatar();
       }
 
       const extractedName = providedName || extractNameFromEmail(user.email);

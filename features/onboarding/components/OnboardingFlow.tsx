@@ -1,48 +1,11 @@
 "use client";
 
-import {
-  adventurer,
-  avataaars,
-  bottts,
-  funEmoji,
-  identicon,
-  lorelei,
-  micah,
-  miniavs,
-  openPeeps,
-  personas,
-  pixelArt,
-  shapes,
-  thumbs,
-} from "@dicebear/collection";
-import { createAvatar, type Style } from "@dicebear/core";
 import type { User } from "@prisma/client";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState, useTransition } from "react";
 import { Stepper } from "@/components/ui/stepper";
 import completeOnboarding from "../usecase/completeOnboarding";
-
-const avatarStyles = [
-  { name: "adventurer", generator: adventurer },
-  { name: "avataaars", generator: avataaars },
-  { name: "bottts", generator: bottts },
-  { name: "fun-emoji", generator: funEmoji },
-  { name: "identicon", generator: identicon },
-  { name: "lorelei", generator: lorelei },
-  { name: "micah", generator: micah },
-  { name: "miniavs", generator: miniavs },
-  { name: "open-peeps", generator: openPeeps },
-  { name: "personas", generator: personas },
-  { name: "pixel-art", generator: pixelArt },
-  { name: "shapes", generator: shapes },
-  { name: "thumbs", generator: thumbs },
-];
-
-const generateAvatar = (
-  style: { name: string; generator: Style<{ seed: string; size: number }> },
-  seed: string,
-) => createAvatar(style.generator, { seed, size: 128 }).toDataUri();
 
 const STEPS = [
   { label: "Bienvenue" },
@@ -64,11 +27,12 @@ export default function OnboardingFlow({ user }: { user: User }) {
 
   const avatarOptions = useMemo(
     () =>
-      avatarStyles.map((style) => ({
-        style: style.name,
-        url: generateAvatar(style, name || user.email),
+      Array.from({ length: 15 }, (_, i) => ({
+        style: `Avatar ${i + 1}`,
+        id: String(i + 1),
+        url: `/assets/profil/${i + 1}.png`,
       })),
-    [name, user.email],
+    [],
   );
 
   const goNext = () => {
@@ -200,7 +164,7 @@ function StepAvatar({
   onNext,
   onBack,
 }: {
-  avatarOptions: { style: string; url: string }[];
+  avatarOptions: { style: string; id: string; url: string }[];
   selected: string | null;
   onSelect: (url: string) => void;
   onNext: () => void;
@@ -227,12 +191,12 @@ function StepAvatar({
 
       <div className="grid grid-cols-4 gap-3 max-h-72 overflow-y-auto pr-1">
         {avatarOptions.map((option) => {
-          const isSelected = selected === option.url;
+          const isSelected = selected === option.id;
           return (
             <button
               key={option.style}
               type="button"
-              onClick={() => onSelect(option.url)}
+              onClick={() => onSelect(option.id)}
               className={`relative rounded-2xl overflow-hidden border-2 transition-all aspect-square ${
                 isSelected
                   ? "border-white ring-2 ring-white/40 scale-105"

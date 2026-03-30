@@ -1,21 +1,5 @@
 "use client";
 
-import {
-  adventurer,
-  avataaars,
-  bottts,
-  funEmoji,
-  identicon,
-  lorelei,
-  micah,
-  miniavs,
-  openPeeps,
-  personas,
-  pixelArt,
-  shapes,
-  thumbs,
-} from "@dicebear/collection";
-import { createAvatar, type Style } from "@dicebear/core";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { User } from "@prisma/client";
 import { Check, SquarePen, X } from "lucide-react";
@@ -45,27 +29,6 @@ import {
   type ProfileFormData,
 } from "../utils/profileSchema";
 import SignOutButton from "./SignOutButton";
-
-const avatarStyles = [
-  { name: "adventurer", generator: adventurer },
-  { name: "avataaars", generator: avataaars },
-  { name: "bottts", generator: bottts },
-  { name: "fun-emoji", generator: funEmoji },
-  { name: "identicon", generator: identicon },
-  { name: "lorelei", generator: lorelei },
-  { name: "micah", generator: micah },
-  { name: "miniavs", generator: miniavs },
-  { name: "open-peeps", generator: openPeeps },
-  { name: "personas", generator: personas },
-  { name: "pixel-art", generator: pixelArt },
-  { name: "shapes", generator: shapes },
-  { name: "thumbs", generator: thumbs },
-];
-
-const generateAvatar = (
-  style: { name: string; generator: Style<{ seed: string; size: number }> },
-  seed: string,
-) => createAvatar(style.generator, { seed, size: 128 }).toDataUri();
 
 interface ProfileCardProps {
   user: User;
@@ -116,14 +79,12 @@ export default function ProfileCard({
 
   const avatarOptions = useMemo(
     () =>
-      avatarStyles.map((style) => ({
-        style: style.name,
-        url: generateAvatar(
-          style,
-          currentInitialData.name || currentInitialData.email,
-        ),
+      Array.from({ length: 15 }, (_, i) => ({
+        style: `Avatar ${i + 1}`,
+        id: String(i + 1),
+        url: `/assets/profil/${i + 1}.png`,
       })),
-    [currentInitialData.name, currentInitialData.email],
+    [],
   );
 
   const watchedValues = form.watch();
@@ -133,7 +94,10 @@ export default function ProfileCard({
     watchedValues.locale !== currentInitialData.locale ||
     selectedAvatar !== initialAvatar;
 
-  const currentAvatarUrl = selectedAvatar ?? avatarOptions[0]?.url ?? "";
+  const currentAvatarUrl =
+    avatarOptions.find((opt) => opt.id === selectedAvatar)?.url ??
+    avatarOptions[0]?.url ??
+    "";
 
   const handleBlur = () => {
     if (!loading) setTimeout(() => setEditingField(null), 150);
@@ -164,13 +128,13 @@ export default function ProfileCard({
               </div>
               <div className="grid grid-cols-5 gap-2.5">
                 {avatarOptions.map((option) => {
-                  const isSelected = selectedAvatar === option.url;
+                  const isSelected = selectedAvatar === option.id;
                   return (
                     <button
                       key={option.style}
                       type="button"
                       onClick={() => {
-                        setSelectedAvatar(option.url);
+                        setSelectedAvatar(option.id);
                         setPickingAvatar(false);
                       }}
                       className={`relative rounded-full overflow-hidden border-2 aspect-square transition-all ${

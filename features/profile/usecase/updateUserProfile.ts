@@ -10,23 +10,7 @@ import { userRepository } from "../repository/userRepository";
 const updateProfileSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
   email: z.string().email("Email invalide").min(1, "L'email est requis"),
-  image: z
-    .union([
-      z
-        .string()
-        .refine(
-          (val) =>
-            val.trim().length === 0 ||
-            val.startsWith("data:") ||
-            val.startsWith("http://") ||
-            val.startsWith("https://"),
-          { message: "L'image doit être une URL valide ou une data URI" },
-        ),
-      z.null(),
-    ])
-    .optional()
-    .nullable()
-    .transform((val) => (val === "" || val === null ? null : val)),
+  image: z.string().optional().nullable(),
 });
 
 const updateUserProfile = usecase(

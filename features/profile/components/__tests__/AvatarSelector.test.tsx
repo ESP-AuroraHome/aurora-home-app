@@ -14,26 +14,6 @@ vi.mock("next/image", () => ({
   ),
 }));
 
-vi.mock("@dicebear/core", () => ({
-  createAvatar: vi.fn(() => ({ toDataUri: () => "data:image/svg+xml,mock" })),
-}));
-
-vi.mock("@dicebear/collection", () => ({
-  adventurer: {},
-  avataaars: {},
-  bottts: {},
-  funEmoji: {},
-  identicon: {},
-  lorelei: {},
-  micah: {},
-  miniavs: {},
-  openPeeps: {},
-  personas: {},
-  pixelArt: {},
-  shapes: {},
-  thumbs: {},
-}));
-
 import AvatarSelector from "../AvatarSelector";
 
 const onSelect = vi.fn();
