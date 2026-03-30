@@ -18,6 +18,10 @@ export default function ProfileSheetWrapper({
   const t = useTranslations("profile");
   const [open, setOpen] = useState(false);
 
+  const avatarUrl = user.image
+    ? `/assets/profil/${user.image}.png`
+    : "/assets/default-profil.jpg";
+
   return (
     <>
       <button
@@ -28,7 +32,7 @@ export default function ProfileSheetWrapper({
       >
         <Image
           className="w-14 h-14 rounded-full object-cover"
-          src={"/assets/default-profil.jpg"}
+          src={avatarUrl}
           alt={user.name}
           width={56}
           height={56}

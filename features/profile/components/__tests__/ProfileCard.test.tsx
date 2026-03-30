@@ -14,26 +14,6 @@ vi.mock("next/image", () => ({
   ),
 }));
 
-vi.mock("@dicebear/core", () => ({
-  createAvatar: vi.fn(() => ({ toDataUri: () => "data:image/svg+xml,mock" })),
-}));
-
-vi.mock("@dicebear/collection", () => ({
-  adventurer: {},
-  avataaars: {},
-  bottts: {},
-  funEmoji: {},
-  identicon: {},
-  lorelei: {},
-  micah: {},
-  miniavs: {},
-  openPeeps: {},
-  personas: {},
-  pixelArt: {},
-  shapes: {},
-  thumbs: {},
-}));
-
 vi.mock("@/features/profile/hooks/useProfileSubmit", () => ({
   useProfileSubmit: vi.fn(() => ({ loading: false, onSubmit: vi.fn() })),
 }));
@@ -129,7 +109,7 @@ describe("ProfileCard", () => {
     await userEvent.click(screen.getByRole("button", { name: "changeAvatar" }));
     const avatarBtns = screen.getAllByRole("button");
     const avatarOptionBtn = avatarBtns.find((btn) =>
-      btn.querySelector("img[alt='adventurer']"),
+      btn.querySelector("img[alt='Avatar 1']"),
     );
     if (avatarOptionBtn) await userEvent.click(avatarOptionBtn);
     expect(screen.getByText("save")).toBeTruthy();

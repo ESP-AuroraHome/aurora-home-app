@@ -14,26 +14,6 @@ vi.mock("next/image", () => ({
   ),
 }));
 
-vi.mock("@dicebear/core", () => ({
-  createAvatar: vi.fn(() => ({ toDataUri: () => "data:image/svg+xml,mock" })),
-}));
-
-vi.mock("@dicebear/collection", () => ({
-  adventurer: {},
-  avataaars: {},
-  bottts: {},
-  funEmoji: {},
-  identicon: {},
-  lorelei: {},
-  micah: {},
-  miniavs: {},
-  openPeeps: {},
-  personas: {},
-  pixelArt: {},
-  shapes: {},
-  thumbs: {},
-}));
-
 import AvatarSelector from "../AvatarSelector";
 
 const onSelect = vi.fn();
@@ -101,10 +81,10 @@ describe("AvatarSelector", () => {
       />,
     );
     await userEvent.click(screen.getByRole("button", { name: "changeAvatar" }));
-    const avatarImg = screen.getByAltText("Avatar adventurer");
+    const avatarImg = screen.getByAltText("Avatar Avatar 1");
     const avatarBtn = avatarImg.closest("button");
     if (avatarBtn) await userEvent.click(avatarBtn);
-    expect(onSelect).toHaveBeenCalledWith("data:image/svg+xml,mock");
+    expect(onSelect).toHaveBeenCalledWith("1");
     expect(screen.queryByText("chooseAvatar")).toBeNull();
   });
 });

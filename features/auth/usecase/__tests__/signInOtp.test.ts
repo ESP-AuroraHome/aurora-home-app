@@ -13,16 +13,6 @@ vi.mock("@/lib/usecase", () => ({
     },
 }));
 
-vi.mock("@dicebear/collection", () => ({
-  adventurer: {},
-}));
-
-vi.mock("@dicebear/core", () => ({
-  createAvatar: vi.fn(() => ({
-    toDataUri: vi.fn(() => "data:image/svg+xml;base64,abc"),
-  })),
-}));
-
 vi.mock("@/lib/otp-display", () => ({
   clearScreen: vi.fn(),
 }));
@@ -107,7 +97,7 @@ describe("signInOtp", () => {
 
     expect(mockUserRepo.update).toHaveBeenCalledWith(
       "user-1",
-      expect.objectContaining({ image: expect.stringContaining("data:") }),
+      expect.objectContaining({ image: expect.any(String) }),
     );
   });
 

@@ -1,21 +1,5 @@
 "use client";
 
-import {
-  adventurer,
-  avataaars,
-  bottts,
-  funEmoji,
-  identicon,
-  lorelei,
-  micah,
-  miniavs,
-  openPeeps,
-  personas,
-  pixelArt,
-  shapes,
-  thumbs,
-} from "@dicebear/collection";
-import { createAvatar, type Style } from "@dicebear/core";
 import { SquarePen } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -27,33 +11,6 @@ interface AvatarSelectorProps {
   onSelect: (avatarUrl: string) => void;
 }
 
-const avatarStyles = [
-  { name: "adventurer", generator: adventurer },
-  { name: "avataaars", generator: avataaars },
-  { name: "bottts", generator: bottts },
-  { name: "fun-emoji", generator: funEmoji },
-  { name: "identicon", generator: identicon },
-  { name: "lorelei", generator: lorelei },
-  { name: "micah", generator: micah },
-  { name: "miniavs", generator: miniavs },
-  { name: "open-peeps", generator: openPeeps },
-  { name: "personas", generator: personas },
-  { name: "pixel-art", generator: pixelArt },
-  { name: "shapes", generator: shapes },
-  { name: "thumbs", generator: thumbs },
-];
-
-const generateAvatar = (
-  style: { name: string; generator: Style<{ seed: string; size: number }> },
-  seed: string,
-) => {
-  const avatar = createAvatar(style.generator, {
-    seed: seed,
-    size: 128,
-  });
-  return avatar.toDataUri();
-};
-
 export default function AvatarSelector({
   currentAvatar,
   userName,
@@ -64,17 +21,24 @@ export default function AvatarSelector({
 
   const avatarOptions = useMemo(
     () =>
-      avatarStyles.map((style) => ({
-        style: style.name,
-        url: generateAvatar(style, userName),
+      Array.from({ length: 15 }, (_, i) => ({
+        style: `Avatar ${i + 1}`,
+        id: String(i + 1),
+        url: `/assets/profil/${i + 1}.png`,
       })),
-    [userName],
+    [],
   );
 
-  const handleSelect = (avatarUrl: string, e: React.MouseEvent) => {
+  const currentAvatarUrl =
+    avatarOptions.find((opt) => opt.id === currentAvatar)?.url ??
+    (currentAvatar
+      ? `/assets/profil/${currentAvatar}.png`
+      : avatarOptions[0].url);
+
+  const handleSelect = (avatarId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    onSelect(avatarUrl);
+    onSelect(avatarId);
     setIsOpen(false);
   };
 
@@ -98,23 +62,13 @@ export default function AvatarSelector({
           onMouseLeave={() => setIsOpen(false)}
           onClick={(e) => e.stopPropagation()}
         >
-          {currentAvatar ? (
-            <Image
-              src={currentAvatar}
-              alt={userName}
-              className="w-full h-full object-cover"
-              width={64}
-              height={64}
-            />
-          ) : (
-            <Image
-              src={avatarOptions[0].url}
-              alt={userName}
-              className="w-full h-full object-cover"
-              width={64}
-              height={64}
-            />
-          )}
+          <Image
+            src={currentAvatarUrl}
+            alt={userName}
+            className="w-full h-full object-cover"
+            width={64}
+            height={64}
+          />
         </button>
         <button
           type="button"
@@ -156,13 +110,13 @@ export default function AvatarSelector({
             {avatarOptions.map((option) => (
               <button
                 type="button"
-                key={option.url}
+                key={option.id}
                 className="relative group"
-                onClick={(e) => handleSelect(option.url, e)}
+                onClick={(e) => handleSelect(option.id, e)}
               >
                 <div
                   className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 cursor-pointer transition-all ${
-                    currentAvatar === option.url
+                    currentAvatar === option.id
                       ? "border-blue-500 ring-2 ring-blue-500/50"
                       : "border-white/20 hover:border-white/50 active:border-white/50"
                   }`}
