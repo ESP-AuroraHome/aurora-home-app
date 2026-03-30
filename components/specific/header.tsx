@@ -24,7 +24,7 @@ const Header = async () => {
       </div>
       <Link
         href="/settings"
-        className="p-2 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all"
+        className="p-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/10 transition-all"
       >
         <Settings className="w-5 h-5" />
       </Link>

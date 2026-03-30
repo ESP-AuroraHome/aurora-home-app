@@ -30,7 +30,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                       ? "bg-white text-black"
                       : i === currentStep
                         ? "bg-white text-black shadow-[0_0_0_4px_rgba(255,255,255,0.15)]"
-                        : "bg-white/5 text-white/40 border border-white/15"
+                        : "bg-white/5 text-slate-200 border border-white/15"
                   }
                 `}
               >
@@ -45,7 +45,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
             <span
               className={`
                 text-[11px] font-medium tracking-wide transition-all duration-300
-                ${i === currentStep ? "text-white" : i < currentStep ? "text-white/60" : "text-white/30"}
+                ${i === currentStep ? "text-white" : i < currentStep ? "text-slate-200" : "text-slate-200"}
               `}
             >
               {step.label}

@@ -81,7 +81,7 @@ function TrendIndicator({
   }
 
   return (
-    <span className="flex items-center gap-1 text-xs text-white/30">
+    <span className="flex items-center gap-1 text-xs text-slate-200">
       <Minus className="w-3.5 h-3.5" />
       {t("trendStable")}
     </span>
@@ -280,7 +280,7 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
                   className={`px-3 py-1 rounded-full text-xs transition-all ${
                     period === p.value
                       ? "bg-white/20 border border-white/20 text-white font-medium"
-                      : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70"
+                      : "bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white/70"
                   }`}
                 >
                   {p.label}
@@ -290,7 +290,7 @@ const ItemDataPoint = ({ type, datapoints }: Props) => {
             <button
               type="button"
               onClick={exportCSV}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white/70 transition-all"
             >
               <Download className="w-3 h-3" />
               {t("export")}

@@ -39,7 +39,7 @@ const OTPPage = async ({
           <CardTitle className="text-white text-2xl font-semibold text-center">
             {t("otpTitle")}
           </CardTitle>
-          <p className="text-white/60 text-center text-sm mt-3 font-light">
+          <p className="text-slate-200 text-center text-sm mt-3 font-light">
             {t("otpSubtitle")}
           </p>
         </CardHeader>

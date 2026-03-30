@@ -156,7 +156,7 @@ export default function ProfileCard({
                 <button
                   type="button"
                   onClick={() => setPickingAvatar(false)}
-                  className="text-white/40 hover:text-white/70 transition-colors"
+                  className="text-slate-200 hover:text-white/70 transition-colors"
                   aria-label={t("close")}
                 >
                   <X className="w-4 h-4" />
@@ -251,7 +251,7 @@ export default function ProfileCard({
                   <span className="text-white text-lg font-semibold">
                     {watchedValues.name}
                   </span>
-                  <SquarePen className="w-3.5 h-3.5 text-white/20 group-hover:text-white/50 transition-colors" />
+                  <SquarePen className="w-3.5 h-3.5 text-slate-200 group-hover:text-slate-200 transition-colors" />
                 </button>
               )}
             </div>
@@ -260,7 +260,7 @@ export default function ProfileCard({
 
         <div className="bg-black/20 backdrop-blur-md rounded-3xl overflow-hidden">
           <div className="flex items-center gap-4 px-6 py-4 border-b border-white/5">
-            <span className="text-white/50 text-sm w-20 flex-shrink-0">
+            <span className="text-slate-200 text-sm w-20 flex-shrink-0">
               {t("email")}
             </span>
             {editingField === "email" ? (
@@ -295,14 +295,14 @@ export default function ProfileCard({
                   onClick={() => setEditingField("email")}
                   className="flex-shrink-0"
                 >
-                  <SquarePen className="w-3.5 h-3.5 text-white/25 hover:text-white/60 transition-colors" />
+                  <SquarePen className="w-3.5 h-3.5 text-slate-200 hover:text-slate-200 transition-colors" />
                 </button>
               </div>
             )}
           </div>
 
           <div className="flex items-center gap-4 px-6 py-4 border-b border-white/5">
-            <span className="text-white/50 text-sm w-20 flex-shrink-0">
+            <span className="text-slate-200 text-sm w-20 flex-shrink-0">
               {t("language")}
             </span>
             {editingField === "locale" ? (
@@ -351,24 +351,24 @@ export default function ProfileCard({
                   onClick={() => setEditingField("locale")}
                   className="flex-shrink-0"
                 >
-                  <SquarePen className="w-3.5 h-3.5 text-white/25 hover:text-white/60 transition-colors" />
+                  <SquarePen className="w-3.5 h-3.5 text-slate-200 hover:text-slate-200 transition-colors" />
                 </button>
               </div>
             )}
           </div>
 
           <div className="flex items-center gap-4 px-6 py-4">
-            <span className="text-white/50 text-sm w-20 flex-shrink-0">
+            <span className="text-slate-200 text-sm w-20 flex-shrink-0">
               {t("emailVerified")}
             </span>
             <div className="flex flex-1 justify-end">
               {user.emailVerified ? (
-                <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full">
+                <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-400/80 px-2.5 py-1 rounded-full">
                   <Check className="w-3 h-3" />
                   {t("verified")}
                 </span>
               ) : (
-                <span className="text-xs font-medium text-red-400 bg-red-400/10 px-2.5 py-1 rounded-full">
+                <span className="text-xs font-medium text-red-900 bg-red-400/80 px-2.5 py-1 rounded-full">
                   {t("notVerified")}
                 </span>
               )}
@@ -390,7 +390,7 @@ export default function ProfileCard({
         <div className="bg-black/20 backdrop-blur-md rounded-3xl px-6 py-4 flex items-center justify-between">
           <div>
             <p className="text-white text-sm font-medium">{t("signOut")}</p>
-            <p className="text-white/35 text-xs mt-0.5">
+            <p className="text-slate-200 text-xs mt-0.5">
               {t("signOutDescription")}
             </p>
           </div>

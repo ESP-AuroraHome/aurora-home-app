@@ -29,7 +29,7 @@ export default async function SettingsPage() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/"
-                  className="p-2 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all"
+                  className="p-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/10 transition-all"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </Link>
@@ -37,12 +37,12 @@ export default async function SettingsPage() {
                   <h1 className="text-white text-xl font-semibold">
                     {t("title")}
                   </h1>
-                  <p className="text-white/40 text-sm">{t("description")}</p>
+                  <p className="text-slate-200 text-sm">{t("description")}</p>
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
-                <h2 className="text-white/60 text-xs font-semibold uppercase tracking-wider px-1">
+                <h2 className="text-slate-200 text-xs font-semibold uppercase tracking-wider px-1">
                   {t("prefsTitle")}
                 </h2>
                 <NotificationPrefsCard
@@ -52,7 +52,7 @@ export default async function SettingsPage() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <h2 className="text-white/60 text-xs font-semibold uppercase tracking-wider px-1">
+                <h2 className="text-slate-200 text-xs font-semibold uppercase tracking-wider px-1">
                   {t("thresholdsTitle")}
                 </h2>
                 <ThresholdsCard initialThresholds={thresholds} />

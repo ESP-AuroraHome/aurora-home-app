@@ -156,7 +156,7 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
               <button
                 type="button"
                 onClick={() => reset(type)}
-                className="flex items-center gap-1.5 text-white/30 hover:text-white/60 text-xs transition-colors"
+                className="flex items-center gap-1.5 text-slate-200 hover:text-slate-200 text-xs transition-colors"
               >
                 <RotateCcw className="w-3 h-3" />
                 {t("reset")}
@@ -165,7 +165,7 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
 
             {hasHigh && (
               <div className="flex items-center gap-3 px-6 py-3 border-b border-white/5">
-                <span className="text-white/50 text-xs w-16 flex-shrink-0">
+                <span className="text-slate-200 text-xs w-16 flex-shrink-0">
                   {t("high")}
                 </span>
                 <div className="flex items-center gap-2 flex-1">
@@ -175,7 +175,7 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
                     placeholder={String(def.highValue)}
                     step={type === "PRESSURE" ? 1 : type === "CO2" ? 50 : 1}
                   />
-                  <span className="text-white/30 text-xs flex-shrink-0">
+                  <span className="text-slate-200 text-xs flex-shrink-0">
                     {meta.unit}
                   </span>
                   <SeveritySelect
@@ -189,7 +189,7 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
 
             {hasLow && (
               <div className="flex items-center gap-3 px-6 py-3">
-                <span className="text-white/50 text-xs w-16 flex-shrink-0">
+                <span className="text-slate-200 text-xs w-16 flex-shrink-0">
                   {t("low")}
                 </span>
                 <div className="flex items-center gap-2 flex-1">
@@ -199,7 +199,7 @@ export default function ThresholdsCard({ initialThresholds }: Props) {
                     placeholder={String(def.lowValue)}
                     step={type === "PRESSURE" ? 1 : type === "CO2" ? 50 : 1}
                   />
-                  <span className="text-white/30 text-xs flex-shrink-0">
+                  <span className="text-slate-200 text-xs flex-shrink-0">
                     {meta.unit}
                   </span>
                   <SeveritySelect
@@ -250,7 +250,7 @@ function NumberInput({
       <button
         type="button"
         onClick={decrement}
-        className="px-2 h-full text-white/50 hover:text-white hover:bg-white/10 transition-colors flex items-center"
+        className="px-2 h-full text-slate-200 hover:text-white hover:bg-white/10 transition-colors flex items-center"
       >
         <Minus className="w-3 h-3" />
       </button>
@@ -260,7 +260,7 @@ function NumberInput({
       <button
         type="button"
         onClick={increment}
-        className="px-2 h-full text-white/50 hover:text-white hover:bg-white/10 transition-colors flex items-center"
+        className="px-2 h-full text-slate-200 hover:text-white hover:bg-white/10 transition-colors flex items-center"
       >
         <Plus className="w-3 h-3" />
       </button>

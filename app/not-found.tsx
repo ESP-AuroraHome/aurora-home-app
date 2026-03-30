@@ -15,10 +15,10 @@ export default async function NotFound() {
         className="object-cover object-center"
       />
       <div className="relative z-10 flex flex-col items-center gap-6 text-center px-6">
-        <p className="text-8xl font-bold text-white/20 select-none">404</p>
+        <p className="text-8xl font-bold text-slate-200 select-none">404</p>
         <div className="flex flex-col items-center gap-2">
           <p className="text-white text-xl font-semibold">{t("title")}</p>
-          <p className="text-white/40 text-sm">{t("description")}</p>
+          <p className="text-slate-200 text-sm">{t("description")}</p>
         </div>
         <Link
           href="/"
